@@ -1,0 +1,50 @@
+import { ReactNode } from 'react';
+
+export interface DNGridProps {
+  /**
+   * The content to be rendered inside the grid
+   */
+  children: ReactNode;
+
+  /**
+   * Number of rows in the grid (defaults to 8)
+   */
+  rows?: 2 | 4 | 6 | 8;
+
+  /**
+   * Custom class names to apply to the grid
+   */
+  className?: string;
+}
+
+export interface DNGridItemProps {
+  /**
+   * The content to be rendered inside the grid item
+   */
+  children: ReactNode;
+
+  /**
+   * Number of columns the item spans (1-12)
+   */
+  colSpan?: number | 'full';
+
+  /**
+   * Starting column for the item (1-11)
+   */
+  colStart?: number;
+
+  /**
+   * Number of rows the item spans (1-8)
+   */
+  rowSpan?: number | 'full';
+
+  /**
+   * Starting row for the item (1-7)
+   */
+  rowStart?: number;
+
+  /**
+   * Custom class names to apply to the grid item
+   */
+  className?: string;
+}

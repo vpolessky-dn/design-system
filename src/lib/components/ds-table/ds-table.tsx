@@ -16,12 +16,12 @@ import classnames from 'classnames';
 import * as React from 'react';
 import { CSSProperties } from 'react';
 
+import Button from '../ds-button/ds-button';
+import { DsCheckbox } from '../ds-checkbox';
 import DsIcon from '../ds-icon/ds-icon';
 import { Table, TableBody, TableCell, TableRow } from './core-table';
 import DsTableBulkActions from './ds-table-bulk-actions';
 import DsTableHeader from './ds-table-header';
-import Button from '../ds-button/ds-button';
-import { DsCheckbox } from '../ds-checkbox';
 import styles from './ds-table.module.scss';
 import type { DataTableProps } from './ds-table.types';
 
@@ -155,6 +155,9 @@ const DsTable = <TData, TValue>({
                   const toggleHandler = row.getToggleSelectedHandler();
                   toggleHandler(e);
                 }}
+                onDoubleClick={e => {
+                  e.stopPropagation();
+                }}
               />
             </TableCell>
           )}
@@ -166,6 +169,9 @@ const DsTable = <TData, TValue>({
                 onClick={(e: React.MouseEvent) => {
                   e.stopPropagation();
                   toggleRowExpanded(row.id);
+                }}
+                onDoubleClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
                 }}
                 className={styles.expandToggleButton}
               >

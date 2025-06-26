@@ -13,6 +13,7 @@ export * from './lib/components/ds-breadcrumb';
 export * from './lib/components/ds-dropdown';
 export * from './lib/components/ds-dropdown-menu';
 export * from './lib/components/ds-dialog';
+export * from './lib/components/ds-panel';
 
 export * from './lib/utils/common.util';
 export * from './lib/utils/string.util';

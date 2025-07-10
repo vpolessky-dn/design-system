@@ -10,24 +10,13 @@ import { materialIcons } from './material-icons';
 const DsIcon: React.FC<DsIconProps> = ({
 	icon,
 	size = 'medium',
-	variant = 'filled',
+	variant = 'outlined',
 	className = '',
 	style = {},
 	onClick,
 	...rest
 }) => {
-	// Check if this is a Material Symbols icon (when no regular icon exists)
-	const isSymbolsIcon =
-		typeof icon === 'string' &&
-		materialIcons[`symbols::${icon}` as keyof typeof materialIcons] &&
-		!Object.keys(materialIcons).some((key) => !key.startsWith('symbols::') && key.endsWith(`::${icon}`));
-
-	const variantClass = isSymbolsIcon
-		? 'material-symbols-outlined'
-		: variant !== 'filled'
-			? `material-icons-${variant}`
-			: 'material-icons';
-
+	const variantClass = `material-symbols-${variant}`;
 	const iconClass = classNames(styles.icon, styles[size], className);
 
 	if (typeof icon === 'function') {

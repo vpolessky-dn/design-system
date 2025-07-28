@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import * as Select from '@radix-ui/react-select';
 import classNames from 'classnames';
 import styles from './ds-select.module.scss';
@@ -9,7 +9,7 @@ const SEARCH_THRESHOLD = 13;
 
 const DsSelect: React.FC<DsSelectProps> = ({
 	id,
-	options,
+	options = [],
 	value,
 	style,
 	size,

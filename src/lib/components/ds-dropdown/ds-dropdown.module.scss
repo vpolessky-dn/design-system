@@ -1,5 +1,6 @@
 @use 'typography' as typography;
 @use 'shared/dropdown' as dropdown;
+@use 'shared/input' as input;
 
 .content {
 	@include dropdown.dropdown-content;
@@ -10,38 +11,7 @@
 }
 
 .searchInput {
-	position: relative;
-	padding: var(--spacing-3xs);
-
-	.searchInputField {
-		@extend .body-sm-reg;
-		width: 100%;
-		font-size: 14px;
-		border: 1px solid var(--color-border);
-		border-radius: 4px;
-		transition: border-color 0.2s;
-		padding: var(--spacing-xs) var(--spacing-sm);
-		padding-left: calc(var(--spacing-sm) + var(--icon-width-tiny) + var(--spacing-sm));
-
-		&:focus {
-			outline: none;
-			border-color: var(--color-border-action-primary);
-		}
-
-		&::placeholder {
-			@extend .body-sm-reg;
-			color: var(--color-background-deselected);
-		}
-	}
-
-	.searchIcon {
-		position: absolute;
-		pointer-events: none;
-		color: var(--color-background-action);
-		top: calc(50%);
-		transform: translateY(-50%);
-		left: 16px;
-	}
+	@extend .searchInput;
 }
 
 .items {

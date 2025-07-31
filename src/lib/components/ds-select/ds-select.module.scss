@@ -1,8 +1,6 @@
 @use 'typography' as typography;
 @use 'shared/dropdown' as dropdown;
-
-$select-height-small: 28px;
-$select-height-default: 36px;
+@use 'shared/input' as input;
 
 .container {
 	display: flex;
@@ -11,82 +9,7 @@ $select-height-default: 36px;
 }
 
 .trigger {
-	display: flex;
-	justify-content: space-between;
-	// because icon size exceeds line height
-	padding: calc(var(--spacing-xs) - 3px) var(--spacing-sm);
-	border: 1px solid var(--color-border-secondary);
-	border-radius: 4px;
-	background-color: var(--color-background);
-	cursor: pointer;
-	max-height: $select-height-default;
-
-	&.small {
-		max-height: $select-height-small;
-	}
-
-	.triggerIcons {
-		display: flex;
-		align-items: center;
-		gap: 4px;
-	}
-
-	.triggerIcon {
-		display: flex;
-		align-items: center;
-		border-radius: 4px;
-		color: var(--color-background-deselected);
-	}
-
-	.clearIcon {
-		display: flex;
-		align-items: center;
-		color: var(--color-background-deselected-hover);
-		margin-right: 2px;
-	}
-
-	.iconRotated {
-		transform: rotate(180deg);
-		transition: transform 0.2s ease-in-out;
-	}
-
-	&:hover:not(:disabled) {
-		border-color: var(--color-background-action-hover);
-
-		.triggerIcon {
-			color: var(--color-background-deselected-hover);
-			background: var(--color-background-action-hover-weak);
-		}
-	}
-
-	&:focus {
-		border-color: var(--color-border-action-primary);
-		outline: none;
-
-		.triggerIcon {
-			color: var(--color-background-deselected-hover);
-			background: var(--color-background-action-hover-weak);
-		}
-	}
-
-	&:disabled {
-		color: var(--color-font-disabled);
-		border-color: var(--color-border-disabled);
-		cursor: not-allowed;
-
-		.triggerIcon {
-			color: var(--color-background-disable);
-		}
-
-		.clearIcon {
-			color: var(--color-background-disable);
-			cursor: not-allowed;
-		}
-
-		.itemValue {
-			color: var(--color-font-disabled);
-		}
-	}
+	@extend .selectTrigger;
 }
 
 .content {
@@ -94,38 +17,7 @@ $select-height-default: 36px;
 }
 
 .searchInput {
-	position: relative;
-	padding: var(--spacing-3xs);
-
-	.searchInputField {
-		@extend .body-sm-reg;
-		width: 100%;
-		font-size: 14px;
-		border: 1px solid var(--color-border);
-		border-radius: 4px;
-		transition: border-color 0.2s;
-		padding: var(--spacing-xs) var(--spacing-sm);
-		padding-left: calc(var(--spacing-sm) + var(--icon-width-tiny) + var(--spacing-sm));
-
-		&:focus {
-			outline: none;
-			border-color: var(--color-border-action-primary);
-		}
-
-		&::placeholder {
-			@extend .body-sm-reg;
-			color: var(--color-background-deselected);
-		}
-	}
-
-	.searchIcon {
-		position: absolute;
-		pointer-events: none;
-		color: var(--color-background-action);
-		top: 50%;
-		transform: translateY(-50%);
-		left: calc(var(--spacing-3xs) + var(--spacing-sm));
-	}
+	@extend .searchInput;
 }
 
 .viewport {

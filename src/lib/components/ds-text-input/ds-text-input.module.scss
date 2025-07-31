@@ -1,0 +1,13 @@
+@use 'shared/input' as input;
+
+.textInputContainer {
+	@extend .inputContainer;
+}
+
+.input {
+	@extend .input;
+}
+
+.iconButton {
+	@extend .iconButton;
+}

@@ -1,0 +1,337 @@
+@use 'typography' as typography;
+
+// Variables
+$input-text-height-small: 28px;
+$input-text-height-default: 36px;
+$textarea-height-default: 120px;
+
+// Mixins
+@mixin base-input-container {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	border-radius: 4px;
+	transition: all 0.2s ease;
+	background: var(--color-background);
+	border: 1px solid var(--color-border);
+	padding: var(--spacing-xs) var(--spacing-sm);
+}
+
+@mixin base-input {
+	@extend .body-sm-reg;
+	border: none;
+	background: transparent;
+	outline: none;
+	font-family: inherit;
+	transition: all 0.2s ease;
+	color: var(--color-font-main);
+	flex: 1;
+
+	&::placeholder {
+		color: var(--color-background-deselected);
+		transition: color 0.2s ease;
+	}
+
+	&:disabled {
+		cursor: not-allowed;
+	}
+
+	&::selection {
+		background: var(--color-background-selected-weak);
+	}
+
+	&::-moz-selection {
+		background: var(--color-background-selected-weak);
+	}
+}
+
+@mixin input-container-states {
+	&:hover:not(:has(.input:disabled)):not(:has(:focus-within)) {
+		border: 1px solid var(--color-background-action-hover);
+	}
+
+	&:has(:focus-within) {
+		border: 1px solid var(--color-border-action-primary);
+	}
+
+	&:has(.input:disabled) {
+		border-color: var(--color-border-disabled);
+		cursor: not-allowed;
+
+		.input {
+			color: var(--color-font-disabled);
+		}
+
+		.iconButton {
+			color: var(--color-background-disable);
+		}
+	}
+}
+
+@mixin input-states {
+	&:hover:not(:disabled):not(:focus) {
+		border-color: var(--form-control-focus-border-color, var(--color-background-action-hover));
+	}
+
+	&:focus {
+		border-color: var(--form-control-focus-border-color, var(--color-border-action-primary));
+	}
+
+	&:disabled {
+		border-color: var(--color-border-disabled);
+		color: var(--color-background-disable);
+		cursor: not-allowed;
+	}
+
+	&:read-only {
+		cursor: default;
+	}
+}
+
+@mixin form-control-states {
+	&:hover:not(:disabled) {
+		border-color: var(--form-control-focus-border-color, var(--color-background-action-hover));
+	}
+
+	&:focus {
+		border-color: var(--form-control-focus-border-color, var(--color-border-action-primary));
+		outline: none;
+	}
+
+	&:disabled {
+		color: var(--color-font-disabled);
+		border-color: var(--color-border-disabled);
+		cursor: not-allowed;
+	}
+}
+
+@mixin select-trigger-states {
+	&:hover:not(:disabled) {
+		border-color: var(--form-control-focus-border-color, var(--color-background-action-hover));
+
+		.triggerIcon {
+			color: var(--color-background-deselected-hover);
+			background: var(--color-background-action-hover-weak);
+		}
+	}
+
+	&:focus {
+		border-color: var(--form-control-focus-border-color, var(--color-border-action-primary));
+		outline: none;
+
+		.triggerIcon {
+			color: var(--color-background-deselected-hover);
+			background: var(--color-background-action-hover-weak);
+		}
+	}
+
+	&:disabled {
+		color: var(--color-font-disabled);
+		border-color: var(--color-border-disabled);
+		cursor: not-allowed;
+
+		.triggerIcon {
+			color: var(--color-background-disable);
+		}
+
+		.clearIcon {
+			color: var(--color-background-disable);
+			cursor: not-allowed;
+		}
+
+		.itemValue {
+			color: var(--color-font-disabled);
+		}
+	}
+}
+
+@mixin icon-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	background: transparent;
+	color: var(--color-background-action);
+	//width: var(--icon-width-large);
+	//height: var(--icon-width-large);
+
+	&:disabled {
+		color: var(--color-background-disable);
+		cursor: not-allowed;
+	}
+}
+
+@mixin number-input-styles {
+	-moz-appearance: textfield;
+
+	&::-webkit-outer-spin-button,
+	&::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+}
+
+// Common classes
+.inputContainer {
+	@include base-input-container;
+	@include input-container-states;
+	max-height: $input-text-height-default;
+
+	&.small {
+		max-height: $input-text-height-small;
+	}
+
+	&.default {
+		height: $input-text-height-default;
+	}
+
+	&:has(input[type='number']) {
+		.input {
+			text-align: center;
+		}
+	}
+
+	&:has(input[type='password']) {
+		.trigger,
+		.indicator {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.input {
+			letter-spacing: 2px;
+		}
+	}
+}
+
+.input {
+	@include base-input;
+	min-width: 0;
+
+	&[type='number'] {
+		@include number-input-styles;
+	}
+}
+
+.iconButton {
+	@include icon-button;
+
+	&:first-child {
+		margin-right: var(--spacing-xs);
+	}
+}
+
+// Textarea specific styles
+.textarea {
+	@include base-input;
+	border: 1px solid var(--form-control-border-color, var(--color-border));
+	border-radius: 4px;
+	background: var(--color-background);
+	resize: vertical;
+	min-height: $textarea-height-default;
+	padding: var(--spacing-xs) var(--spacing-sm);
+	@include input-states;
+
+	&::selection {
+		background: var(--color-background-selected-weak);
+	}
+
+	&::-moz-selection {
+		background: var(--color-background-selected-weak);
+	}
+}
+
+// Form control base styles
+.formControl {
+	@include base-input-container;
+	@include form-control-states;
+	cursor: pointer;
+	justify-content: space-between;
+}
+
+.formControlSmall {
+	max-height: $input-text-height-small;
+}
+
+.formControlDefault {
+	max-height: $input-text-height-default;
+}
+
+// Select trigger styles
+.selectTrigger {
+	display: flex;
+	justify-content: space-between;
+	padding: calc(var(--spacing-xs) - 3px) var(--spacing-sm);
+	border: 1px solid var(--form-control-border-color, var(--color-border-secondary));
+	border-radius: 4px;
+	background-color: var(--color-background);
+	cursor: pointer;
+	max-height: $input-text-height-default;
+	@include select-trigger-states;
+
+	&.small {
+		max-height: $input-text-height-small;
+	}
+
+	.triggerIcons {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+	}
+
+	.triggerIcon {
+		display: flex;
+		align-items: center;
+		border-radius: 4px;
+		color: var(--color-background-deselected);
+	}
+
+	.clearIcon {
+		display: flex;
+		align-items: center;
+		color: var(--color-background-deselected-hover);
+		margin-right: 2px;
+	}
+
+	.iconRotated {
+		transform: rotate(180deg);
+		transition: transform 0.2s ease-in-out;
+	}
+}
+
+// Search input styles
+.searchInput {
+	position: relative;
+	padding: var(--spacing-3xs);
+
+	.searchInputField {
+		@extend .body-sm-reg;
+		width: 100%;
+		font-size: 14px;
+		border: 1px solid var(--color-border);
+		border-radius: 4px;
+		transition: border-color 0.2s;
+		padding: var(--spacing-xs) var(--spacing-sm);
+		padding-left: calc(var(--spacing-sm) + var(--icon-width-tiny) + var(--spacing-sm));
+
+		&:focus {
+			outline: none;
+			border-color: var(--color-border-action-primary);
+		}
+
+		&::placeholder {
+			@extend .body-sm-reg;
+			color: var(--color-background-deselected);
+		}
+	}
+
+	.searchIcon {
+		position: absolute;
+		pointer-events: none;
+		color: var(--color-background-action);
+		top: 50%;
+		transform: translateY(-50%);
+		left: calc(var(--spacing-3xs) + var(--spacing-sm));
+	}
+}

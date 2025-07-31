@@ -1,3 +1,6 @@
+export * from './lib/utils/common.util';
+export * from './lib/utils/string.util';
+
 export * from './lib/components/ds-button';
 export * from './lib/components/ds-checkbox';
 export * from './lib/components/ds-form-control';
@@ -15,6 +18,7 @@ export * from './lib/components/ds-dropdown-menu';
 export * from './lib/components/ds-dialog';
 export * from './lib/components/ds-panel';
 export * from './lib/components/ds-stepper';
-
-export * from './lib/utils/common.util';
-export * from './lib/utils/string.util';
+export * from './lib/components/ds-text-input';
+export * from './lib/components/ds-textarea';
+export * from './lib/components/ds-number-input';
+export * from './lib/components/ds-password-input';

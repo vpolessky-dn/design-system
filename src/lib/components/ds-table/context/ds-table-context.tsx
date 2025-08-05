@@ -6,6 +6,7 @@ export interface DsTableContextType<TData, TValue> extends Partial<DataTableProp
 	toggleRowExpanded: (rowId: string) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const DsTableContext = createContext<DsTableContextType<any, any> | null>(null);
 
 export const useDsTableContext = <TData, TValue>(): DsTableContextType<TData, TValue> => {

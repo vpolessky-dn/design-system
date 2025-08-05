@@ -328,10 +328,10 @@ export const ProgrammaticRowSelection: Story = {
 		onSelectionChange: (selectedRows) => console.log('Selected rows:', selectedRows),
 	},
 	render: function Render(args) {
-		const tableRef = useRef<Table<any>>(null);
+		const tableRef = useRef<Table<Person>>(null);
 		const [selectedRows, setSelectedRows] = useState<string[]>([]);
 
-		const handleTableCreated = (table: any) => {
+		const handleTableCreated = (table: Table<Person>) => {
 			tableRef.current = table;
 		};
 
@@ -360,7 +360,7 @@ export const ProgrammaticRowSelection: Story = {
 				tableRef.current
 					.getRowModel()
 					.rows.slice(0, 3)
-					.forEach((row: any) => {
+					.forEach((row) => {
 						newSelection[row.id] = true;
 					});
 				tableRef.current.setRowSelection(newSelection);

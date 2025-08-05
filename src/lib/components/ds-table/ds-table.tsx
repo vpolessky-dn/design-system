@@ -125,6 +125,7 @@ const DsTable = <TData extends { id: string }, TValue>({
 
 	useEffect(() => {
 		onTableCreated?.(table);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	const { rows } = table.getRowModel();

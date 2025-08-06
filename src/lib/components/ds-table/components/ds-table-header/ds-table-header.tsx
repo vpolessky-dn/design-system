@@ -1,4 +1,4 @@
-import { flexRender } from '@tanstack/react-table';
+import { defaultColumnSizing, flexRender } from '@tanstack/react-table';
 import classnames from 'classnames';
 import { DsCheckbox, DsIcon } from '@design-system/ui';
 import { TableHead, TableHeader, TableRow } from '../core-table';
@@ -8,7 +8,7 @@ import { DsTableHeaderProps } from './ds-table-header.types';
 import { useDsTableContext } from '../../context/ds-table-context';
 
 const DsTableHeader = <TData,>({ table }: DsTableHeaderProps<TData>) => {
-	const { stickyHeader, bordered, expandable, selectable, reorderable, showSelectAllCheckbox } =
+	const { stickyHeader, bordered, expandable, selectable, reorderable, showSelectAllCheckbox, virtualized } =
 		useDsTableContext<TData, unknown>();
 
 	return (
@@ -16,7 +16,11 @@ const DsTableHeader = <TData,>({ table }: DsTableHeaderProps<TData>) => {
 			{table.getHeaderGroups().map((headerGroup) => (
 				<TableRow
 					key={headerGroup.id}
-					className={classnames(styles.headerRow, !bordered && styles.headerRowNoBorder)}
+					className={classnames(
+						styles.headerRow,
+						!bordered && styles.headerRowNoBorder,
+						virtualized && styles.headerRowVirtualized,
+					)}
 				>
 					{selectable && (
 						<TableHead className={classnames(styles.headerCell, styles.selectColumn)}>
@@ -39,7 +43,7 @@ const DsTableHeader = <TData,>({ table }: DsTableHeaderProps<TData>) => {
 							)}
 						</TableHead>
 					)}
-					{expandable && <TableHead className={styles.expandColumn} />}
+					{expandable && <TableHead className={classnames(styles.headerCell, styles.expandColumn)} />}
 					{reorderable && (
 						<TableHead className={classnames(styles.headerCell, styles.reorderColumn)}>Order</TableHead>
 					)}
@@ -49,10 +53,14 @@ const DsTableHeader = <TData,>({ table }: DsTableHeaderProps<TData>) => {
 								key={header.id}
 								className={classnames(styles.headerCell, header.column.getCanSort() && styles.sortableHeader)}
 								onClick={header.column.getToggleSortingHandler()}
-								style={{
-									width: header.getSize(),
-									minWidth: header.getSize(),
-								}}
+								style={
+									virtualized && header.column.getSize() !== defaultColumnSizing.size
+										? {
+												flexBasis: header.column.getSize(),
+												flexGrow: 0,
+											}
+										: undefined
+								}
 							>
 								{header.isPlaceholder ? null : (
 									<div className={styles.headerSortContainer}>

@@ -1,3 +1,4 @@
+import { Ref } from 'react';
 import { Row } from '@tanstack/react-table';
 import { VirtualItem } from '@tanstack/react-virtual';
 
@@ -5,6 +6,10 @@ import { VirtualItem } from '@tanstack/react-virtual';
  * Props for the table row component
  */
 export interface DsTableRowProps<TData> {
+	/**
+	 * Ref for the table row
+	 */
+	ref?: Ref<HTMLTableRowElement>;
 	/**
 	 * The row data from the table
 	 */

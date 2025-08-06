@@ -4,7 +4,6 @@ import {
 	type ColumnFiltersState,
 	getCoreRowModel,
 	getFilteredRowModel,
-	getPaginationRowModel,
 	getSortedRowModel,
 	RowSelectionState,
 	type SortingState,
@@ -30,12 +29,7 @@ const DsTable = <TData extends { id: string }, TValue>({
 	columns,
 	data: tableData = [],
 	virtualized = false,
-	virtualizedOptions = {
-		estimateSize: 48,
-		overscan: 10,
-	},
-	pagination = true,
-	pageSize = 10,
+	virtualizedOptions,
 	className,
 	onRowClick,
 	emptyState,
@@ -45,10 +39,11 @@ const DsTable = <TData extends { id: string }, TValue>({
 	highlightOnHover = true,
 	expandable = false,
 	renderExpandedRow,
-	filterElement,
 	selectable = false,
 	showSelectAllCheckbox = true,
 	onSelectionChange,
+	onSortingChange,
+	onScroll,
 	actions = [],
 	onRowDoubleClick,
 	primaryRowActions = [],
@@ -88,6 +83,12 @@ const DsTable = <TData extends { id: string }, TValue>({
 		}
 	};
 
+	const handleSortingChange = (updaterOrValue: SortingState | ((old: SortingState) => SortingState)) => {
+		const newSorting = typeof updaterOrValue === 'function' ? updaterOrValue(sorting) : updaterOrValue;
+		setSorting(newSorting);
+		onSortingChange?.(newSorting);
+	};
+
 	const handleRowSelectionChange = (
 		updaterOrValue: RowSelectionState | ((old: RowSelectionState) => RowSelectionState),
 	) => {
@@ -101,8 +102,7 @@ const DsTable = <TData extends { id: string }, TValue>({
 		data: reorderable ? data : tableData,
 		columns,
 		getCoreRowModel: getCoreRowModel(),
-		getPaginationRowModel: pagination ? getPaginationRowModel() : undefined,
-		onSortingChange: setSorting,
+		onSortingChange: handleSortingChange,
 		getSortedRowModel: getSortedRowModel(),
 		onColumnFiltersChange: handleColumnFiltersChange,
 		getFilteredRowModel: getFilteredRowModel(),
@@ -114,11 +114,6 @@ const DsTable = <TData extends { id: string }, TValue>({
 			columnFilters,
 			columnVisibility,
 			rowSelection,
-		},
-		initialState: {
-			pagination: {
-				pageSize,
-			},
 		},
 		enableRowSelection: selectable,
 	});
@@ -155,8 +150,20 @@ const DsTable = <TData extends { id: string }, TValue>({
 	const rowVirtualizer = useVirtualizer({
 		count: rows.length,
 		getScrollElement: () => tableContainerRef.current,
-		estimateSize: () => virtualizedOptions.estimateSize || 48,
-		overscan: virtualizedOptions.overscan || 10,
+		// estimate row height for accurate scrollbar dragging
+		estimateSize: () => virtualizedOptions?.estimateSize || 65,
+		overscan: virtualizedOptions?.overscan || 5,
+		onChange: (instance, sync) => {
+			if (sync && onScroll) {
+				const scrollOffset = instance.scrollOffset || 0;
+				const totalContentHeight = instance.getTotalSize();
+				const viewportHeight = instance.scrollElement?.clientHeight;
+
+				if (viewportHeight) {
+					onScroll({ scrollOffset, totalContentHeight, viewportHeight });
+				}
+			}
+		},
 	});
 
 	const toggleRowExpanded = (rowId: string) => {
@@ -165,9 +172,6 @@ const DsTable = <TData extends { id: string }, TValue>({
 			[rowId]: !prev[rowId],
 		}));
 	};
-
-	const virtualItems = virtualized ? rowVirtualizer.getVirtualItems() : null;
-	const totalSize = virtualized ? rowVirtualizer.getTotalSize() : null;
 
 	const renderEmptyState = () => (
 		<TableRow>
@@ -189,7 +193,6 @@ const DsTable = <TData extends { id: string }, TValue>({
 		bordered,
 		fullWidth,
 		highlightOnHover,
-		virtualized,
 		expandable,
 		selectable,
 		reorderable,
@@ -199,62 +202,52 @@ const DsTable = <TData extends { id: string }, TValue>({
 		primaryRowActions,
 		secondaryRowActions,
 		renderExpandedRow,
+		virtualized,
 		expandedRows,
 		toggleRowExpanded,
 	};
 
 	return (
 		<DsTableContext.Provider value={contextValue}>
-			<div className={classnames(styles.container, className)}>
-				{filterElement}
-				<div
-					ref={tableContainerRef}
-					className={classnames(styles.dataTableContainer, virtualized && styles.virtualized)}
-				>
-					{virtualized && totalSize ? (
-						<div
-							className={styles.virtualRowContainer}
-							style={{
-								height: `${totalSize}px`,
-							}}
-						>
-							<table className={classnames(styles.table, !bordered && styles.tableNoBorder)}>
-								<DsTableHeader table={table} />
-								<TableBody>
-									{virtualItems &&
-										virtualItems.map((virtualRow: VirtualItem) => {
-											const row = rows[virtualRow.index];
-											return <DsTableRow key={row.id} row={row} virtualRow={virtualRow} />;
-										})}
-								</TableBody>
-							</table>
-						</div>
-					) : (
-						<DragWrapper>
-							<Table className={classnames(fullWidth && styles.fullWidth, !bordered && styles.tableNoBorder)}>
-								<DsTableHeader table={table} />
-								<TableBody>
-									<SortableWrapper>
-										{rows.length
-											? rows.map((row) => <DsTableRow key={row.id} row={row} />)
-											: renderEmptyState()}
-									</SortableWrapper>
-								</TableBody>
-							</Table>
-						</DragWrapper>
-					)}
-				</div>
-				{selectable && actions.length > 0 && (
-					<DsTableBulkActions
-						numSelectedRows={selectedRows.length}
-						actions={actions.map((action) => ({
-							...action,
-							onClick: () => action.onClick(selectedRows),
-						}))}
-						onClearSelection={table.resetRowSelection}
-					/>
+			<div
+				ref={tableContainerRef}
+				className={classnames(
+					styles.container,
+					!virtualized && styles.dataTableContainer,
+					virtualized && styles.virtualizedContainer,
+					className,
 				)}
+			>
+				<DragWrapper>
+					<Table className={classnames(fullWidth && styles.fullWidth, !bordered && styles.tableNoBorder)}>
+						<DsTableHeader table={table} />
+						<TableBody style={{ height: virtualized ? `${rowVirtualizer.getTotalSize()}px` : undefined }}>
+							{virtualized ? (
+								rowVirtualizer.getVirtualItems().map((virtualRow: VirtualItem) => {
+									const row = rows[virtualRow.index];
+									return <DsTableRow key={row.id} row={row} virtualRow={virtualRow} />;
+								})
+							) : (
+								<SortableWrapper>
+									{rows.length
+										? rows.map((row) => <DsTableRow key={row.id} row={row} />)
+										: renderEmptyState()}
+								</SortableWrapper>
+							)}
+						</TableBody>
+					</Table>
+				</DragWrapper>
 			</div>
+			{selectable && actions.length > 0 && (
+				<DsTableBulkActions
+					numSelectedRows={selectedRows.length}
+					actions={actions.map((action) => ({
+						...action,
+						onClick: () => action.onClick(selectedRows),
+					}))}
+					onClearSelection={table.resetRowSelection}
+				/>
+			)}
 		</DsTableContext.Provider>
 	);
 };

@@ -5,14 +5,28 @@
 	position: sticky;
 	top: 0;
 	z-index: 10;
-	background-color: var(--background);
+	background-color: var(--color-background);
 }
 
 .headerRow {
-	border-bottom: 1px solid var(--neutral-6);
+	.headerCell {
+		border-bottom: 1px solid var(--neutral-6);
+	}
 
 	&.headerRowNoBorder {
-		border-bottom-width: 0;
+		.headerCell {
+			border-bottom: none;
+		}
+	}
+}
+
+.headerRowVirtualized {
+	display: flex;
+
+	.headerCell {
+		display: flex;
+		flex-basis: 0;
+		flex-grow: 1;
 	}
 }
 
@@ -32,12 +46,9 @@
 .headerCell {
 	@extend .p-base, .regular;
 	color: var(--neutral-4);
-	padding-left: vars.$cell-padding;
-	padding-right: vars.$cell-padding;
 	text-align: left;
 	vertical-align: middle;
-	padding-top: vars.$cell-padding-standard-vertical;
-	padding-bottom: vars.$cell-padding-standard-vertical;
+	padding: vars.$cell-padding-standard-vertical vars.$cell-padding;
 
 	&.sortableHeader {
 		cursor: pointer;

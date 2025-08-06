@@ -1,7 +1,19 @@
 import React from 'react';
-import type { ColumnDef, ColumnFiltersState, Table } from '@tanstack/react-table';
+import type { ColumnDef, ColumnFiltersState, SortingState, Table } from '@tanstack/react-table';
 import { IconType } from '../ds-icon';
 import { RowAction, SecondaryRowAction } from './components/ds-table-cell';
+
+/**
+ * Parameters passed to the onScroll callback in virtualized tables.
+ */
+export interface ScrollParams {
+	/** The current vertical scroll position from the top of the scrollable content (in pixels) */
+	scrollOffset: number;
+	/** The total height of all content in the virtualized table (in pixels) */
+	totalContentHeight: number;
+	/** The visible height of the table container (in pixels) */
+	viewportHeight: number;
+}
 
 /**
  * API for programmatically controlling a DsTable component.
@@ -154,18 +166,6 @@ export interface DsDataTableProps<TData, TValue> {
 	};
 
 	/**
-	 * Whether the table has pagination
-	 * @default false
-	 */
-	pagination?: boolean;
-
-	/**
-	 * Size of the table
-	 * @default 10
-	 */
-	pageSize?: number;
-
-	/**
 	 * Class name of the table
 	 */
 	className?: string;
@@ -221,11 +221,6 @@ export interface DsDataTableProps<TData, TValue> {
 	renderExpandedRow?: (row: TData) => React.ReactNode;
 
 	/**
-	 * Filter element of the table
-	 */
-	filterElement?: React.ReactNode;
-
-	/**
 	 * Function to handle table creation
 	 */
 	onTableCreated?: (table: Table<TData>) => void;
@@ -246,6 +241,30 @@ export interface DsDataTableProps<TData, TValue> {
 	 * Function to handle selection change
 	 */
 	onSelectionChange?: (selectedRows: Record<string, boolean>) => void;
+
+	/**
+	 * Function to handle sorting change
+	 */
+	onSortingChange?: (sorting: SortingState) => void;
+
+	/**
+	 * Function to handle scroll events in virtualized tables.
+	 * Called when the user scrolls within the table container.
+	 *
+	 * @param params - Scroll parameters containing scroll position and dimensions
+	 *
+	 * @example
+	 * ```tsx
+	 * const handleScroll = ({ scrollOffset, totalContentHeight, viewportHeight }) => {
+	 *   const distanceFromBottom = totalContentHeight - scrollOffset - viewportHeight;
+	 *   if (distanceFromBottom < 500) {
+	 *     // Fetch more data when within 500px of bottom
+	 *     fetchNextPage();
+	 *   }
+	 * };
+	 * ```
+	 */
+	onScroll?: (params: ScrollParams) => void;
 
 	/**
 	 * Actions to be shown in the bulk actions

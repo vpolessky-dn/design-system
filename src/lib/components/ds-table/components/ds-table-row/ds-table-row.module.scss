@@ -2,12 +2,27 @@
 @use '../../styles/variables' as vars;
 
 .tableRow {
-	border-bottom-width: vars.$border-width;
-	border-bottom-style: solid;
-	border-color: var(--neutral-6);
-	transition-property: color, background-color, border-color;
-	border-bottom: 1px solid var(--neutral-6);
-	border-top: 1px solid var(--neutral-6);
+	&:not(.virtualizedRow):not(:last-child) {
+		.tableCell {
+			border-bottom: vars.$border-width solid var(--neutral-6);
+		}
+	}
+
+	&.virtualizedRow {
+		position: absolute;
+		display: flex;
+		width: 100%;
+
+		&:not(:last-child) {
+			border-bottom: vars.$border-width solid var(--neutral-6);
+		}
+
+		.tableCell {
+			display: flex;
+			flex-basis: 0;
+			flex-grow: 1;
+		}
+	}
 
 	&:hover {
 		background-color: var(--action-hover-light);
@@ -22,7 +37,7 @@
 	}
 
 	&.rowNoBorder {
-		border-bottom-width: 0;
+		border-bottom: none;
 	}
 
 	&.expandedRow {
@@ -57,11 +72,9 @@
 }
 
 .tableCell {
-	padding: vars.$cell-padding;
 	vertical-align: middle;
-	padding-top: vars.$cell-padding-standard-vertical;
-	padding-bottom: vars.$cell-padding-standard-vertical;
 	color: var(--neutral-2);
+	padding: vars.$cell-padding-standard-vertical vars.$cell-padding;
 }
 
 .expandToggleButton {

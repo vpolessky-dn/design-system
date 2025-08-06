@@ -2,8 +2,20 @@ import { createContext, useContext } from 'react';
 import { DsDataTableProps } from '@design-system/ui';
 
 export interface DsTableContextType<TData, TValue> extends Partial<DsDataTableProps<TData, TValue>> {
+	/**
+	 * The expanded rows
+	 */
 	expandedRows: Record<string, boolean>;
+	/**
+	 * Toggle the expanded state of a row
+	 * @param rowId - The id of the row to toggle
+	 */
 	toggleRowExpanded: (rowId: string) => void;
+	/**
+	 * Whether the table is virtualized
+	 * @default false
+	 */
+	virtualized?: boolean;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

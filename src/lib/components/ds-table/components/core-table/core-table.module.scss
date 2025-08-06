@@ -1,37 +1,15 @@
-.tableWrapper {
-	position: relative;
-	width: 100%;
-	overflow: auto;
-}
-
 .table {
 	width: 100%;
 	caption-side: bottom;
 	font-size: 0.875rem;
 	line-height: 1.25rem;
-	border-collapse: collapse;
-}
-
-.tableHeader {
-	& tr {
-		border-bottom-width: 1px;
-	}
-}
-
-.tableBody {
-	& tr:last-child {
-		border-bottom-width: 0;
-	}
+	border-collapse: separate;
+	border-spacing: 0;
 }
 
 .tableFooter {
-	border-top-width: 1px;
 	background-color: rgba(241, 245, 249, 0.5);
 	font-weight: 500;
-
-	& > tr:last-child {
-		border-bottom-width: 0;
-	}
 }
 
 .tableHead {

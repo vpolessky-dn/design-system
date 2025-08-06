@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { Cell } from '@tanstack/react-table';
+import { Cell, defaultColumnSizing } from '@tanstack/react-table';
 import classnames from 'classnames';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -10,6 +10,7 @@ import { DsTableRowProps } from './ds-table-row.types';
 import styles from './ds-table-row.module.scss';
 import stylesShared from '../../styles/shared/ds-table-shared.module.scss';
 import { useDsTableContext } from '../../context/ds-table-context';
+import { mergeRefs } from '../../utils/merge-refs';
 
 interface DsRowDragHandleProps {
 	isDragging: boolean;
@@ -36,7 +37,7 @@ const DsRowDragHandle = ({ isDragging, attributes, listeners }: DsRowDragHandleP
 	);
 };
 
-const DsTableRow = <TData, TValue>({ row, virtualRow }: DsTableRowProps<TData>) => {
+const DsTableRow = <TData, TValue>({ ref, row, virtualRow }: DsTableRowProps<TData>) => {
 	const {
 		expandable,
 		expandedRows,
@@ -59,33 +60,31 @@ const DsTableRow = <TData, TValue>({ row, virtualRow }: DsTableRowProps<TData>) 
 		id: row.id,
 		disabled: !reorderable,
 	});
-	const rowStyle: CSSProperties = virtualRow
-		? {
-				height: `${virtualRow.size}px`,
-				transform: `translateY(${virtualRow.start}px)`,
-				position: 'absolute',
-				width: '100%',
-			}
-		: reorderable
+	const rowStyle: CSSProperties =
+		virtualRow && virtualized
 			? {
-					// Convert DND-kit's transform coordinates to CSS transform string
-					transform: CSS.Transform.toString(transform),
-					transition: transition,
-					...(isDragging
-						? {
-								background: 'var(--action-active-light)',
-								boxShadow: '0 0 12px 0 rgba(0, 102, 250, 0.60)',
-								zIndex: 1,
-							}
-						: {}),
-					position: 'relative',
+					transform: `translateY(${virtualRow.start}px)`,
 				}
-			: {};
+			: reorderable
+				? {
+						// Convert DND-kit's transform coordinates to CSS transform string
+						transform: CSS.Transform.toString(transform),
+						transition: transition,
+						...(isDragging
+							? {
+									background: 'var(--action-active-light)',
+									boxShadow: '0 0 12px 0 rgba(0, 102, 250, 0.60)',
+									zIndex: 1,
+								}
+							: {}),
+						position: 'relative',
+					}
+				: {};
 
 	return (
 		<React.Fragment key={row.id}>
 			<TableRow
-				ref={setNodeRef}
+				ref={mergeRefs(reorderable ? setNodeRef : null, ref)}
 				data-state={row.getIsSelected() && 'selected'}
 				className={classnames(
 					styles.tableRow,
@@ -148,10 +147,10 @@ const DsTableRow = <TData, TValue>({ row, virtualRow }: DsTableRowProps<TData>) 
 						key={cell.id}
 						className={styles.tableCell}
 						style={
-							virtualized
+							virtualized && cell.column.getSize() !== defaultColumnSizing.size
 								? {
-										width: cell.column.getSize(),
-										minWidth: cell.column.getSize(),
+										flexBasis: cell.column.getSize(),
+										flexGrow: 0,
 									}
 								: undefined
 						}
@@ -172,11 +171,9 @@ const DsTableRow = <TData, TValue>({ row, virtualRow }: DsTableRowProps<TData>) 
 			{isExpanded && renderExpandedRow && (
 				<TableRow
 					style={
-						virtualRow
+						virtualRow && virtualized
 							? {
 									transform: `translateY(${virtualRow.start + virtualRow.size}px)`,
-									position: 'absolute',
-									width: '100%',
 								}
 							: undefined
 					}

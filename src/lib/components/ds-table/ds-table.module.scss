@@ -3,26 +3,21 @@
 @use './styles/variables' as vars;
 
 .container {
-	margin-top: vars.$container-margin-vertical;
-	margin-bottom: vars.$container-margin-vertical;
-	position: relative;
-}
-
-.dataTableContainer {
 	border-radius: vars.$border-radius;
 	border-width: vars.$border-width;
 	border-style: solid;
 	border-color: var(--neutral-6);
 }
 
-.virtualized {
+.virtualizedContainer {
+	position: relative;
 	height: vars.$virtualized-height;
 	overflow: auto;
 }
 
-.virtualRowContainer {
-	position: relative;
-	width: 100%;
+.dataTableContainer {
+	max-height: 100%;
+	overflow: auto;
 }
 
 .table {
@@ -31,7 +26,8 @@
 	@extend .p-base;
 
 	&.tableNoBorder {
-		border-collapse: collapse;
+		border-collapse: separate;
+		border-spacing: 0;
 		border: none;
 	}
 }

@@ -1,11 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { useMemo, useRef, useState } from 'react';
-import { ColumnDef, ColumnFiltersState } from '@tanstack/react-table';
+import { ColumnDef, ColumnFiltersState, SortingState } from '@tanstack/react-table';
+import { keepPreviousData, QueryClient, useInfiniteQuery } from '@tanstack/react-query';
 import classnames from 'classnames';
 import DsIcon from '../ds-icon/ds-icon';
 import { IconType } from '../ds-icon/ds-icon.types';
 import DsTable from './ds-table';
-import { DsTableApi } from './ds-table.types';
+import { DsTableApi, ScrollParams } from './ds-table.types';
+import { generatePersonData, simulateApiCall } from './utils/story-data-generator';
 import styles from './ds-table.stories.module.scss';
 
 export enum Status {
@@ -222,7 +224,6 @@ const meta: Meta<typeof DsTable<Person, unknown>> = {
 	argTypes: {
 		// Define argTypes based on DsTable props if needed for controls
 		// Example:
-		// pagination: { control: 'boolean' },
 		// zebra: { control: 'boolean' },
 		// bordered: { control: 'boolean' },
 		// highlightOnHover: { control: 'boolean' },
@@ -231,20 +232,22 @@ const meta: Meta<typeof DsTable<Person, unknown>> = {
 		// Default args for all stories
 		columns: columns,
 		data: defaultData,
-		pagination: true,
-		pageSize: 5,
 		stickyHeader: true,
 		bordered: true,
 		fullWidth: true,
 		highlightOnHover: true,
 		expandable: false,
-		virtualized: false, // Keep virtualized off by default for simpler stories
 		emptyState: <div>No data available</div>,
 		onRowClick: (row) => console.log('Row clicked:', row),
 	},
 	decorators: [
 		(Story) => (
 			<div className={styles.storyPadding}>
+				<style>
+					{`
+            #storybook-root, html, body { height: 100%; }
+          `}
+				</style>
 				<Story />
 			</div>
 		),
@@ -259,15 +262,6 @@ type Story = StoryObj<typeof DsTable<Person, unknown>>;
 export const Default: Story = {
 	args: {
 		// Override default args here if needed
-		pagination: false, // Disable pagination for default view
-	},
-};
-
-export const Paginated: Story = {
-	args: {
-		pagination: true,
-		pageSize: 5,
-		data: defaultData, // Ensure enough data for pagination
 	},
 };
 
@@ -280,6 +274,7 @@ export const Sortable: Story = {
 
 export const Expandable: Story = {
 	args: {
+		data: defaultData.slice(0, 5),
 		expandable: (row) => row.firstName !== 'Tanner',
 		renderExpandedRow: (row) => (
 			<div className={styles.expandedRowDetails}>
@@ -324,7 +319,6 @@ export const ProgrammaticRowSelection: Story = {
 		selectable: true,
 		showSelectAllCheckbox: false,
 		stickyHeader: true,
-		pagination: false,
 		onSelectionChange: (selectedRows) => console.log('Selected rows:', selectedRows),
 	},
 	render: function Render(args) {
@@ -393,6 +387,7 @@ export const ProgrammaticRowSelection: Story = {
 
 export const Reorderable: Story = {
 	args: {
+		data: defaultData.slice(0, 5),
 		reorderable: true,
 		onOrderChange: (rows) => console.log('Reordered row:', rows),
 	},
@@ -490,8 +485,6 @@ export const WithProgressInfographic: Story = {
 			return col;
 		}),
 		data: defaultData,
-		pagination: true,
-		pageSize: 5,
 	},
 };
 
@@ -525,10 +518,7 @@ export const AdvancedSearch: Story = {
 			</div>
 		);
 	},
-	args: {
-		pagination: true,
-		pageSize: 10,
-	},
+	args: {},
 };
 
 export const TabFilters: Story = {
@@ -621,8 +611,124 @@ export const TabFilters: Story = {
 			</div>
 		);
 	},
+	args: {},
+};
+
+export const Virtualized: Story = {
+	name: 'Virtualized Table (Large Dataset)',
+	render: function Render(args) {
+		// Simulate API call using the utility function
+		const fetchData = async (start: number, size: number, sorting: SortingState) => {
+			return simulateApiCall(() => generatePersonData(start, size, sorting));
+		};
+
+		const pageSize = 50;
+		const [sorting, setSorting] = useState<SortingState>([]);
+
+		const {
+			data: infiniteQueryData,
+			fetchNextPage,
+			isFetching,
+			isLoading,
+		} = useInfiniteQuery(
+			{
+				queryKey: [
+					'people',
+					sorting, // refetch when sorting changes
+				],
+				queryFn: async ({ pageParam = 0 }) => {
+					const start = (pageParam as number) * pageSize;
+					return await fetchData(start, pageSize, sorting);
+				},
+				initialPageParam: 0,
+				getNextPageParam: (_lastGroup, groups) => groups.length,
+				placeholderData: keepPreviousData,
+			},
+			// assuming the app is wrapped inside QueryClientProvider below is no longer needed
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						staleTime: 5 * 60 * 1000, // 5 minutes
+						gcTime: 10 * 60 * 1000, // 10 minutes
+						refetchOnWindowFocus: false,
+					},
+				},
+			}),
+		);
+
+		const flatData = useMemo(
+			() => infiniteQueryData?.pages.flatMap((page) => page.data) ?? [],
+			[infiniteQueryData],
+		);
+
+		const totalRows = infiniteQueryData?.pages[0]?.meta.totalRowCount ?? 0;
+		const totalFetched = flatData.length;
+
+		const fetchMoreOnBottomReached = async ({
+			scrollOffset,
+			totalContentHeight,
+			viewportHeight,
+		}: ScrollParams) => {
+			const finishedFetching = totalFetched >= totalRows;
+
+			const scrollThreshold = 500;
+			const distanceFromBottom = totalContentHeight - scrollOffset - viewportHeight;
+			const shouldFetchMore = distanceFromBottom <= scrollThreshold;
+
+			if (!isFetching && !finishedFetching && shouldFetchMore) {
+				fetchNextPage();
+			}
+		};
+
+		return (
+			<div className={styles.virtualizedDemoContainer}>
+				<div className={styles.virtualizedDemoHeader}>
+					<h4 className={styles.virtualizedDemoHeader__title}>Virtualized Table Demo</h4>
+					<p className={styles.virtualizedDemoHeader__description}>
+						This table uses infinite query to fetch data as you scroll, making it performant even with large
+						datasets. Try scrolling to see the data loading!
+					</p>
+					<p className={styles.virtualizedDemoHeader__stats}>
+						({flatData.length} of {totalRows} rows fetched)
+					</p>
+				</div>
+
+				{process.env.NODE_ENV === 'development' && (
+					<p className={styles.developmentNotice}>
+						<strong>Notice:</strong> You are currently running React in development mode. Virtualized
+						rendering performance will be slightly degraded until this application is built for production.
+					</p>
+				)}
+
+				<div className={styles.virtualizedTableWrapper}>
+					<DsTable
+						{...args}
+						data={flatData}
+						onSortingChange={setSorting}
+						onScroll={fetchMoreOnBottomReached}
+						virtualized={true}
+					/>
+					{isLoading && (
+						<div className={styles.loadingOverlay}>
+							<div className={styles.loadingContent}>
+								<div className={styles.spinner} />
+								<span className={styles.loadingText}>Loading data...</span>
+							</div>
+						</div>
+					)}
+				</div>
+			</div>
+		);
+	},
 	args: {
-		pagination: true,
-		pageSize: 10,
+		columns: columns.map((col) => {
+			if ('accessorKey' in col && col.accessorKey === 'age') {
+				return {
+					...col,
+					size: 100,
+				} as ColumnDef<Person>;
+			}
+			return col;
+		}),
 	},
 };

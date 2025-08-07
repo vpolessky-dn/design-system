@@ -5,15 +5,12 @@ import { TableHead, TableHeader, TableRow } from '../core-table';
 import styles from './ds-table-header.module.scss';
 import stylesShared from '../../styles/shared/ds-table-shared.module.scss';
 import { DsTableHeaderProps } from './ds-table-header.types';
+import { useDsTableContext } from '../../context/ds-table-context';
 
-const DsTableHeader = <TData,>({
-	table,
-	stickyHeader = true,
-	bordered = true,
-	expandable = false,
-	selectable = false,
-	reorderable = false,
-}: DsTableHeaderProps<TData>) => {
+const DsTableHeader = <TData,>({ table }: DsTableHeaderProps<TData>) => {
+	const { stickyHeader, bordered, expandable, selectable, reorderable, showSelectAllCheckbox } =
+		useDsTableContext<TData, unknown>();
+
 	return (
 		<TableHeader className={classnames(stickyHeader && styles.stickyHeader)}>
 			{table.getHeaderGroups().map((headerGroup) => (
@@ -23,21 +20,23 @@ const DsTableHeader = <TData,>({
 				>
 					{selectable && (
 						<TableHead className={classnames(styles.headerCell, styles.selectColumn)}>
-							<DsCheckbox
-								className={stylesShared.checkboxContainer}
-								checked={
-									table.getIsAllRowsSelected()
-										? true
-										: table.getIsSomeRowsSelected()
-											? 'indeterminate'
-											: false
-								}
-								onClick={(e) => {
-									e.stopPropagation();
-									const toggleHandler = table.getToggleAllRowsSelectedHandler();
-									toggleHandler(e);
-								}}
-							/>
+							{showSelectAllCheckbox && (
+								<DsCheckbox
+									className={stylesShared.checkboxContainer}
+									checked={
+										table.getIsAllRowsSelected()
+											? true
+											: table.getIsSomeRowsSelected()
+												? 'indeterminate'
+												: false
+									}
+									onClick={(e) => {
+										e.stopPropagation();
+										const toggleHandler = table.getToggleAllRowsSelectedHandler();
+										toggleHandler(e);
+									}}
+								/>
+							)}
 						</TableHead>
 					)}
 					{expandable && <TableHead className={styles.expandColumn} />}

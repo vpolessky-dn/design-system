@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useImperativeHandle } from 'react';
 import {
 	type ColumnFiltersState,
 	getCoreRowModel,
@@ -16,14 +17,16 @@ import { Table, TableBody, TableCell, TableRow } from './components/core-table';
 import { DsTableBulkActions } from './components/ds-table-bulk-actions';
 import { DsTableHeader } from './components/ds-table-header';
 import styles from './ds-table.module.scss';
-import type { DataTableProps } from './ds-table.types';
+import type { DsDataTableProps } from './ds-table.types';
 import { DsTableRow } from './components/ds-table-row';
 import { useDragAndDrop } from './hooks/use-drag-and-drop';
+import { DsTableContext, DsTableContextType } from './context/ds-table-context';
 
 /**
  * Design system Table component
  */
 const DsTable = <TData extends { id: string }, TValue>({
+	ref,
 	columns,
 	data: tableData = [],
 	virtualized = false,
@@ -43,8 +46,8 @@ const DsTable = <TData extends { id: string }, TValue>({
 	expandable = false,
 	renderExpandedRow,
 	filterElement,
-	onTableCreated,
 	selectable = false,
+	showSelectAllCheckbox = true,
 	onSelectionChange,
 	actions = [],
 	onRowDoubleClick,
@@ -54,7 +57,7 @@ const DsTable = <TData extends { id: string }, TValue>({
 	onOrderChange,
 	columnFilters: externalColumnFilters,
 	onColumnFiltersChange,
-}: DataTableProps<TData, TValue>) => {
+}: DsDataTableProps<TData, TValue>) => {
 	const [data, setData] = React.useState(tableData);
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [internalColumnFilters, setInternalColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -85,11 +88,14 @@ const DsTable = <TData extends { id: string }, TValue>({
 		}
 	};
 
-	React.useEffect(() => {
-		if (onSelectionChange && selectable) {
-			onSelectionChange(rowSelection);
-		}
-	}, [rowSelection, onSelectionChange, selectable]);
+	const handleRowSelectionChange = (
+		updaterOrValue: RowSelectionState | ((old: RowSelectionState) => RowSelectionState),
+	) => {
+		const newRowSelection =
+			typeof updaterOrValue === 'function' ? updaterOrValue(rowSelection) : updaterOrValue;
+		setRowSelection(newRowSelection);
+		onSelectionChange?.(newRowSelection);
+	};
 
 	const table = useReactTable({
 		data: reorderable ? data : tableData,
@@ -101,7 +107,7 @@ const DsTable = <TData extends { id: string }, TValue>({
 		onColumnFiltersChange: handleColumnFiltersChange,
 		getFilteredRowModel: getFilteredRowModel(),
 		onColumnVisibilityChange: setColumnVisibility,
-		onRowSelectionChange: setRowSelection,
+		onRowSelectionChange: handleRowSelectionChange,
 		getRowId: (row) => row.id,
 		state: {
 			sorting,
@@ -117,11 +123,32 @@ const DsTable = <TData extends { id: string }, TValue>({
 		enableRowSelection: selectable,
 	});
 
-	React.useEffect(() => {
-		if (onTableCreated) {
-			onTableCreated(table);
-		}
-	}, [table, onTableCreated]);
+	useImperativeHandle(
+		ref,
+		() => ({
+			selectRow: (rowId: string) => {
+				table.getRow(rowId).toggleSelected(true);
+			},
+			deselectRow: (rowId: string) => {
+				table.getRow(rowId).toggleSelected(false);
+			},
+			selectAllRows: () => {
+				table.toggleAllRowsSelected(true);
+			},
+			deselectAllRows: () => {
+				table.toggleAllRowsSelected(false);
+			},
+			selectRows: (rowIds: string[]) => {
+				const selection: Record<string, boolean> = {};
+				rowIds.forEach((id) => (selection[id] = true));
+				table.setRowSelection(selection);
+			},
+			getSelectedRows: () => {
+				return table.getFilteredSelectedRowModel().rows.map((r) => r.original);
+			},
+		}),
+		[table],
+	);
 
 	const { rows } = table.getRowModel();
 
@@ -157,106 +184,78 @@ const DsTable = <TData extends { id: string }, TValue>({
 		.filter(([, selected]) => selected)
 		.map(([key]) => table.getRow(key).original);
 
+	const contextValue: DsTableContextType<TData, TValue> = {
+		stickyHeader,
+		bordered,
+		fullWidth,
+		highlightOnHover,
+		virtualized,
+		expandable,
+		selectable,
+		reorderable,
+		showSelectAllCheckbox,
+		onRowClick,
+		onRowDoubleClick,
+		primaryRowActions,
+		secondaryRowActions,
+		renderExpandedRow,
+		expandedRows,
+		toggleRowExpanded,
+	};
+
 	return (
-		<div className={classnames(styles.container, className)}>
-			{filterElement}
-			<div
-				ref={tableContainerRef}
-				className={classnames(styles.dataTableContainer, virtualized && styles.virtualized)}
-			>
-				{virtualized && totalSize ? (
-					<div
-						className={styles.virtualRowContainer}
-						style={{
-							height: `${totalSize}px`,
-						}}
-					>
-						<table className={classnames(styles.table, !bordered && styles.tableNoBorder)}>
-							<DsTableHeader
-								table={table}
-								stickyHeader={stickyHeader}
-								bordered={bordered}
-								expandable={expandable}
-								selectable={selectable}
-							/>
-							<TableBody>
-								{virtualItems &&
-									virtualItems.map((virtualRow: VirtualItem) => {
-										const row = rows[virtualRow.index];
-										return (
-											<DsTableRow
-												key={row.id}
-												row={row}
-												virtualRow={virtualRow}
-												expandable={expandable}
-												expandedRows={expandedRows}
-												selectable={selectable}
-												onRowClick={onRowClick}
-												onRowDoubleClick={onRowDoubleClick}
-												renderExpandedRow={renderExpandedRow}
-												virtualized={virtualized}
-												bordered={bordered}
-												highlightOnHover={highlightOnHover}
-												toggleRowExpanded={toggleRowExpanded}
-												primaryRowActions={primaryRowActions}
-												secondaryRowActions={secondaryRowActions}
-											/>
-										);
-									})}
-							</TableBody>
-						</table>
-					</div>
-				) : (
-					<DragWrapper>
-						<Table className={classnames(fullWidth && styles.fullWidth, !bordered && styles.tableNoBorder)}>
-							<DsTableHeader
-								table={table}
-								stickyHeader={stickyHeader}
-								bordered={bordered}
-								expandable={expandable}
-								selectable={selectable}
-								reorderable={reorderable}
-							/>
-							<TableBody>
-								<SortableWrapper>
-									{rows.length
-										? rows.map((row) => (
-												<DsTableRow
-													key={row.id}
-													row={row}
-													expandable={expandable}
-													expandedRows={expandedRows}
-													selectable={selectable}
-													reorderable={reorderable}
-													onRowClick={onRowClick}
-													onRowDoubleClick={onRowDoubleClick}
-													renderExpandedRow={renderExpandedRow}
-													virtualized={virtualized}
-													bordered={bordered}
-													highlightOnHover={highlightOnHover}
-													toggleRowExpanded={toggleRowExpanded}
-													primaryRowActions={primaryRowActions}
-													secondaryRowActions={secondaryRowActions}
-												/>
-											))
-										: renderEmptyState()}
-								</SortableWrapper>
-							</TableBody>
-						</Table>
-					</DragWrapper>
+		<DsTableContext.Provider value={contextValue}>
+			<div className={classnames(styles.container, className)}>
+				{filterElement}
+				<div
+					ref={tableContainerRef}
+					className={classnames(styles.dataTableContainer, virtualized && styles.virtualized)}
+				>
+					{virtualized && totalSize ? (
+						<div
+							className={styles.virtualRowContainer}
+							style={{
+								height: `${totalSize}px`,
+							}}
+						>
+							<table className={classnames(styles.table, !bordered && styles.tableNoBorder)}>
+								<DsTableHeader table={table} />
+								<TableBody>
+									{virtualItems &&
+										virtualItems.map((virtualRow: VirtualItem) => {
+											const row = rows[virtualRow.index];
+											return <DsTableRow key={row.id} row={row} virtualRow={virtualRow} />;
+										})}
+								</TableBody>
+							</table>
+						</div>
+					) : (
+						<DragWrapper>
+							<Table className={classnames(fullWidth && styles.fullWidth, !bordered && styles.tableNoBorder)}>
+								<DsTableHeader table={table} />
+								<TableBody>
+									<SortableWrapper>
+										{rows.length
+											? rows.map((row) => <DsTableRow key={row.id} row={row} />)
+											: renderEmptyState()}
+									</SortableWrapper>
+								</TableBody>
+							</Table>
+						</DragWrapper>
+					)}
+				</div>
+				{selectable && actions.length > 0 && (
+					<DsTableBulkActions
+						numSelectedRows={selectedRows.length}
+						actions={actions.map((action) => ({
+							...action,
+							onClick: () => action.onClick(selectedRows),
+						}))}
+						onClearSelection={table.resetRowSelection}
+					/>
 				)}
 			</div>
-			{selectable && actions.length > 0 && (
-				<DsTableBulkActions
-					numSelectedRows={selectedRows.length}
-					actions={actions.map((action) => ({
-						...action,
-						onClick: () => action.onClick(selectedRows),
-					}))}
-					onClearSelection={table.resetRowSelection}
-				/>
-			)}
-		</div>
+		</DsTableContext.Provider>
 	);
 };
 

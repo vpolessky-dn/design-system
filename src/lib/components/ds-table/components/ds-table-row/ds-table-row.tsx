@@ -6,9 +6,10 @@ import { CSS } from '@dnd-kit/utilities';
 import { DsButton, DsCheckbox, DsIcon } from '@design-system/ui';
 import { TableCell, TableRow } from '../core-table';
 import { DsTableCell } from '../ds-table-cell';
-import { TableRowProps } from './ds-table-row.types';
+import { DsTableRowProps } from './ds-table-row.types';
 import styles from './ds-table-row.module.scss';
 import stylesShared from '../../styles/shared/ds-table-shared.module.scss';
+import { useDsTableContext } from '../../context/ds-table-context';
 
 interface DsRowDragHandleProps {
 	isDragging: boolean;
@@ -35,24 +36,25 @@ const DsRowDragHandle = ({ isDragging, attributes, listeners }: DsRowDragHandleP
 	);
 };
 
-const DsTableRow = <TData, TValue>({
-	row,
-	virtualRow,
-	expandable,
-	expandedRows,
-	selectable,
-	reorderable,
-	onRowClick,
-	onRowDoubleClick,
-	renderExpandedRow,
-	virtualized,
-	bordered,
-	highlightOnHover,
-	toggleRowExpanded,
-	primaryRowActions,
-	secondaryRowActions,
-}: TableRowProps<TData>) => {
-	const isExpanded = expandable && expandedRows[row.id];
+const DsTableRow = <TData, TValue>({ row, virtualRow }: DsTableRowProps<TData>) => {
+	const {
+		expandable,
+		expandedRows,
+		selectable,
+		reorderable,
+		onRowClick,
+		onRowDoubleClick,
+		renderExpandedRow,
+		virtualized,
+		bordered,
+		highlightOnHover,
+		toggleRowExpanded,
+		primaryRowActions,
+		secondaryRowActions,
+	} = useDsTableContext<TData, TValue>();
+	const isExpanded = expandedRows[row.id];
+	const isExpandable = typeof expandable === 'function' ? expandable(row.original) : expandable;
+
 	const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
 		id: row.id,
 		disabled: !reorderable,
@@ -114,23 +116,28 @@ const DsTableRow = <TData, TValue>({
 				)}
 				{expandable && (
 					<TableCell className={classnames(styles.tableCell, styles.cellButton)}>
-						<DsButton
-							variant={virtualized ? 'ghost' : 'borderless'}
-							size="small"
-							onClick={(e: React.MouseEvent) => {
-								e.stopPropagation();
-								toggleRowExpanded(row.id);
-							}}
-							onDoubleClick={(e: React.MouseEvent) => {
-								e.stopPropagation();
-							}}
-							className={styles.expandToggleButton}
-						>
-							<DsIcon
-								icon={virtualized ? (isExpanded ? 'arrow_drop_down' : 'arrow_right') : 'chevron_right'}
-								className={classnames(stylesShared.pageButtonIcon, !virtualized && isExpanded && 'rotate-90')}
-							/>
-						</DsButton>
+						{isExpandable && (
+							<DsButton
+								variant={virtualized ? 'ghost' : 'borderless'}
+								size="small"
+								onClick={(e: React.MouseEvent) => {
+									e.stopPropagation();
+									toggleRowExpanded(row.id);
+								}}
+								onDoubleClick={(e: React.MouseEvent) => {
+									e.stopPropagation();
+								}}
+								className={styles.expandToggleButton}
+							>
+								<DsIcon
+									icon={virtualized ? (isExpanded ? 'arrow_drop_down' : 'arrow_right') : 'chevron_right'}
+									className={classnames(
+										stylesShared.pageButtonIcon,
+										!virtualized && isExpanded && 'rotate-90',
+									)}
+								/>
+							</DsButton>
+						)}
 					</TableCell>
 				)}
 				{reorderable && (
@@ -179,7 +186,7 @@ const DsTableRow = <TData, TValue>({
 						colSpan={
 							row.getVisibleCells().length +
 							(selectable ? 1 : 0) +
-							(expandable ? 1 : 0) +
+							(isExpandable ? 1 : 0) +
 							(reorderable ? 1 : 0)
 						}
 						className={styles.tableCell}

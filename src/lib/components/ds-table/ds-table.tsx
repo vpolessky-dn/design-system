@@ -126,7 +126,6 @@ const DsTable = <TData extends { id: string }, TValue>({
 	useImperativeHandle(
 		ref,
 		() => ({
-			// Selection API
 			selectRow: (rowId: string) => {
 				table.getRow(rowId).toggleSelected(true);
 			},
@@ -147,13 +146,6 @@ const DsTable = <TData extends { id: string }, TValue>({
 			getSelectedRows: () => {
 				return table.getFilteredSelectedRowModel().rows.map((r) => r.original);
 			},
-			// Pagination API
-			nextPage: () => table.nextPage(),
-			previousPage: () => table.previousPage(),
-			getPageCount: () => table.getPageCount(),
-			getCanNextPage: () => table.getCanNextPage(),
-			getCanPreviousPage: () => table.getCanPreviousPage(),
-			getState: () => table.getState(),
 		}),
 		[table],
 	);

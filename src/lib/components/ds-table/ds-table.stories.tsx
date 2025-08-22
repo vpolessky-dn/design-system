@@ -5,6 +5,7 @@ import { keepPreviousData, QueryClient, useInfiniteQuery } from '@tanstack/react
 import classnames from 'classnames';
 import DsIcon from '../ds-icon/ds-icon';
 import { IconType } from '../ds-icon/ds-icon.types';
+import { DsSmartTabs } from '../ds-smart-tabs';
 import DsTable from './ds-table';
 import { DsTableApi, ScrollParams } from './ds-table.types';
 import { generatePersonData, simulateApiCall } from './utils/story-data-generator';
@@ -527,30 +528,14 @@ export const TabFilters: Story = {
 		const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
 		const [activeTab, setActiveTab] = useState<Status | 'all'>('all');
 
-		const tabs: { name: string; value: Status | 'all'; icon: IconType }[] = useMemo(
-			() => [
-				{ name: 'All People', value: 'all', icon: 'groups' },
-				{ name: 'In a Relationship', value: Status.Relationship, icon: 'favorite' },
-				{ name: "It's Complicated", value: Status.Complicated, icon: 'psychology' },
-				{ name: 'Single', value: Status.Single, icon: 'person' },
-			],
-			[],
-		);
-
-		const handleTabClick = (tabValue: Status | 'all') => {
-			setActiveTab(tabValue);
-			if (tabValue === 'all') {
+		const handleTabClick = (tabValue: string) => {
+			const typedValue = tabValue as Status | 'all';
+			setActiveTab(typedValue);
+			if (typedValue === 'all') {
 				setColumnFilters([]);
 			} else {
-				setColumnFilters([{ id: 'status', value: tabValue }]);
+				setColumnFilters([{ id: 'status', value: typedValue }]);
 			}
-		};
-
-		const getTabTotal = (tabValue: Status | 'all') => {
-			if (tabValue === 'all') {
-				return defaultData.length;
-			}
-			return defaultData.filter((row) => row.status === tabValue).length;
 		};
 
 		const getStatusIcon = (status: Status): IconType => {
@@ -585,29 +570,41 @@ export const TabFilters: Story = {
 
 		return (
 			<div className={styles.tableFilterContainer}>
-				<div className={styles.tabFilterContainer}>
-					{tabs.map((tab) => (
-						<button
-							key={tab.name}
-							className={classnames(styles.tab, {
-								[styles.active]: activeTab === tab.value,
-							})}
-							onClick={() => handleTabClick(tab.value)}
-						>
-							<DsIcon icon={tab.icon} size="small" />
-							<span className={styles.title}>{tab.name}</span>
-							<span className={styles.total}>{getTabTotal(tab.value)}</span>
-						</button>
-					))}
-				</div>
-				<div className={styles.table}>
-					<DsTable
-						{...args}
-						columns={tableColumns}
-						columnFilters={columnFilters}
-						onColumnFiltersChange={setColumnFilters}
-					/>
-				</div>
+				<DsSmartTabs activeTab={activeTab} onTabClick={handleTabClick}>
+					<DsSmartTabs.Tab name="All People" value="all" icon="groups" color="var(--color-primary-500)">
+						{defaultData.length}
+					</DsSmartTabs.Tab>
+					<DsSmartTabs.Tab
+						name="In a Relationship"
+						value={Status.Relationship}
+						icon="favorite"
+						color="var(--color-positive-500)"
+					>
+						{defaultData.filter((row) => row.status === Status.Relationship).length}
+					</DsSmartTabs.Tab>
+					<DsSmartTabs.Tab
+						name="It's Complicated"
+						value={Status.Complicated}
+						icon="psychology"
+						color="var(--color-warning-600-default)"
+					>
+						{defaultData.filter((row) => row.status === Status.Complicated).length}
+					</DsSmartTabs.Tab>
+					<DsSmartTabs.Tab
+						name="Single"
+						value={Status.Single}
+						icon="person"
+						color="var(--color-secondary-600-net-2)"
+					>
+						{defaultData.filter((row) => row.status === Status.Single).length}
+					</DsSmartTabs.Tab>
+				</DsSmartTabs>
+				<DsTable
+					{...args}
+					columns={tableColumns}
+					columnFilters={columnFilters}
+					onColumnFiltersChange={setColumnFilters}
+				/>
 			</div>
 		);
 	},

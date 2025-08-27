@@ -1,11 +1,23 @@
 import React, { ReactNode } from 'react';
 import { IconType } from '../ds-icon/ds-icon.types';
 
-export interface DsTabProps {
+export const colors = [
+	'dark-blue',
+	'light-blue',
+	'green',
+	'fuchsia',
+	'blue',
+	'gray',
+	'red',
+	'amber',
+] as const;
+export type Color = (typeof colors)[number];
+
+export interface DsSmartTabProps {
 	/**
-	 * The name/label of the tab
+	 * The label of the tab
 	 */
-	name: string;
+	label: string;
 	/**
 	 * The value of the tab (used for filtering/identification)
 	 */
@@ -17,11 +29,11 @@ export interface DsTabProps {
 	/**
 	 * The content to display in the tab (typically a count or text)
 	 */
-	children: ReactNode;
+	content: number | string;
 	/**
-	 * Color for the tab (can be hex, rgb, CSS variable, etc.)
+	 * Color for the tab (limited to predefined color values)
 	 */
-	color?: string;
+	color?: Color;
 	/**
 	 * Whether the tab is disabled
 	 */
@@ -38,9 +50,9 @@ export interface DsTabProps {
 
 export interface DsSmartTabsProps {
 	/**
-	 * Currently active tab value (optional - if not provided, component manages internally)
+	 * Currently active tab value
 	 */
-	activeTab?: string;
+	activeTab: string;
 	/**
 	 * Callback function when a tab is clicked
 	 */
@@ -57,12 +69,4 @@ export interface DsSmartTabsProps {
 	 * The tab components as children
 	 */
 	children: ReactNode;
-}
-
-/**
- * Compound component type for DsSmartTabs
- */
-export interface DsSmartTabsCompound {
-	(props: DsSmartTabsProps): React.ReactElement;
-	Tab: React.FC<DsTabProps>;
 }

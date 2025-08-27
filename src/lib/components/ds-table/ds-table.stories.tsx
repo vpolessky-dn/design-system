@@ -571,33 +571,34 @@ export const TabFilters: Story = {
 		return (
 			<div className={styles.tableFilterContainer}>
 				<DsSmartTabs activeTab={activeTab} onTabClick={handleTabClick}>
-					<DsSmartTabs.Tab name="All People" value="all" icon="groups" color="var(--color-primary-500)">
-						{defaultData.length}
-					</DsSmartTabs.Tab>
 					<DsSmartTabs.Tab
-						name="In a Relationship"
+						label="All People"
+						value="all"
+						icon="groups"
+						color="dark-blue"
+						content={defaultData.length}
+					/>
+					<DsSmartTabs.Tab
+						label="In a Relationship"
 						value={Status.Relationship}
 						icon="favorite"
-						color="var(--color-positive-500)"
-					>
-						{defaultData.filter((row) => row.status === Status.Relationship).length}
-					</DsSmartTabs.Tab>
+						color="green"
+						content={defaultData.filter((row) => row.status === Status.Relationship).length}
+					/>
 					<DsSmartTabs.Tab
-						name="It's Complicated"
+						label="It's Complicated"
 						value={Status.Complicated}
 						icon="psychology"
-						color="var(--color-warning-600-default)"
-					>
-						{defaultData.filter((row) => row.status === Status.Complicated).length}
-					</DsSmartTabs.Tab>
+						color="red"
+						content={defaultData.filter((row) => row.status === Status.Complicated).length}
+					/>
 					<DsSmartTabs.Tab
-						name="Single"
+						label="Single"
 						value={Status.Single}
 						icon="person"
-						color="var(--color-secondary-600-net-2)"
-					>
-						{defaultData.filter((row) => row.status === Status.Single).length}
-					</DsSmartTabs.Tab>
+						color="gray"
+						content={defaultData.filter((row) => row.status === Status.Single).length}
+					/>
 				</DsSmartTabs>
 				<DsTable
 					{...args}

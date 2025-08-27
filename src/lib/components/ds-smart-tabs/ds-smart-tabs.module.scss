@@ -55,13 +55,13 @@
 			height: var(--icon-width-extra-large);
 		}
 
-		.name {
+		.label {
 			flex: 1;
 			white-space: nowrap;
 			text-align: start;
 		}
 
-		.value {
+		.content {
 			padding-right: 4px;
 			color: var(--color-font-secondary);
 		}

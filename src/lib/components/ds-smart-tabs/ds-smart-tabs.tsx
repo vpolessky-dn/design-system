@@ -1,8 +1,19 @@
-import { createContext, CSSProperties, FC, useContext, useEffect, useState } from 'react';
+import React, { createContext, CSSProperties, useContext } from 'react';
 import classNames from 'classnames';
 import { DsIcon } from '../ds-icon';
 import styles from './ds-smart-tabs.module.scss';
-import { DsSmartTabsCompound, DsTabProps } from './ds-smart-tabs.types';
+import { Color, DsSmartTabProps, DsSmartTabsProps } from './ds-smart-tabs.types';
+
+const colorMap: Record<Color, string> = {
+	'dark-blue': 'var(--color-background-info-strong)',
+	'light-blue': 'var(--color-background-active-moderate)',
+	green: 'var(--color-background-success-strong)',
+	fuchsia: 'var(--color-data-fuchsia)',
+	blue: 'var(--color-icon-information-secondary)',
+	gray: 'var(--color-icon-information-main)',
+	red: 'var(--color-icon-warning)',
+	amber: 'var(--color-data-amber)',
+};
 
 interface SmartTabsContextType {
 	activeTab: string;
@@ -22,11 +33,11 @@ const useSmartTabsContext = () => {
 /**
  * Individual tab component
  */
-const DsTab: FC<DsTabProps> = ({
-	name,
+const DsSmartTab: React.FC<DsSmartTabProps> = ({
+	label,
 	value,
 	icon,
-	children,
+	content,
 	color,
 	disabled,
 	className,
@@ -45,7 +56,7 @@ const DsTab: FC<DsTabProps> = ({
 	);
 	const tabStyle = {
 		...style,
-		...(color && ({ '--tab-color': color } as CSSProperties)),
+		...(color && ({ '--tab-color': colorMap[color] } as CSSProperties)),
 	};
 
 	const handleClick = () => {
@@ -57,8 +68,8 @@ const DsTab: FC<DsTabProps> = ({
 	return (
 		<button className={tabClass} style={tabStyle} onClick={handleClick} disabled={disabled} {...props}>
 			<DsIcon className={styles.icon} icon={icon} size="small" />
-			<span className={styles.name}>{name}</span>
-			<span className={styles.value}>{children}</span>
+			<span className={styles.label}>{label}</span>
+			<span className={styles.content}>{content}</span>
 		</button>
 	);
 };
@@ -66,33 +77,17 @@ const DsTab: FC<DsTabProps> = ({
 /**
  * Design system SmartTabs component
  */
-const DsSmartTabs: DsSmartTabsCompound = ({
-	activeTab: externalActiveTab,
+const DsSmartTabs = ({
+	activeTab,
 	onTabClick,
 	className,
 	style = {},
 	children,
 	...props
-}) => {
-	const [internalActiveTab, setInternalActiveTab] = useState<string>('');
-	const activeTab = externalActiveTab !== undefined ? externalActiveTab : internalActiveTab;
-
-	useEffect(() => {
-		if (externalActiveTab !== undefined) {
-			setInternalActiveTab(externalActiveTab);
-		}
-	}, [externalActiveTab]);
-
-	const handleTabClick = (value: string) => {
-		if (externalActiveTab === undefined) {
-			setInternalActiveTab(value);
-		}
-		onTabClick(value);
-	};
-
+}: DsSmartTabsProps) => {
 	const contextValue: SmartTabsContextType = {
 		activeTab,
-		onTabClick: handleTabClick,
+		onTabClick,
 	};
 
 	return (
@@ -104,7 +99,6 @@ const DsSmartTabs: DsSmartTabsCompound = ({
 	);
 };
 
-DsSmartTabs.Tab = DsTab;
+DsSmartTabs.Tab = DsSmartTab;
 
-export { DsTab };
 export default DsSmartTabs;

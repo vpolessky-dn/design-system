@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 import { IconType } from '../ds-icon';
 
 export const controlStatuses = ['info', 'success', 'error', 'warning'] as const;
@@ -47,7 +47,7 @@ export interface DsFormControlDescriptionProps {
 	/**
 	 * The description content
 	 */
-	children: ReactNode;
+	children: React.ReactNode;
 	/**
 	 * Additional CSS class names
 	 */

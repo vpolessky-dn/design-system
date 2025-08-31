@@ -1,11 +1,5 @@
 // typography is defined in: https://www.figma.com/design/XJwVCvDPhD0dMTP4vr3xY3/%F0%9F%A6%95-%F0%9F%AA%86Style-%26-Design-System?node-id=4804-91960&node-type=frame&t=6LW93tAe2no6Rhgx-0
 @use 'variables' as var;
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap');
-
-body {
-	font-family: var.$font-family-primary;
-}
 
 @mixin base-font {
 	font-family: var.$font-family-base;
@@ -139,55 +133,6 @@ body {
 }
 
 // New for DS v1.2
-
-:root {
-	/* Family */
-	--font-family-base: 'Roboto', sans-serif;
-	--font-family-code: 'Fira Mono', monospace;
-
-	/* Font weight */
-	--font-weight-regular: 400;
-	--font-weight-medium: 500;
-	--font-weight-semi-bold: 600;
-	--font-weight-bold: 700;
-	--font-weight-extra-bold: 800;
-
-	/* Font size / heading */
-	--font-size-3xl: 32px;
-	--font-size-2xl: 24px;
-	--font-size-xl: 20px;
-	--font-size-large: 18px;
-
-	/* Font size / body */
-	--font-size-md: 16px;
-	--font-size-sm: 14px;
-	--font-size-xs: 12px;
-
-	/* Line height / heading */
-	--line-height-3xl: 40px;
-	--line-height-2xl: 32px;
-	--line-height-xl: 26px;
-	--line-height-large: 24px;
-
-	/* Line height / body */
-	--line-height-md: 24px;
-	--line-height-sm: 20px;
-	--line-height-xs: 16px;
-
-	/* Paragraph spacing / heading */
-	--paragraph-spacing-3xl: 40;
-	--paragraph-spacing-2xl: 24;
-	--paragraph-spacing-xl: 20;
-	--paragraph-spacing-large: 20;
-
-	/* Paragraph spacing / body */
-	--paragraph-spacing-md: 20;
-	--paragraph-spacing-sm: 16;
-	--paragraph-spacing-xs: 8;
-
-	/* Letter spacing */
-	--letter-spacing--1percent: -0.01em; // -1% letter spacing for headings
-}
 
 // TODO below needs to be removed
 @mixin font-base {

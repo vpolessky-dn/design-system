@@ -1,4 +1,4 @@
-@use 'typography' as typography;
+@use '@design-system/ui/src/styles/typography';
 
 @mixin breadcrumb-item {
 	@include typography.body-sm-reg;

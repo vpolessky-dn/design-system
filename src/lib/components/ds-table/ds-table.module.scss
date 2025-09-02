@@ -1,5 +1,5 @@
-@use 'typography' as typography;
-@use 'utilities' as utils;
+@use '@design-system/ui/src/styles/typography';
+@use '@design-system/ui/src/styles/utilities' as utils;
 @use './styles/variables' as vars;
 
 .container {

@@ -56,6 +56,7 @@ const DsSelect: React.FC<DsSelectProps> = ({
 					<div className={styles.triggerIcons}>
 						{selectedOption && (
 							<button
+								type="button"
 								onPointerDown={(e) => e.stopPropagation()}
 								onClick={onClear}
 								className={styles.clearIcon}

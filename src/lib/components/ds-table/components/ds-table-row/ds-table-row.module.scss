@@ -5,6 +5,11 @@
 	&:not(.virtualizedRow):not(:last-child) {
 		.tableCell {
 			border-bottom: vars.$border-width solid var(--color-border-secondary);
+
+			&.cellCheckbox {
+				padding: 0;
+				width: vars.$select-column-width;
+			}
 		}
 	}
 
@@ -22,6 +27,13 @@
 			align-items: center;
 			flex-basis: 0;
 			flex-grow: 1;
+
+			&.cellCheckbox {
+				text-align: center;
+				padding: 0;
+				flex-grow: 0;
+				flex-basis: vars.$select-column-width;
+			}
 		}
 	}
 
@@ -64,11 +76,6 @@
 
 .cellButton {
 	width: vars.$expand-column-width;
-}
-
-.cellCheckbox {
-	width: vars.$select-column-width;
-	text-align: center;
 }
 
 .cellReorder {

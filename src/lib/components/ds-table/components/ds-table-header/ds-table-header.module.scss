@@ -11,6 +11,13 @@
 .headerRow {
 	.headerCell {
 		border-bottom: 1px solid var(--neutral-6);
+
+		&.selectColumn {
+			flex-grow: 0;
+			flex-basis: vars.$select-column-width;
+			text-align: center;
+			padding: 0;
+		}
 	}
 
 	&.headerRowNoBorder {
@@ -32,11 +39,6 @@
 
 .expandColumn {
 	width: vars.$expand-column-width;
-}
-
-.selectColumn {
-	width: vars.$select-column-width;
-	text-align: center;
 }
 
 .reorderColumn {

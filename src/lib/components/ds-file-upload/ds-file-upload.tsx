@@ -13,10 +13,12 @@ import {
 } from './utils/file-validation';
 
 /**
- * Clean file upload component - minimal UI only
- * User handles all upload logic externally
+ * Design system File Upload component using Ark UI
+ * Used in conjunction with the useFileUpload hook
  */
 const DsFileUpload: React.FC<DsFileUploadProps> = ({
+	files,
+	acceptedFiles,
 	label,
 	helperText,
 	errorText,
@@ -26,6 +28,7 @@ const DsFileUpload: React.FC<DsFileUploadProps> = ({
 	allowDrop = true,
 	onFileAccept,
 	onFileReject,
+	onRemove,
 	className,
 	style = {},
 	hasError = false,
@@ -33,7 +36,6 @@ const DsFileUpload: React.FC<DsFileUploadProps> = ({
 	maxFiles = DEFAULT_MAX_FILES,
 	maxFileSize = DEFAULT_MAX_FILE_SIZE,
 	disabled = false,
-	...props
 }) => {
 	const rootClass = classNames(
 		styles.fileUploadRoot,
@@ -43,12 +45,7 @@ const DsFileUpload: React.FC<DsFileUploadProps> = ({
 		},
 		className,
 	);
-	/*
-		const validateFiles = (file: File) => {
-			const duplicate = props.files?.find((f) => isFileEqual(f.file, file));
-			return duplicate ? ['FILE_EXISTS'] : null;
-		};
-	*/
+
 	return (
 		<div className={rootClass} style={style}>
 			<FileUpload.Root
@@ -57,10 +54,9 @@ const DsFileUpload: React.FC<DsFileUploadProps> = ({
 				accept={accept}
 				disabled={disabled}
 				allowDrop={allowDrop}
-				acceptedFiles={props.acceptedFiles}
+				acceptedFiles={acceptedFiles}
 				onFileAccept={onFileAccept}
 				onFileReject={onFileReject}
-				{...props}
 			>
 				<Dropzone
 					label={label}
@@ -70,13 +66,13 @@ const DsFileUpload: React.FC<DsFileUploadProps> = ({
 					hasError={hasError || !!errorText}
 				/>
 
-				{props.files && props.files.length > 0 && (
+				{files && files.length > 0 && (
 					<div className={styles.fileList}>
-						{props.files.map((uploadFile) => (
+						{files.map((uploadFile) => (
 							<FileItem
 								key={uploadFile.id}
 								uploadFile={uploadFile}
-								onRemove={props.onRemove || (() => {})}
+								onRemove={onRemove}
 								showProgress={showProgress}
 							/>
 						))}

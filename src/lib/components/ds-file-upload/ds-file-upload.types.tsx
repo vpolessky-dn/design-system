@@ -2,14 +2,14 @@ import React from 'react';
 import {
 	FileUploadFileAcceptDetails,
 	FileUploadFileError,
+	FileUploadFileMimeType,
 	FileUploadFileRejectDetails,
-	FileUploadRootProps,
 } from '@ark-ui/react';
 import { UploadFileMeta } from './hooks/use-file-upload';
 
 export type FileError = FileUploadFileError;
 
-export interface DsFileUploadProps extends Omit<FileUploadRootProps, 'children'> {
+export interface DsFileUploadProps {
 	/**
 	 * Label text for the file upload
 	 */
@@ -41,6 +41,10 @@ export interface DsFileUploadProps extends Omit<FileUploadRootProps, 'children'>
 	 */
 	allowDrop?: boolean;
 	/**
+	 * The maximum number of files that can be uploaded
+	 */
+	maxFiles?: number;
+	/**
 	 * Maximum file size in bytes
 	 * @default 25MB
 	 */
@@ -66,6 +70,10 @@ export interface DsFileUploadProps extends Omit<FileUploadRootProps, 'children'>
 	 */
 	hasError?: boolean;
 	/**
+	 * The file types that are accepted
+	 */
+	accept?: Record<string, string[]> | FileUploadFileMimeType | FileUploadFileMimeType[] | undefined;
+	/**
 	 * File states to display (managed externally)
 	 */
 	files?: UploadFileMeta[];
@@ -77,4 +85,8 @@ export interface DsFileUploadProps extends Omit<FileUploadRootProps, 'children'>
 	 * Controlled accepted files
 	 */
 	acceptedFiles?: File[];
+	/**
+	 * Whether the file upload is disabled
+	 */
+	disabled?: boolean;
 }

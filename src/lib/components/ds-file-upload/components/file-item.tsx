@@ -8,7 +8,7 @@ import styles from '../ds-file-upload.module.scss';
 
 export interface FileItemProps {
 	uploadFile: UploadFileMeta;
-	onRemove: (fileId: string) => void;
+	onRemove?: (fileId: string) => void;
 	showProgress?: boolean;
 	className?: string;
 }
@@ -25,7 +25,7 @@ export const FileItem: React.FC<FileItemProps> = ({
 	const { id, progress, status, errors, ...file } = uploadFile;
 
 	const handleRemove = () => {
-		onRemove(id);
+		onRemove?.(id);
 	};
 
 	const getStatusIcon = (): IconType => {

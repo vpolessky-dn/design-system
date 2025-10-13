@@ -17,6 +17,7 @@ const DsSelect: FC<DsSelectProps> = ({
 	className,
 	onValueChange,
 	onBlur,
+	hideClearButton,
 	placeholder = 'Click to select a value',
 	...props
 }) => {
@@ -54,7 +55,7 @@ const DsSelect: FC<DsSelectProps> = ({
 						<Select.Value className={styles.itemValueText} placeholder={placeholder} />
 					</div>
 					<div className={styles.triggerIcons}>
-						{selectedOption && (
+						{selectedOption && !hideClearButton && (
 							/*
 							 * Using a div instead of a button because:
 							 *

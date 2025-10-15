@@ -57,7 +57,7 @@ export const DsTableCell = <TData, TValue>({
 							contentGap={4}
 							align="end"
 							side="bottom"
-							appendToBody
+							portal
 						>
 							<span
 								className={styles.rowActionIcon}

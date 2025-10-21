@@ -25,3 +25,5 @@ export * from './lib/components/ds-password-input';
 export * from './lib/components/ds-smart-tabs';
 export * from './lib/components/ds-spinner';
 export * from './lib/components/ds-typography';
+export * from './lib/components/ds-alert-banner';
+export * from './lib/components/ds-toast';

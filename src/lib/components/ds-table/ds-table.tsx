@@ -153,7 +153,7 @@ const DsTable = <TData extends { id: string }, TValue>({
 		[table],
 	);
 
-	const { rows } = table.getRowModel();
+	const { rows, rowsById } = table.getRowModel();
 
 	const rowVirtualizer = useVirtualizer({
 		count: rows.length,
@@ -194,7 +194,8 @@ const DsTable = <TData extends { id: string }, TValue>({
 
 	const selectedRows = Object.entries(rowSelection)
 		.filter(([, selected]) => selected)
-		.map(([key]) => table.getRow(key).original);
+		.map(([key]) => rowsById[key]?.original)
+		.filter(Boolean);
 
 	const contextValue: DsTableContextType<TData, TValue> = {
 		stickyHeader,

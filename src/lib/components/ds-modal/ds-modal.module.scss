@@ -31,12 +31,6 @@ $max-height: 90vh;
 .footer {
 	@include shared.footer-base;
 	display: flex;
-
-	.footerContent {
-		flex: 1;
-		display: flex;
-		justify-content: end;
-	}
 }
 
 .title {

@@ -117,7 +117,7 @@ const Actions = ({
 	className?: string;
 	children: ReactNode;
 }) => (
-	<div style={style} className={classNames(styles.footerContent, className)}>
+	<div style={style} className={classNames(styles.actions, className)}>
 		{children}
 	</div>
 );

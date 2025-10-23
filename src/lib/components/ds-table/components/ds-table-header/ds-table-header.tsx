@@ -76,11 +76,13 @@ const DsTableHeader = <TData,>({ table }: DsTableHeaderProps<TData>) => {
 								)}
 								onClick={header.column.getToggleSortingHandler()}
 								style={
-									virtualized && header.column.getSize() !== defaultColumnSizing.size
-										? {
-												flexBasis: header.column.getSize(),
-												flexGrow: idx === headerGroup.headers.length - 1 ? 1 : 0,
-											}
+									header.column.getSize() !== defaultColumnSizing.size
+										? virtualized
+											? {
+													flexBasis: header.column.getSize(),
+													flexGrow: idx === headerGroup.headers.length - 1 ? 1 : 0,
+												}
+											: { width: header.getSize() }
 										: undefined
 								}
 							>

@@ -153,11 +153,13 @@ const DsTableRow = <TData, TValue>({ ref, row, virtualRow }: DsTableRowProps<TDa
 						key={cell.id}
 						className={styles.tableCell}
 						style={
-							virtualized && cell.column.getSize() !== defaultColumnSizing.size
-								? {
-										flexBasis: cell.column.getSize(),
-										flexGrow: idx === row.getVisibleCells().length - 1 ? 1 : 0,
-									}
+							cell.column.getSize() !== defaultColumnSizing.size
+								? virtualized
+									? {
+											flexBasis: cell.column.getSize(),
+											flexGrow: idx === row.getVisibleCells().length - 1 ? 1 : 0,
+										}
+									: { width: cell.column.getSize() }
 								: undefined
 						}
 					>

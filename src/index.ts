@@ -28,4 +28,5 @@ export * from './lib/components/ds-typography';
 export * from './lib/components/ds-alert-banner';
 export * from './lib/components/ds-toast';
 export * from './lib/components/ds-modal';
+export * from './lib/components/ds-filter-modal';
 export * from './lib/components/ds-drawer';

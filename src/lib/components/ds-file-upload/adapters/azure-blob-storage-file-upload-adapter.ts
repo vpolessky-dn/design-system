@@ -36,11 +36,8 @@ export class AzureBlobStorageFileUploadAdapter implements FileUploadAdapter {
 		return new Promise((resolve) => {
 			xhr.upload.addEventListener('progress', (e) => {
 				if (e.lengthComputable && options.onProgress) {
-					options.onProgress({
-						// uploadedBytes: e.loaded,
-						// totalBytes: e.total,
-						percentage: (e.loaded / e.total) * 100,
-					});
+					const percentComplete = (e.loaded / e.total) * 100;
+					options.onProgress(percentComplete);
 				}
 			});
 
@@ -99,11 +96,8 @@ export class BackendAdapter implements FileUploadAdapter {
 		return new Promise((resolve) => {
 			xhr.upload.addEventListener('progress', (e) => {
 				if (e.lengthComputable && options.onProgress) {
-					options.onProgress({
-						// uploadedBytes: e.loaded,
-						// totalBytes: e.total,
-						percentage: (e.loaded / e.total) * 100,
-					});
+					const percentComplete = (e.loaded / e.total) * 100;
+					options.onProgress(percentComplete);
 				}
 			});
 

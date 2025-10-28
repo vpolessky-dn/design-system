@@ -3,12 +3,8 @@ export interface FileUploadOptions {
 	fileId: string;
 	metadata?: Record<string, string>;
 	chunkSize?: number;
-	onProgress?: (progress: FileUploadProgress) => void;
+	onProgress?: (progress: number) => void;
 	signal?: AbortSignal;
-}
-
-export interface FileUploadProgress {
-	percentage: number;
 }
 
 export interface FileUploadResult {
@@ -21,8 +17,6 @@ export interface FileUploadResult {
 export interface FileUploadAdapter {
 	name: string;
 	upload: (options: FileUploadOptions) => Promise<FileUploadResult>;
-	pause?: (fileId: string) => Promise<void>;
-	resume?: (fileId: string) => Promise<void>;
 	cancel?: (fileId: string) => Promise<void>;
 	supportsResumable?: boolean;
 	supportsChunking?: boolean;

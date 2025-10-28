@@ -1,9 +1,4 @@
-import {
-	FileUploadAdapter,
-	FileUploadOptions,
-	FileUploadProgress,
-	FileUploadResult,
-} from './file-upload-adapter.types';
+import { FileUploadAdapter, FileUploadOptions, FileUploadResult } from './file-upload-adapter.types';
 
 export type MockScenario = 'success' | 'error' | 'interrupted' | 'slow' | 'fast';
 
@@ -82,11 +77,7 @@ export class MockAdapter implements FileUploadAdapter {
 
 			const percentage = Math.min((i / steps) * 100, 100);
 
-			const progress: FileUploadProgress = {
-				percentage,
-			};
-
-			onProgress?.(progress);
+			onProgress?.(percentage);
 
 			// Interrupt scenario - fail at specified progress
 			if (scenario === 'interrupted' && percentage >= interruptAt && this.interruptedRuns % 2) {
@@ -145,7 +136,7 @@ export const MockAdapterPresets = {
 			steps: 10,
 		}),
 
-	/** Slow upload - takes longer (good for testing pause/cancel) */
+	/** Slow upload - takes longer (good for testing cancel) */
 	slow: (): MockAdapter =>
 		new MockAdapter({
 			scenario: 'success',

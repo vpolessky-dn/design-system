@@ -1,10 +1,6 @@
 import { useState } from 'react';
 import { isFileEqual } from '../utils';
-import {
-	FileUploadAdapter,
-	FileUploadProgress,
-	FileUploadResult,
-} from '../adapters/file-upload-adapter.types';
+import { FileUploadAdapter, FileUploadResult } from '../adapters/file-upload-adapter.types';
 import { FileError } from '../components/file-upload';
 
 export interface FileWithErrors {
@@ -12,7 +8,7 @@ export interface FileWithErrors {
 	errors: FileError[];
 }
 
-export type UploadFileStatus = 'pending' | 'uploading' | 'paused' | 'completed' | 'error' | 'cancelled';
+export type UploadFileStatus = 'pending' | 'uploading' | 'completed' | 'error' | 'cancelled';
 export type FileMeta = Pick<File, 'name' | 'type' | 'size'>;
 
 export interface UploadFileMeta extends FileMeta {
@@ -52,13 +48,9 @@ export interface UseFileUploadReturn {
 	removeFile: (fileId: string) => void;
 	uploadFile: (fileId: string) => Promise<void>;
 	uploadAll: () => Promise<void>;
-	pauseUpload: (fileId: string) => Promise<void>;
-	resumeUpload: (fileId: string) => Promise<void>;
 	cancelUpload: (fileId: string) => Promise<void>;
 	retryUpload: (fileId: string) => Promise<void>;
 	clearFiles: () => void;
-	isUploading: boolean;
-	hasFiles: boolean;
 }
 
 /**
@@ -138,17 +130,8 @@ export function useFileUpload(config: UseFileUploadConfig): UseFileUploadReturn 
 		setFiles((prev) => [...prev, ...newFileStates]);
 	};
 
-	const updateFileProgress = (fileId: string, progressData: Partial<FileUploadProgress>) => {
-		setFiles((prev) =>
-			prev.map((file) =>
-				file.id === fileId
-					? {
-							...file,
-							progress: progressData.percentage ?? file.progress,
-						}
-					: file,
-			),
-		);
+	const updateFileProgress = (fileId: string, progress: number) => {
+		setFiles((prev) => prev.map((file) => (file.id === fileId ? { ...file, progress } : file)));
 	};
 
 	const updateFileStatus = (fileId: string, status: UploadFileStatus, error?: string) => {
@@ -193,7 +176,7 @@ export function useFileUpload(config: UseFileUploadConfig): UseFileUploadReturn 
 
 			if (result.success) {
 				updateFileStatus(fileId, 'completed');
-				updateFileProgress(fileId, { percentage: 100 });
+				updateFileProgress(fileId, 100);
 				config.onUploadComplete?.(fileId, result);
 			} else {
 				updateFileStatus(fileId, 'error', result.error);
@@ -221,20 +204,6 @@ export function useFileUpload(config: UseFileUploadConfig): UseFileUploadReturn 
 		}
 	};
 
-	const pauseUpload = async (fileId: string) => {
-		if (adapter.pause) {
-			await adapter.pause(fileId);
-			updateFileStatus(fileId, 'paused');
-		}
-	};
-
-	const resumeUpload = async (fileId: string) => {
-		if (adapter.resume) {
-			await adapter.resume(fileId);
-			await uploadFile(fileId);
-		}
-	};
-
 	const cancelUpload = async (fileId: string) => {
 		const controller = abortControllers.get(fileId);
 		if (controller) {
@@ -250,7 +219,7 @@ export function useFileUpload(config: UseFileUploadConfig): UseFileUploadReturn 
 
 	const retryUpload = async (fileId: string) => {
 		updateFileStatus(fileId, 'pending');
-		updateFileProgress(fileId, { percentage: 0 });
+		updateFileProgress(fileId, 0);
 		await uploadFile(fileId);
 	};
 
@@ -272,9 +241,6 @@ export function useFileUpload(config: UseFileUploadConfig): UseFileUploadReturn 
 		setAbortControllers(new Map());
 	};
 
-	const isUploading = files.some((file) => file.status === 'uploading');
-	const hasFiles = files.length > 0;
-
 	return {
 		files,
 		acceptedFiles,
@@ -283,12 +249,8 @@ export function useFileUpload(config: UseFileUploadConfig): UseFileUploadReturn 
 		removeFile,
 		uploadFile,
 		uploadAll,
-		pauseUpload,
-		resumeUpload,
 		cancelUpload,
 		retryUpload,
 		clearFiles,
-		isUploading,
-		hasFiles,
 	};
 }

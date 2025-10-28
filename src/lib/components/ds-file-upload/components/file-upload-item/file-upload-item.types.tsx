@@ -23,8 +23,4 @@ export interface FileUploadItemProps {
 	onRemove?: (fileId: string) => void;
 	/** Callback when delete button is clicked (for completed state) */
 	onDelete?: (fileId: string) => void;
-	/** Callback when pause button is clicked */
-	onPause?: (fileId: string) => void;
-	/** Callback when resume button is clicked */
-	onResume?: (fileId: string) => void;
 }

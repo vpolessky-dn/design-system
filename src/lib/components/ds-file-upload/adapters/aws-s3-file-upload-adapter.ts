@@ -42,11 +42,7 @@ export class AwsS3FileUploadAdapter implements FileUploadAdapter {
 		return new Promise((resolve, reject) => {
 			xhr.upload.addEventListener('progress', (e) => {
 				if (e.lengthComputable && options.onProgress) {
-					options.onProgress({
-						// uploadedBytes: e.loaded,
-						// totalBytes: e.total,
-						percentage: (e.loaded / e.total) * 100,
-					});
+					options.onProgress((e.loaded / e.total) * 100);
 				}
 			});
 

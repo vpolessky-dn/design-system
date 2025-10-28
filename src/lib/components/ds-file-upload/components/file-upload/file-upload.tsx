@@ -34,8 +34,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 	onFileDelete,
 	onFileCancel,
 	onFileRetry,
-	onFilePause,
-	onFileResume,
 	accept = DEFAULT_ALLOWED_FILE_TYPES,
 	maxFiles = DEFAULT_MAX_FILES,
 	maxFileSize = DEFAULT_MAX_FILE_SIZE,
@@ -100,8 +98,6 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 							onDelete={onFileDelete}
 							onCancel={onFileCancel}
 							onRetry={onFileRetry}
-							onPause={onFilePause}
-							onResume={onFileResume}
 						/>
 					))}
 				</div>

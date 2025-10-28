@@ -12,8 +12,6 @@ export interface DsFileUploadProps
 		| 'onFileDelete'
 		| 'onFileCancel'
 		| 'onFileRetry'
-		| 'onFilePause'
-		| 'onFileResume'
 		| 'uploadProgress'
 	> {
 	/** Upload adapter (S3, Azure, custom backend, etc.) */

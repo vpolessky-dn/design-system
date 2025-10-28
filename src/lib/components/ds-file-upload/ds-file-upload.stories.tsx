@@ -78,6 +78,9 @@ export const Manual: Story = {
 			autoUpload: false, // Manual upload
 		});
 
+		const isUploading = fileUpload.files.some((file) => file.status === 'uploading');
+		const hasFiles = fileUpload.files.length > 0;
+
 		return (
 			<div style={{ width: '500px' }}>
 				<FileUpload
@@ -93,25 +96,27 @@ export const Manual: Story = {
 							})),
 						)
 					}
+					onFileDelete={(fileId) => fileUpload.removeFile(fileId)}
 					onFileRemove={(fileId) => fileUpload.removeFile(fileId)}
+					onFileCancel={(fileId) => fileUpload.cancelUpload(fileId)}
 				/>
 
-				{fileUpload.hasFiles && (
+				{hasFiles && (
 					<div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
 						<DsButton
 							design="v1.2"
 							size="small"
 							onClick={() => fileUpload.uploadAll()}
-							disabled={fileUpload.isUploading}
+							disabled={isUploading}
 						>
-							{fileUpload.isUploading ? 'Uploading...' : 'Upload All'}
+							{isUploading ? 'Uploading...' : 'Upload All'}
 						</DsButton>
 						<DsButton
 							design="v1.2"
 							variant="ghost"
 							size="small"
 							onClick={() => fileUpload.clearFiles()}
-							disabled={fileUpload.isUploading}
+							disabled={isUploading}
 						>
 							Clear All
 						</DsButton>

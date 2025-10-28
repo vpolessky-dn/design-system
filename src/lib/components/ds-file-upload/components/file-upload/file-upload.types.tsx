@@ -82,14 +82,6 @@ export interface FileUploadProps {
 	 */
 	onFileRetry?: (fileId: string) => void;
 	/**
-	 * Callback when files upload is paused
-	 */
-	onFilePause?: (fileId: string) => void;
-	/**
-	 * Callback when files upload is resumed
-	 */
-	onFileResume?: (fileId: string) => void;
-	/**
 	 * Controlled accepted files
 	 */
 	acceptedFiles?: File[];

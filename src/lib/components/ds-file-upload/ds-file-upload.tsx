@@ -81,8 +81,6 @@ const DsFileUpload: React.FC<DsFileUploadProps> = ({
 			onFileDelete={handleFileRemove}
 			onFileCancel={fileUpload.cancelUpload}
 			onFileRetry={fileUpload.retryUpload}
-			onFilePause={fileUpload.pauseUpload}
-			onFileResume={fileUpload.resumeUpload}
 		/>
 	);
 };

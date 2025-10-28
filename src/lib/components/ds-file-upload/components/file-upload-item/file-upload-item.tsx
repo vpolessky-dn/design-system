@@ -22,14 +22,11 @@ export const FileUploadItem: React.FC<FileUploadItemProps> = ({
 	onRetry,
 	onRemove,
 	onDelete,
-	onPause,
-	onResume,
 }) => {
 	const fileItemClass = classNames(styles.fileItemContent, {
 		[styles.fileItemError]: status === 'error',
 		[styles.fileItemCompleted]: status === 'completed',
 		[styles.fileItemUploading]: status === 'uploading',
-		// [styles.fileItemPaused]: status === 'paused',
 		[styles.fileItemInterrupted]: status === 'cancelled',
 	});
 
@@ -62,30 +59,6 @@ export const FileUploadItem: React.FC<FileUploadItemProps> = ({
 					</DsButton>
 				)}
 
-				{status === 'uploading' && onPause && (
-					<DsButton
-						type="button"
-						design="v1.2"
-						buttonType="tertiary"
-						aria-label={`Pause ${name} upload`}
-						onClick={() => onPause(id)}
-					>
-						<DsIcon icon="pause" size="small" />
-					</DsButton>
-				)}
-
-				{status === 'paused' && onResume && (
-					<DsButton
-						type="button"
-						design="v1.2"
-						buttonType="tertiary"
-						aria-label={`Resume ${name} upload`}
-						onClick={() => onResume(id)}
-					>
-						<DsIcon icon="play_arrow" size="small" />
-					</DsButton>
-				)}
-
 				{(status === 'error' || status === 'cancelled') && onRetry && (
 					<DsButton
 						type="button"
@@ -98,7 +71,7 @@ export const FileUploadItem: React.FC<FileUploadItemProps> = ({
 					</DsButton>
 				)}
 
-				{(status === 'uploading' || status === 'paused') && onCancel && (
+				{status === 'uploading' && onCancel && (
 					<DsButton
 						type="button"
 						design="v1.2"

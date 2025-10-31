@@ -36,4 +36,8 @@ export interface DsStatusBadgeProps {
 	 * @default false
 	 */
 	compact?: boolean;
+	/**
+	 * Accessible label for screen readers, if provided, will override default label/status text.
+	 */
+	'aria-label'?: string;
 }

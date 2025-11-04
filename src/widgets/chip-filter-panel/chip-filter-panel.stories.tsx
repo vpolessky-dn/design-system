@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { useState } from 'react';
 import ChipFilterPanel from './chip-filter-panel';
 import { FilterChipItem } from './chip-filter-panel.types';
+import styles from './chip-filter-panel.stories.module.scss';
 
 const meta: Meta<typeof ChipFilterPanel> = {
 	title: 'Widgets/ChipFilterPanel',
@@ -73,30 +74,19 @@ export const Default: Story = {
 		};
 
 		return (
-			<div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+			<div className={styles.container}>
 				<ChipFilterPanel
 					filters={filters}
 					onClearAll={handleClearAll}
 					onFilterDelete={handleFilterDelete}
 					onFilterSelect={handleFilterSelect}
 				/>
-				<div style={{ display: 'flex', gap: '8px' }}>
-					<button
-						onClick={handleAddFilter}
-						style={{
-							padding: '8px 16px',
-							borderRadius: '4px',
-							border: '1px solid #ccc',
-							background: 'white',
-							cursor: 'pointer',
-						}}
-					>
+				<div className={styles.controlsContainer}>
+					<button onClick={handleAddFilter} className={styles.addButton}>
 						Add Filter
 					</button>
-					<p style={{ fontSize: '12px', color: '#666', alignSelf: 'center' }}>
-						Total filters: {filters.length}
-					</p>
-					<p style={{ fontSize: '12px', color: '#666', alignSelf: 'center' }}>
+					<p className={styles.infoText}>Total filters: {filters.length}</p>
+					<p className={styles.infoText}>
 						Selected filters: [
 						{filters
 							.filter((filter) => filter.selected)

@@ -1,5 +1,8 @@
 import { CSSProperties, MouseEvent, ReactNode, Ref } from 'react';
 
+export const chipSizes = ['medium', 'small'] as const;
+export type ChipSize = (typeof chipSizes)[number];
+
 export interface DsChipProps {
 	/**
 	 * Ref to the chip element
@@ -26,10 +29,10 @@ export interface DsChipProps {
 	 */
 	onDelete?: (event: MouseEvent<HTMLButtonElement>) => void;
 	/**
-	 * Whether the chip should be compact (small size)
-	 * @default false
+	 * Size of the chip
+	 * @default 'medium'
 	 */
-	compact?: boolean;
+	size?: ChipSize;
 	/**
 	 * Custom delete icon element
 	 */

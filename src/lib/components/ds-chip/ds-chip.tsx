@@ -15,7 +15,7 @@ const DsChip: React.FC<DsChipProps> = ({
 	style = {},
 	onClick,
 	onDelete,
-	compact = false,
+	size = 'medium',
 	deleteIcon,
 	selected = false,
 }) => {
@@ -23,7 +23,7 @@ const DsChip: React.FC<DsChipProps> = ({
 		styles.chip,
 		{
 			[styles.clickable]: onClick !== undefined,
-			[styles.compact]: compact,
+			[styles.small]: size === 'small',
 		},
 		className,
 	);
@@ -55,7 +55,7 @@ const DsChip: React.FC<DsChipProps> = ({
 			aria-label={label}
 			aria-pressed={onClick && selected ? 'true' : undefined}
 		>
-			<DsTypography variant={compact ? 'body-xs-reg' : 'body-sm-reg'} className={styles.label}>
+			<DsTypography variant={size === 'small' ? 'body-xs-reg' : 'body-sm-reg'} className={styles.label}>
 				{label}
 			</DsTypography>
 			{onDelete && (

@@ -29,9 +29,10 @@ const meta: Meta<typeof DsChip> = {
 			action: 'deleted',
 			description: 'Function called when delete icon is clicked',
 		},
-		compact: {
-			control: 'boolean',
-			description: 'Whether the chip should be compact (small size)',
+		size: {
+			control: 'select',
+			options: ['medium', 'small'],
+			description: 'Size of the chip',
 		},
 		deleteIcon: {
 			control: false,

@@ -26,10 +26,6 @@ export interface DsStatusBadgeProps {
 	 */
 	style?: CSSProperties;
 	/**
-	 * Optional label to display instead of the default status text
-	 */
-	label?: string;
-	/**
 	 * Whether the status badge should use ghost style (light background)
 	 * @default false
 	 */

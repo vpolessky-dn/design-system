@@ -1,5 +1,5 @@
 import { FileUploadProps } from './components/file-upload';
-import { FileUploadAdapter } from './adapters/file-upload-adapter.types';
+import { FileUploadAdapter, FileUploadResult } from './adapters/file-upload-adapter.types';
 
 export interface DsFileUploadProps
 	extends Omit<
@@ -30,7 +30,7 @@ export interface DsFileUploadProps
 	metadata?: Record<string, string>;
 
 	/** Called when a file upload completes successfully */
-	onUploadComplete?: (fileId: string, result: { url?: string; metadata?: Record<string, any> }) => void;
+	onUploadComplete?: (fileId: string, result: FileUploadResult) => void;
 
 	/** Called when a file upload fails */
 	onUploadError?: (fileId: string, error: string) => void;

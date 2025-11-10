@@ -94,49 +94,28 @@ export const Manual: Story = {
 		style: { width: '500px' },
 	},
 	render: function Render(args) {
-		const fileUpload = useFileUpload({
+		const { getProps, files, uploadAll, clearFiles } = useFileUpload({
 			adapter: MockAdapterPresets.normal(),
 			autoUpload: false, // Manual upload
 		});
 
-		const isUploading = fileUpload.files.some((file) => file.status === 'uploading');
-		const hasFiles = fileUpload.files.length > 0;
+		const isUploading = files.some((file) => file.status === 'uploading');
+		const hasFiles = files.length > 0;
 
 		return (
 			<div style={{ width: '500px' }}>
-				<FileUpload
-					{...args}
-					files={fileUpload.files}
-					acceptedFiles={fileUpload.acceptedFiles}
-					onFileAccept={(details) => fileUpload.addFiles(details.files)}
-					onFileReject={(details) =>
-						fileUpload.addRejectedFiles(
-							details.files.map((f) => ({
-								file: f.file,
-								errors: f.errors,
-							})),
-						)
-					}
-					onFileDelete={(fileId) => fileUpload.removeFile(fileId)}
-					onFileRemove={(fileId) => fileUpload.removeFile(fileId)}
-					onFileCancel={(fileId) => fileUpload.cancelUpload(fileId)}
-				/>
+				<FileUpload {...getProps()} {...args} />
 
 				{hasFiles && (
 					<div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
-						<DsButton
-							design="v1.2"
-							size="small"
-							onClick={() => fileUpload.uploadAll()}
-							disabled={isUploading}
-						>
+						<DsButton design="v1.2" size="small" onClick={() => uploadAll()} disabled={isUploading}>
 							{isUploading ? 'Uploading...' : 'Upload All'}
 						</DsButton>
 						<DsButton
 							design="v1.2"
 							variant="ghost"
 							size="small"
-							onClick={() => fileUpload.clearFiles()}
+							onClick={() => clearFiles()}
 							disabled={isUploading}
 						>
 							Clear All

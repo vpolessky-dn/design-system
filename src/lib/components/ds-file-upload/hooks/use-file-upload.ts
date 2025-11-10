@@ -1,7 +1,12 @@
 import { useState } from 'react';
+import {
+	FileUploadFileAcceptDetails,
+	FileUploadFileRejectDetails,
+	FileUploadFileRejection,
+} from '@ark-ui/react';
 import { isFileEqual } from '../utils';
 import { FileUploadAdapter, FileUploadResult } from '../adapters/file-upload-adapter.types';
-import { FileError } from '../components/file-upload';
+import { FileError, FileUploadProps } from '../components/file-upload';
 
 export interface FileWithErrors {
 	file: File;
@@ -39,6 +44,11 @@ export interface UseFileUploadConfig {
 	onUploadError?: (fileId: string, error: string) => void;
 }
 
+export interface UseFileUploadUserCallbacks {
+	onFilesAdded?: (files: File[]) => void;
+	onFileRemoved?: (fileId: string) => void;
+}
+
 export interface UseFileUploadReturn {
 	files: UploadFileMeta[];
 	acceptedFiles: UploadFile[];
@@ -50,6 +60,24 @@ export interface UseFileUploadReturn {
 	cancelUpload: (fileId: string) => Promise<void>;
 	retryUpload: (fileId: string) => Promise<void>;
 	clearFiles: () => void;
+	/**
+	 * Get props for FileUpload component with callback composition
+	 * @param userCallbacks Optional user callbacks to compose with internal logic
+	 * @returns Props ready to spread onto FileUpload component
+	 */
+	getProps: (
+		userCallbacks?: UseFileUploadUserCallbacks,
+	) => Pick<
+		FileUploadProps,
+		| 'files'
+		| 'acceptedFiles'
+		| 'onFileAccept'
+		| 'onFileReject'
+		| 'onFileRemove'
+		| 'onFileDelete'
+		| 'onFileCancel'
+		| 'onFileRetry'
+	>;
 }
 
 /**
@@ -242,6 +270,38 @@ export function useFileUpload(config: UseFileUploadConfig): UseFileUploadReturn 
 		setAbortControllers(new Map());
 	};
 
+	const getProps = (userCallbacks?: UseFileUploadUserCallbacks) => {
+		const handleFileAccept = (details: FileUploadFileAcceptDetails) => {
+			const addedFiles = addFiles(details.files);
+			userCallbacks?.onFilesAdded?.(addedFiles);
+		};
+
+		const handleFileReject = (details: FileUploadFileRejectDetails) => {
+			addRejectedFiles(
+				details.files.map((f: FileUploadFileRejection) => ({
+					file: f.file,
+					errors: f.errors,
+				})),
+			);
+		};
+
+		const handleFileRemove = (fileId: string) => {
+			removeFile(fileId);
+			userCallbacks?.onFileRemoved?.(fileId);
+		};
+
+		return {
+			files,
+			acceptedFiles,
+			onFileAccept: handleFileAccept,
+			onFileReject: handleFileReject,
+			onFileRemove: handleFileRemove,
+			onFileDelete: handleFileRemove,
+			onFileCancel: cancelUpload,
+			onFileRetry: retryUpload,
+		};
+	};
+
 	return {
 		files,
 		acceptedFiles,
@@ -253,5 +313,6 @@ export function useFileUpload(config: UseFileUploadConfig): UseFileUploadReturn 
 		cancelUpload,
 		retryUpload,
 		clearFiles,
+		getProps,
 	};
 }

@@ -1,9 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import {
-	FileUploadFileAcceptDetails,
-	FileUploadFileRejectDetails,
-	FileUploadFileRejection,
-} from '@ark-ui/react';
 import { DsFileUploadProps } from './ds-file-upload.types';
 import { FileUpload } from './components/file-upload';
 import { useFileUpload } from './hooks';
@@ -23,7 +18,7 @@ const DsFileUpload: React.FC<DsFileUploadProps> = ({
 	onAllUploadsComplete,
 	...props
 }) => {
-	const fileUpload = useFileUpload({
+	const { getProps, files } = useFileUpload({
 		adapter,
 		autoUpload,
 		maxConcurrent,
@@ -34,10 +29,10 @@ const DsFileUpload: React.FC<DsFileUploadProps> = ({
 	const prevUploadingCount = useRef(0);
 
 	useEffect(() => {
-		const uploadingCount = fileUpload.files.filter((f) => f.status === 'uploading').length;
+		const uploadingCount = files.filter((f) => f.status === 'uploading').length;
 
-		if (prevUploadingCount.current > 0 && uploadingCount === 0 && fileUpload.files.length > 0) {
-			const allComplete = fileUpload.files.every(
+		if (prevUploadingCount.current > 0 && uploadingCount === 0 && files.length > 0) {
+			const allComplete = files.every(
 				(f) => f.status === 'completed' || f.status === 'error' || f.status === 'cancelled',
 			);
 
@@ -47,40 +42,14 @@ const DsFileUpload: React.FC<DsFileUploadProps> = ({
 		}
 
 		prevUploadingCount.current = uploadingCount;
-	}, [fileUpload.files, onAllUploadsComplete]);
+	}, [files, onAllUploadsComplete]);
 
-	const handleFileAccept = (details: FileUploadFileAcceptDetails) => {
-		const addedFiles = fileUpload.addFiles(details.files);
-		onFilesAdded?.(addedFiles);
-	};
+	const fileUploadProps = getProps({
+		onFilesAdded,
+		onFileRemoved,
+	});
 
-	const handleFileReject = (details: FileUploadFileRejectDetails) => {
-		fileUpload.addRejectedFiles(
-			details.files.map((f: FileUploadFileRejection) => ({
-				file: f.file,
-				errors: f.errors,
-			})),
-		);
-	};
-
-	const handleFileRemove = (fileId: string) => {
-		fileUpload.removeFile(fileId);
-		onFileRemoved?.(fileId);
-	};
-
-	return (
-		<FileUpload
-			{...props}
-			files={fileUpload.files}
-			acceptedFiles={fileUpload.acceptedFiles}
-			onFileAccept={handleFileAccept}
-			onFileReject={handleFileReject}
-			onFileRemove={handleFileRemove}
-			onFileDelete={handleFileRemove}
-			onFileCancel={fileUpload.cancelUpload}
-			onFileRetry={fileUpload.retryUpload}
-		/>
-	);
+	return <FileUpload {...fileUploadProps} {...props} />;
 };
 
 export default DsFileUpload;

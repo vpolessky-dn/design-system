@@ -26,7 +26,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 	errorText,
 	dropzoneText = 'Drag and drop files here or ',
 	triggerText = 'Select file...',
-	showProgress = true,
+	hideProgress = false,
 	allowDrop = true,
 	onFileAccept,
 	onFileReject,
@@ -91,7 +91,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 							id={uploadFile.id}
 							name={uploadFile.name}
 							progress={uploadFile.progress}
-							showProgress={showProgress}
+							hideProgress={hideProgress}
 							status={uploadFile.status}
 							errors={uploadFile.errors}
 							onRemove={onFileRemove}

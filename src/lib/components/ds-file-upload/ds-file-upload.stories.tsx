@@ -3,21 +3,44 @@ import DsButton from '../ds-button/ds-button';
 import DsFileUpload from './ds-file-upload';
 import { useFileUpload } from './hooks/use-file-upload';
 import { createTestPlayFunction } from './ds-file-upload.stories.util';
-import { MockAdapterPresets } from './adapters/mock-file-upload-adapter';
+import { MockAdapterPresets } from './stories/adapters/mock-file-upload-adapter';
 import { FileUpload } from './components/file-upload';
+import DocsPage from './stories/adapters/MyCustomFileUploadAdapter.docs.mdx';
 
 const meta: Meta<typeof DsFileUpload> = {
 	title: 'Design System/FileUpload',
 	component: DsFileUpload,
 	parameters: {
 		layout: 'centered',
+		docs: {
+			page: DocsPage,
+			source: {
+				code:
+					'const adapter = new MyCustomFileUploadAdapter({\n' +
+					"\tbucket: 'my-bucket',\n" +
+					"\tregion: 'us-east-1',\n" +
+					'\tgetPresignedUrl: async (fileName) => `https://example-bucket.s3.amazonaws.com/${fileName}?signature=mocked`,\n' +
+					'});\n' +
+					'\n' +
+					'return (\n' +
+					'\t<DsFileUpload\n' +
+					'\t\tadapter={adapter}\n' +
+					"\t\tonFilesAdded={(files) => console.log('📁 Files added:', files.map((f) => f.name))}\n" +
+					"\t\tonUploadComplete={(fileId, result) => console.log('✅ Upload complete:', fileId, result.url)}\n" +
+					"\t\tonUploadError={(fileId, error) => console.error('❌ Upload failed:', fileId, error)}\n" +
+					"\t\tonFileRemoved={(fileId) => console.log('🗑️ File removed:', fileId)}\n" +
+					"\t\tonAllUploadsComplete={() => console.log('🎉 All uploads complete!')}\n" +
+					'\t/>\n' +
+					');',
+			},
+		},
 	},
 	tags: ['autodocs'],
 	argTypes: {
 		errorText: { control: 'text' },
 		dropzoneText: { control: 'text' },
 		triggerText: { control: 'text' },
-		showProgress: { control: 'boolean' },
+		hideProgress: { control: 'boolean' },
 		allowDrop: { control: 'boolean' },
 		maxFiles: { control: 'number' },
 		accept: { control: 'object' },
@@ -37,8 +60,6 @@ export const Default: Story = {
 	args: {
 		adapter: MockAdapterPresets.normal(),
 		style: { width: '500px' },
-		autoUpload: true,
-		showProgress: true,
 		onFilesAdded: (files) => {
 			console.log(
 				'📁 Files added:',
@@ -69,7 +90,7 @@ export const Manual: Story = {
 	args: {
 		adapter: MockAdapterPresets.normal(),
 		autoUpload: false,
-		showProgress: true,
+		hideProgress: false,
 		style: { width: '500px' },
 	},
 	render: function Render(args) {
@@ -133,10 +154,8 @@ export const Manual: Story = {
 export const Compact: Story = {
 	args: {
 		adapter: MockAdapterPresets.fast(),
-		autoUpload: true,
 		compact: true,
 		maxFiles: 1,
-		showProgress: true,
 		dropzoneText: 'Drag and drop your document here or',
 		triggerText: 'Choose document',
 		style: { width: '400px' },
@@ -160,8 +179,6 @@ export const Disabled: Story = {
 export const UploadError: Story = {
 	args: {
 		adapter: MockAdapterPresets.error('Unsupported file type'),
-		autoUpload: true,
-		showProgress: true,
 		style: { width: '500px' },
 	},
 	play: createTestPlayFunction('error'),
@@ -174,8 +191,6 @@ export const UploadError: Story = {
 export const UploadInterrupted: Story = {
 	args: {
 		adapter: MockAdapterPresets.interrupted(30),
-		autoUpload: true,
-		showProgress: true,
 		style: { width: '500px' },
 	},
 	play: createTestPlayFunction('interrupted'),

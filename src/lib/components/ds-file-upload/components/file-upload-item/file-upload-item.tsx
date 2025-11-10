@@ -15,7 +15,7 @@ export const FileUploadItem: React.FC<FileUploadItemProps> = ({
 	id,
 	name,
 	progress,
-	showProgress = true,
+	hideProgress = false,
 	status,
 	errors,
 	onCancel,
@@ -126,7 +126,7 @@ export const FileUploadItem: React.FC<FileUploadItemProps> = ({
 					</div>
 				))}
 
-			{showProgress && status === 'uploading' && (
+			{!hideProgress && status === 'uploading' && (
 				<span className={styles.progressText}>Uploading...({Math.round(progress)}%)</span>
 			)}
 		</div>

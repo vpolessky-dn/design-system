@@ -1,4 +1,8 @@
-import { FileUploadAdapter, FileUploadOptions, FileUploadResult } from './file-upload-adapter.types';
+import {
+	FileUploadAdapter,
+	FileUploadOptions,
+	FileUploadResult,
+} from '../../adapters/file-upload-adapter.types';
 
 export type MockScenario = 'success' | 'error' | 'interrupted' | 'slow' | 'fast';
 
@@ -16,10 +20,6 @@ export interface MockAdapterConfig {
  * Simulates various upload scenarios without real network calls
  */
 export class MockAdapter implements FileUploadAdapter {
-	name = 'Mock Upload';
-	supportsResumable = false;
-	supportsChunking = false;
-
 	private interruptedRuns = -1;
 	private uploads = new Map<string, { cancelled: boolean }>();
 

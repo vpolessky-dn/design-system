@@ -23,10 +23,10 @@ export interface FileUploadProps {
 	 */
 	triggerText?: string;
 	/**
-	 * Whether to show upload progress
+	 * Whether to hide upload progress
 	 * @default false
 	 */
-	showProgress?: boolean;
+	hideProgress?: boolean;
 	/**
 	 * Whether to allow drag and drop
 	 * @default true

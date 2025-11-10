@@ -12,8 +12,8 @@ export interface FileUploadItemProps {
 	/** Array of error messages if any */
 	errors?: string[];
 
-	/** Whether to show progress bar */
-	showProgress?: boolean;
+	/** Whether to hide progress bar */
+	hideProgress?: boolean;
 
 	/** Callback when cancel button is clicked */
 	onCancel?: (fileId: string) => void;

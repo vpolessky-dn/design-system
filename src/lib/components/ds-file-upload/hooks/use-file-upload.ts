@@ -5,27 +5,14 @@ import {
 	FileUploadFileRejection,
 } from '@ark-ui/react';
 import { isFileEqual } from '../utils';
-import { FileUploadAdapter, FileUploadResult } from '../adapters/file-upload-adapter.types';
-import { FileError, FileUploadProps } from '../components/file-upload';
-
-export interface FileWithErrors {
-	file: File;
-	errors: FileError[];
-}
-
-export type UploadFileStatus = 'pending' | 'uploading' | 'interrupted' | 'completed' | 'error' | 'cancelled';
-export type FileMeta = Pick<File, 'name' | 'type' | 'size'>;
-
-export interface UploadFileMeta extends FileMeta {
-	id: string;
-	progress: number;
-	status: UploadFileStatus;
-	errors?: FileError[];
-}
-
-export interface UploadFile extends File {
-	id: string;
-}
+import {
+	FileError,
+	FileUploadAdapter,
+	FileUploadResult,
+	UploadFile,
+	UploadFileStatus,
+} from '../ds-file-upload-api.types';
+import { FileUploadProps } from '../components/file-upload';
 
 export interface FileUploadState {
 	id: string;
@@ -51,10 +38,10 @@ export interface UseFileUploadUserCallbacks {
 }
 
 export interface UseFileUploadReturn {
-	files: UploadFileMeta[];
+	files: UploadFile[];
 	acceptedFiles: UploadFile[];
 	addFiles: (newFiles: File[]) => UploadFile[];
-	addRejectedFiles: (files: FileWithErrors[]) => void;
+	addRejectedFiles: (filesWithErrors: { file: File; errors: FileError[] }[]) => void;
 	removeFile: (fileId: string) => void;
 	uploadFile: (fileId: string) => Promise<void>;
 	uploadAll: () => Promise<void>;
@@ -94,20 +81,20 @@ export function useFileUpload({
 	onAllUploadsComplete,
 }: UseFileUploadConfig): UseFileUploadReturn {
 	const [abortControllers] = useState(() => new Map<string, AbortController>());
-	const [files, setFiles] = useState<UploadFileMeta[]>([]);
+	const [files, setFiles] = useState<UploadFile[]>([]);
 	const acceptedFiles = files.filter((file) => file.status !== 'error');
 
 	if (files.length && !files.some((f) => f.status === 'uploading')) {
 		onAllUploadsComplete?.();
 	}
 
-	const addFiles = (newFiles: UploadFile[]): UploadFile[] => {
+	const addFiles = (newFiles: File[]): UploadFile[] => {
 		const newFilesOnly = newFiles.filter(
 			(file) => !acceptedFiles.some((existing) => isFileEqual(existing, file)),
 		);
 
 		const duplicateFiles = newFiles.filter(
-			(file) => !file.id && files.find((otherFile) => isFileEqual(file, otherFile)),
+			(file) => !(file as UploadFile).id && files.find((otherFile) => isFileEqual(file, otherFile)),
 		);
 
 		if (duplicateFiles.length > 0) {
@@ -118,14 +105,17 @@ export function useFileUpload({
 			addRejectedFiles(duplicateFilesWithErrors);
 		}
 
-		const newUploadFiles: UploadFileMeta[] = newFilesOnly.map((file) => ({
-			id: `${file.name}-${Date.now()}-${Math.random()}`,
-			name: file.name,
-			size: file.size,
-			type: file.type,
-			progress: 0,
-			status: 'pending',
-		}));
+		const newUploadFiles = newFilesOnly.map(
+			(file) =>
+				({
+					id: `${file.name}-${Date.now()}-${Math.random()}`,
+					name: file.name,
+					size: file.size,
+					type: file.type,
+					progress: 0,
+					status: 'pending',
+				}) as UploadFile,
+		);
 
 		setFiles((prev) => [...prev, ...newUploadFiles]);
 
@@ -138,16 +128,19 @@ export function useFileUpload({
 		return newUploadFiles;
 	};
 
-	const addRejectedFiles = (filesWithErrors: FileWithErrors[]) => {
-		const newFileStates: UploadFileMeta[] = filesWithErrors.map(({ file, errors }) => ({
-			id: `${file.name}-${Date.now()}-${Math.random()}`,
-			progress: 0,
-			status: 'error',
-			errors,
-			name: file.name,
-			size: file.size,
-			type: file.type,
-		}));
+	const addRejectedFiles = (filesWithErrors: { file: File; errors: FileError[] }[]) => {
+		const newFileStates = filesWithErrors.map(
+			({ file, errors }) =>
+				({
+					id: `${file.name}-${Date.now()}-${Math.random()}`,
+					progress: 0,
+					status: 'error',
+					errors,
+					name: file.name,
+					size: file.size,
+					type: file.type,
+				}) as UploadFile,
+		);
 
 		setFiles((prev) => [...prev, ...newFileStates]);
 	};

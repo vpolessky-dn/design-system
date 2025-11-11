@@ -1,5 +1,5 @@
 import { FileUploadProps } from './components/file-upload';
-import { FileUploadAdapter, FileUploadResult } from './adapters/file-upload-adapter.types';
+import { FileUploadAdapter, FileUploadResult } from './ds-file-upload-api.types';
 
 export interface DsFileUploadProps
 	extends Omit<

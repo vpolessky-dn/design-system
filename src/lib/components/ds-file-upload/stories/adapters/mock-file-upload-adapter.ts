@@ -142,7 +142,7 @@ export const MockAdapterPresets = {
 	slow: (): MockAdapter =>
 		new MockAdapter({
 			scenario: 'success',
-			duration: 5000,
+			duration: 10_000,
 			steps: 30,
 		}),
 

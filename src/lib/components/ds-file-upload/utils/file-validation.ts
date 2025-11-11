@@ -1,5 +1,4 @@
-import { FileMeta } from '../hooks/use-file-upload';
-import { FileError } from '../components/file-upload';
+import { FileError } from '../ds-file-upload-api.types';
 
 /**
  * Default allowed file types for the file upload component
@@ -39,7 +38,7 @@ export function formatFileSize(bytes: number): string {
  * @param file1
  * @param file2
  */
-export function isFileEqual(file1: FileMeta, file2: FileMeta): boolean {
+export function isFileEqual(file1: File, file2: File): boolean {
 	return file1.name === file2.name && file1.size === file2.size && file1.type === file2.type;
 }
 

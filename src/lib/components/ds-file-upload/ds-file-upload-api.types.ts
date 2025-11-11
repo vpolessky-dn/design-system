@@ -1,3 +1,15 @@
+import { FileUploadFileError } from '@ark-ui/react';
+
+export type FileError = FileUploadFileError;
+export type UploadFileStatus = 'pending' | 'uploading' | 'interrupted' | 'completed' | 'error' | 'cancelled';
+
+export interface UploadFile extends File {
+	id: string;
+	progress: number;
+	status: UploadFileStatus;
+	errors?: FileError[];
+}
+
 export interface FileUploadOptions {
 	file: File;
 	fileId: string;

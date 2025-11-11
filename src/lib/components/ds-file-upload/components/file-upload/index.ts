@@ -1,2 +1,2 @@
 export { FileUpload } from './file-upload';
-export type { FileUploadProps, FileError } from './file-upload.types';
+export type { FileUploadProps } from './file-upload.types';

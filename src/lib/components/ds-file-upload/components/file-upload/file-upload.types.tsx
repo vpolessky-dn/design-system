@@ -1,13 +1,10 @@
 import React from 'react';
 import {
 	FileUploadFileAcceptDetails,
-	FileUploadFileError,
 	FileUploadFileMimeType,
 	FileUploadFileRejectDetails,
 } from '@ark-ui/react';
-import { UploadFileMeta } from '../../hooks/use-file-upload';
-
-export type FileError = FileUploadFileError;
+import { UploadFile } from '../../ds-file-upload-api.types';
 
 export interface FileUploadProps {
 	/**
@@ -64,7 +61,7 @@ export interface FileUploadProps {
 	/**
 	 * File states to display (managed externally)
 	 */
-	files?: UploadFileMeta[];
+	files?: UploadFile[];
 	/**
 	 * Callback when files are removed
 	 */

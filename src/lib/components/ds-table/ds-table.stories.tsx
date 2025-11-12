@@ -279,14 +279,34 @@ export const Expandable: Story = {
 		data: defaultData.slice(0, 5),
 		expandable: (row) => row.firstName !== 'Tanner',
 		renderExpandedRow: (row) => (
-			<div className={styles.expandedRowDetails}>
-				<h4>Expanded Details for {row.firstName}</h4>
-				<p>ID: {row.id}</p>
-				<p>
-					Full Name: {row.firstName} {row.lastName}
-				</p>
-				<p>Status: {row.status}</p>
-			</div>
+			<>
+				<div className={styles.expandedRowDetails}>
+					<h4>Expanded Details for {row.firstName}</h4>
+					<p>ID: {row.id}</p>
+					<p>
+						Full Name: {row.firstName} {row.lastName}
+					</p>
+					<p>Status: {row.status}</p>
+				</div>
+
+				<DsTable
+					columns={[
+						{
+							accessorKey: 'id',
+							header: 'ID',
+						},
+						{
+							accessorKey: 'firstName',
+							header: 'First Name',
+						},
+						{
+							accessorKey: 'lastName',
+							header: 'Last Name',
+						},
+					]}
+					data={defaultData.slice(0, 3)}
+				/>
+			</>
 		),
 	},
 };

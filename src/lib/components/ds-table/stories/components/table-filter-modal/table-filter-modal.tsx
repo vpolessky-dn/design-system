@@ -1,8 +1,8 @@
+import { useState } from 'react';
 import classNames from 'classnames';
 import { DsButton, DsIcon, DsModal } from '@design-system/ui';
-import styles from './table-filter-modal.module.scss';
 import { TableFilterModalProps, TableFilterNavItem } from './table-filter-modal.types';
-import { useState } from 'react';
+import styles from './table-filter-modal.module.scss';
 
 /**
  * Specialized filter modal with built-in filter navigation
@@ -12,9 +12,6 @@ const TableFilterModal = ({
 	onOpenChange,
 	columns,
 	className,
-	modal = true,
-	closeOnEscape = true,
-	closeOnInteractOutside = false,
 	onClearAll,
 	onApply,
 	filterNavItems = [],
@@ -22,7 +19,7 @@ const TableFilterModal = ({
 	applyDisabled = false,
 	clearAllDisabled = false,
 }: TableFilterModalProps) => {
-	const [selectedFilter, setSelectedFilter] = useState(false);
+	const [selectedFilter, setSelectedFilter] = useState<TableFilterNavItem>(filterNavItems[0]);
 
 	return (
 		<DsModal
@@ -30,9 +27,6 @@ const TableFilterModal = ({
 			onOpenChange={onOpenChange}
 			columns={columns}
 			className={classNames(styles.filterModal, className)}
-			modal={modal}
-			closeOnEscape={closeOnEscape}
-			closeOnInteractOutside={closeOnInteractOutside}
 		>
 			<DsModal.Header className={styles.filterHeader}>
 				<div className={styles.headerLeft}>
@@ -44,7 +38,7 @@ const TableFilterModal = ({
 
 			<DsModal.Body className={styles.filterBody}>
 				<FilterNav items={filterNavItems} selectedItem={selectedFilter} onSelect={setSelectedFilter} />
-				<div className={styles.filterContent}>{children}</div>
+				<div className={styles.filterContent}>{children(selectedFilter)}</div>
 			</DsModal.Body>
 
 			<DsModal.Footer className={styles.filterFooter}>

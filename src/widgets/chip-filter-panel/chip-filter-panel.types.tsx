@@ -1,4 +1,3 @@
-// AI Generated file
 import { CSSProperties } from 'react';
 
 export interface FilterChipItem {
@@ -10,6 +9,10 @@ export interface FilterChipItem {
 	 * The label text to display in the chip
 	 */
 	label: string;
+	/**
+	 * Additional metadata to store with the filter chip
+	 */
+	metadata?: Record<string, unknown>;
 	/**
 	 * Whether the filter chip is selected/checked
 	 */

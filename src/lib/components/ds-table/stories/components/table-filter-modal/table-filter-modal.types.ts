@@ -38,21 +38,6 @@ export interface TableFilterModalProps {
 	 */
 	className?: string;
 	/**
-	 * Whether to use modal behavior (blocking background)
-	 * @default true
-	 */
-	modal?: boolean;
-	/**
-	 * Whether to close on escape key
-	 * @default true
-	 */
-	closeOnEscape?: boolean;
-	/**
-	 * Whether to close when clicking outside
-	 * @default false
-	 */
-	closeOnInteractOutside?: boolean;
-	/**
 	 * Callback when clear all filters is clicked
 	 */
 	onClearAll?: () => void;
@@ -63,7 +48,7 @@ export interface TableFilterModalProps {
 	/**
 	 * Array of filter navigation items
 	 */
-	filterNavItems?: FilterNavItem[];
+	filterNavItems?: TableFilterNavItem[];
 	/**
 	 * Currently selected filter category ID
 	 */
@@ -75,7 +60,7 @@ export interface TableFilterModalProps {
 	/**
 	 * Content to display in the filter panel (right side)
 	 */
-	children?: ReactNode;
+	children?: (item: TableFilterNavItem) => ReactNode;
 	/**
 	 * Whether apply button is disabled
 	 */

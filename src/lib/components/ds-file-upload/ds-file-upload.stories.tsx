@@ -143,6 +143,14 @@ export const Compact: Story = {
 		adapter: MockAdapterPresets.fast(),
 		compact: true,
 		maxFiles: 1,
+		accept: [
+			'application/pdf',
+			'text/csv',
+			{
+				mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+				extensions: ['.xlsx'],
+			},
+		],
 		dropzoneText: 'Drag and drop your document here or',
 		triggerText: 'Choose document',
 		style: { width: '400px' },

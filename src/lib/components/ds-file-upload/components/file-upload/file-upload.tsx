@@ -8,6 +8,7 @@ import { FileUploadItem } from '../file-upload-item';
 import { FileUploadProps } from './file-upload.types';
 import { DEFAULT_ALLOWED_FILE_TYPES, DEFAULT_MAX_FILE_SIZE, DEFAULT_MAX_FILES } from '../../utils/constants';
 import { generateHelperText } from '../../utils/generate-helper-text';
+import { toArkUIAccept } from '../../utils/accept-utils';
 import styles from './file-upload.module.scss';
 
 /**
@@ -37,6 +38,8 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 	disabled = false,
 }) => {
 	const infoText = generateHelperText(accept, maxFileSize, maxFiles);
+	// Convert new accept format to Ark UI format
+	const arkUIAccept = accept ? toArkUIAccept(accept) : undefined;
 
 	return (
 		<ArkUiFileUpload.Root
@@ -44,7 +47,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 			className={classNames(styles.fileUploadRoot, className)}
 			maxFiles={maxFiles}
 			maxFileSize={maxFileSize}
-			accept={accept}
+			accept={arkUIAccept}
 			disabled={disabled}
 			allowDrop={!disableDrop}
 			acceptedFiles={acceptedFiles}

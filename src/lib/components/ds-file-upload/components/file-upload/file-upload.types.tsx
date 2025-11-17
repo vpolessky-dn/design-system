@@ -1,10 +1,7 @@
 import { CSSProperties } from 'react';
-import {
-	FileUploadFileAcceptDetails,
-	FileUploadFileMimeType,
-	FileUploadFileRejectDetails,
-} from '@ark-ui/react';
+import { FileUploadFileAcceptDetails, FileUploadFileRejectDetails } from '@ark-ui/react';
 import { UploadedFile } from '../../ds-file-upload-api.types';
+import { AcceptedFileType } from '../../types/accept-types';
 
 export interface FileUploadProps {
 	/**
@@ -56,10 +53,12 @@ export interface FileUploadProps {
 	style?: CSSProperties;
 	/**
 	 * The file types that are accepted
-	 * Maps MIME types to their file extensions
-	 * @example { 'application/pdf': ['.pdf'], 'image/png': ['.png'] }
+	 * Use shorthand for common MIME types (extensions provided automatically)
+	 * or explicit form for custom types
+	 * @example ['application/pdf', 'image/png']
+	 * @example ['application/pdf', { mimeType: 'application/x-custom', extensions: ['.custom'] }]
 	 */
-	accept?: Partial<Record<FileUploadFileMimeType, string[]>>;
+	accept?: AcceptedFileType[];
 	/**
 	 * File states to display (managed externally)
 	 */

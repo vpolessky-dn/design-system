@@ -1,14 +1,14 @@
-import { FileUploadFileMimeType } from '@ark-ui/react';
+import { AcceptedFileType } from '../types/accept-types';
 
 /**
  * Default allowed file types for the file upload component
  */
-export const DEFAULT_ALLOWED_FILE_TYPES: Partial<Record<FileUploadFileMimeType, string[]>> = {
-	'application/pdf': ['.pdf'],
-	'text/csv': ['.csv'],
-	'application/zip': ['.zip'],
-	'application/x-zip-compressed': ['.zip'],
-} as const;
+export const DEFAULT_ALLOWED_FILE_TYPES: AcceptedFileType[] = [
+	'application/pdf',
+	'text/csv',
+	'application/zip',
+	'application/x-zip-compressed',
+];
 
 /**
  * Default maximum file size in bytes (25MB)

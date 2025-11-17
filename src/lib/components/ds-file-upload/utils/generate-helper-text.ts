@@ -1,20 +1,17 @@
-import { FileUploadFileMimeType } from '@ark-ui/react';
+import { AcceptedFileType } from '../types/accept-types';
+import { getFileExtensions } from './accept-utils';
 import { formatFileSize } from './format-file-size';
 
 /**
  * Generate helper text based on validation props
  */
 export function generateHelperText(
-	accept: Partial<Record<FileUploadFileMimeType, string[]>> | undefined,
+	accept: AcceptedFileType[] | undefined,
 	maxFileSize: number,
 	maxFiles: number,
 ): string {
-	// Extract file extensions from accept object
-	const extensions = accept
-		? Object.values(accept)
-				.flat()
-				.filter((ext): ext is string => !!ext)
-		: [];
+	// Extract file extensions from accept configuration
+	const extensions = accept ? getFileExtensions(accept) : [];
 	const uniqueExtensions = [...new Set(extensions)];
 	const fileTypes = uniqueExtensions.map((ext) => ext.toUpperCase()).join(', ');
 

@@ -94,8 +94,7 @@ export function useTableFilters<TData>(
 	const enhancedColumns: ColumnDef<TData>[] = !baseColumns
 		? []
 		: baseColumns.map((col) => {
-				const accessorKey = (col as any).accessorKey;
-				const adapter = filterAdapters.find((a) => a.id === accessorKey);
+				const adapter = filterAdapters.find((a) => a.id === col.id);
 
 				if (adapter) {
 					return {
@@ -152,7 +151,7 @@ export function useTableFilters<TData>(
 	};
 
 	const deleteChip = (chip: FilterChipItem) => {
-		const filterKey = chip.metadata?.key;
+		const filterKey = chip.metadata?.key as string;
 		if (!filterKey) return;
 
 		const adapter = filterAdapters.find((a) => a.id === filterKey);

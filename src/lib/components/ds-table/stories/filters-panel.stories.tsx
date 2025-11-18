@@ -27,16 +27,19 @@ const sampleUsers = [
 
 const columns: ColumnDef<Workflow>[] = [
 	{
+		id: 'status',
 		accessorKey: 'status',
 		header: 'Status',
 		cell: (info) => info.getValue(),
 	},
 	{
+		id: 'name',
 		accessorKey: 'name',
 		header: 'Name',
 		cell: (info) => info.getValue(),
 	},
 	{
+		id: 'runningCompleted',
 		accessorKey: 'runningCompleted',
 		header: 'Running/completed',
 		cell: (info) => {
@@ -45,16 +48,19 @@ const columns: ColumnDef<Workflow>[] = [
 		},
 	},
 	{
+		id: 'category',
 		accessorKey: 'category',
 		header: 'Category',
 		cell: (info) => info.getValue(),
 	},
 	{
+		id: 'version',
 		accessorKey: 'version',
 		header: 'Version',
 		cell: (info) => info.getValue(),
 	},
 	{
+		id: 'lastEdited',
 		accessorKey: 'lastEdited',
 		header: 'Last edited',
 	},

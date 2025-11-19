@@ -193,7 +193,7 @@ export const Showcase: Story = {
 												return (
 													<td
 														key={`${row.label}-${variant}-${size}-${disabled ? 'disabled' : 'default'}`}
-														className={styles.showcaseCell}
+														className={`${styles.showcaseCell} ${variant === 'dark' ? styles.showcaseCellDark : ''}`}
 													>
 														<div className={styles.showcaseCellInline}>
 															<DsButtonNew

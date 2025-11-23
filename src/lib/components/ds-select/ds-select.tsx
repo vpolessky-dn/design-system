@@ -98,6 +98,10 @@ const DsSelect = ({
 				className={classNames(styles.control, size === 'small' && styles.small, className)}
 				style={style}
 				onKeyDown={(e) => {
+					if (!clearable) {
+						return;
+					}
+
 					if (select.open) {
 						return;
 					}

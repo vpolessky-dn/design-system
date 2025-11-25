@@ -55,12 +55,63 @@ export interface CustomFilterAdapterConfig<TData, TFilterValue> {
 
 /**
  * Factory function to create a custom filter adapter
- * Provides maximum flexibility for app-specific filtering needs
  *
- * Use this when:
- * - You need complex filtering logic
- * - You have a unique UI that doesn't fit generic patterns
- * - You need to combine multiple sub-filters
+ * Provides maximum flexibility for app-specific filtering needs.
+ * Use this when checkbox or dual-range adapters don't fit your requirements.
+ *
+ * ## When to use:
+ * - Complex filtering logic (e.g., editor + date range)
+ * - Unique UI that doesn't fit generic patterns
+ * - Combining multiple sub-filters
+ * - Special chip generation requirements
+ *
+ * ## Example:
+ * ```typescript
+ * interface MyFilterValue {
+ *   users: string[];
+ *   dateRange: { from?: Date; to?: Date };
+ * }
+ *
+ * const myFilter = createCustomFilterAdapter<DataType, MyFilterValue>({
+ *   id: 'myColumn',
+ *   label: 'My Filter',
+ *   initialValue: { users: [], dateRange: {} },
+ *
+ *   filterFn: (row, columnId, filterValue) => {
+ *     // Your custom logic
+ *     return matchesUsers && matchesDateRange;
+ *   },
+ *
+ *   toChips: (value) => {
+ *     // Generate chips from your filter value
+ *     return chips;
+ *   },
+ *
+ *   fromChip: (chip, currentValue) => {
+ *     // Remove chip's effect from value
+ *     return updatedValue;
+ *   },
+ *
+ *   getActiveCount: (value) => {
+ *     // Count active filters
+ *     return count;
+ *   },
+ *
+ *   hasActiveFilters: (value) => {
+ *     // Check if filter is active
+ *     return isActive;
+ *   },
+ *
+ *   renderFilter: (value, onChange) => (
+ *     <YourCustomFilterComponent
+ *       value={value}
+ *       onChange={onChange}
+ *     />
+ *   ),
+ * });
+ * ```
+ *
+ * See `workflow-filters.config.tsx` for a complete example (lastEditedFilterAdapter).
  */
 export function createCustomFilterAdapter<TData, TFilterValue>(
 	config: CustomFilterAdapterConfig<TData, TFilterValue>,

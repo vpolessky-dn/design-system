@@ -226,10 +226,156 @@ const defaultData: Workflow[] = [
 ];
 
 const meta: Meta<typeof DsTable<Workflow, unknown>> = {
-	title: 'Design System/Table',
+	title: 'Design System/Table/Filters',
 	component: DsTable,
 	parameters: {
 		layout: 'fullscreen',
+		docs: {
+			description: {
+				component: `
+# Table Filters System
+
+A plug-and-play filter system using the **Filter Adapter Pattern** that eliminates boilerplate and centralizes filter logic.
+
+## Features
+
+- ✅ **Plug-and-play**: Add filters by adding to config array
+- ✅ **Type-safe**: Full TypeScript support
+- ✅ **Automatic**: Chip generation, nav items, column enhancement
+- ✅ **Reusable**: Generic adapters work across tables
+- ✅ **Extensible**: Custom adapters for complex scenarios
+
+## Quick Start
+
+### 1. Define Filters (config file)
+
+\`\`\`typescript
+// my-filters.config.tsx
+import { createCheckboxFilterAdapter, createDualRangeFilterAdapter } from '../filters';
+
+export const statusFilter = createCheckboxFilterAdapter({
+  id: 'status',
+  label: 'Status',
+  items: [
+    { value: 'active', label: 'Active' },
+    { value: 'inactive', label: 'Inactive' },
+  ],
+});
+
+export const rangeFilter = createDualRangeFilterAdapter({
+  id: 'count',
+  label: 'Count',
+  fields: { count: 'Count' },
+});
+
+export const myFilters = [statusFilter, rangeFilter];
+\`\`\`
+
+### 2. Use in Component
+
+\`\`\`typescript
+import { useTableFilters } from '../filters/hooks/use-table-filters';
+import { myFilters } from './my-filters.config';
+
+function MyTable() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    columnFilters,       // For TanStack Table
+    filterChips,         // For DsChipGroup
+    filterNavItems,      // For FilterModal nav
+    enhancedColumns,     // Columns with filters
+    handlers,            // { applyFilters, clearAll, deleteChip }
+    renderFilterContent, // Render function
+  } = useTableFilters(myFilters, baseColumns);
+
+  return (
+    <>
+      <DsButton onClick={() => setIsModalOpen(true)}>
+        <DsIcon icon="filter_list" />
+      </DsButton>
+
+      {filterChips.length > 0 && (
+        <DsChipGroup
+          items={filterChips}
+          onClearAll={handlers.clearAll}
+          onItemDelete={handlers.deleteChip}
+        />
+      )}
+
+      <DsTable
+        columns={enhancedColumns}
+        columnFilters={columnFilters}
+        data={myData}
+      />
+
+      <FilterModal
+        open={isModalOpen}
+        onOpenChange={setIsModalOpen}
+        filterNavItems={filterNavItems}
+        onApply={handlers.applyFilters}
+        onClearAll={handlers.clearAll}
+      >
+        {(selectedFilter) => renderFilterContent(selectedFilter)}
+      </FilterModal>
+    </>
+  );
+}
+\`\`\`
+
+## Available Filter Types
+
+### Checkbox Filter (Multi-select)
+\`\`\`typescript
+createCheckboxFilterAdapter({
+  id: 'columnName',
+  label: 'Display Label',
+  items: [{ value: 'val1', label: 'Label 1' }],
+  renderer?: (item) => <CustomComponent />,      // Optional
+  chipLabelTemplate?: (item) => \`Custom: \${item.label}\`, // Optional
+  cellRenderer?: (value) => <CustomCell />,      // Optional
+});
+\`\`\`
+
+### Dual-Range Filter (Numeric ranges)
+\`\`\`typescript
+createDualRangeFilterAdapter({
+  id: 'columnName',
+  label: 'Display Label',
+  fields: {
+    field1: 'Field 1 Label',
+    field2: 'Field 2 Label',
+  },
+  formatNumber?: (num) => num.toFixed(2),        // Optional
+});
+\`\`\`
+
+### Custom Filter (Full control)
+\`\`\`typescript
+createCustomFilterAdapter({
+  id: 'columnName',
+  label: 'Display Label',
+  initialValue: { /* your state */ },
+  filterFn: (row, columnId, filterValue) => boolean,
+  toChips: (value) => FilterChipItem[],
+  fromChip: (chip, currentValue) => newValue,
+  getActiveCount: (value) => number,
+  hasActiveFilters: (value) => boolean,
+  renderFilter: (value, onChange) => ReactNode,
+  cellRenderer?: (value) => ReactNode,           // Optional
+});
+\`\`\`
+
+## What You Get Automatically
+
+- ✅ Chip generation from filter state
+- ✅ Filter nav items with active counts
+- ✅ Column enhancement with filter functions
+- ✅ State management across all filters
+- ✅ Type-safe filtering
+`,
+			},
+		},
 	},
 	tags: ['autodocs'],
 	args: {
@@ -262,9 +408,62 @@ type Story = StoryObj<typeof DsTable<Workflow, unknown>>;
 
 export const FiltersPanel: Story = {
 	name: 'With Filters Panel',
+	parameters: {
+		docs: {
+			description: {
+				story: `
+### Interactive Filter Example
+
+This story demonstrates the complete filter system with:
+
+- **Status Filter**: Checkbox multi-select with custom rendering (status badges)
+- **Running/Completed Filter**: Dual-range numeric filter
+- **Category Filter**: Simple checkbox multi-select
+- **Version Filter**: Checkbox with custom chip labels
+
+#### Key Implementation Details:
+
+1. **Filter Configuration** (see \`workflow-filters.config.tsx\`):
+   - Centralized filter definitions
+   - Custom renderers for status badges
+   - Format functions for numbers
+
+2. **Hook Usage**:
+   \`\`\`typescript
+   const {
+     columnFilters,       // Pass to DsTable
+     filterChips,         // Pass to DsChipGroup
+     filterNavItems,      // Pass to FilterModal
+     enhancedColumns,     // Pass to DsTable (includes filter functions)
+     handlers,            // { applyFilters, clearAll, deleteChip }
+     renderFilterContent, // Pass to FilterModal children
+   } = useTableFilters(workflowFilters, columns);
+   \`\`\`
+
+3. **What's Handled Automatically**:
+   - ✅ Filter state management
+   - ✅ Chip generation and deletion
+   - ✅ Nav item counts (updates in real-time)
+   - ✅ Column enhancement with filter functions
+   - ✅ Type-safe filter values
+
+#### Try It:
+1. Click the filter icon to open the modal
+2. Select filters in different categories
+3. Notice the nav item counts update as you make changes
+4. Click "Apply" to see filtered data and chips
+5. Delete individual chips or clear all filters
+
+#### Adding More Filters:
+To add a new filter, just add one adapter to \`workflowFilters\` array. No other changes needed!
+`,
+			},
+		},
+	},
 	render: function Render(args) {
 		const [isOpen, setIsOpen] = useState(false);
 
+		// useTableFilters hook orchestrates all filter logic
 		const { columnFilters, filterChips, filterNavItems, enhancedColumns, handlers, renderFilterContent } =
 			useTableFilters(workflowFilters, args.columns);
 
@@ -280,15 +479,22 @@ export const FiltersPanel: Story = {
 
 		return (
 			<div className={styles.tableFilterContainer}>
+				{/* Toolbar with filter button */}
 				<div className={styles.toolbar}>
 					<DsButton design="v1.2" buttonType="secondary" onClick={() => setIsOpen(true)}>
 						<DsIcon size="tiny" icon="filter_list" />
 					</DsButton>
 				</div>
+
+				{/* Filter chips (automatically generated from filter state) */}
 				{filterChips.length > 0 && (
 					<DsChipGroup items={filterChips} onClearAll={handleClearAll} onItemDelete={handlers.deleteChip} />
 				)}
+
+				{/* Table with enhanced columns (includes filter functions) */}
 				<DsTable {...args} columns={enhancedColumns} columnFilters={columnFilters} />
+
+				{/* Filter modal (renders filter UI for selected category) */}
 				<FilterModal
 					open={isOpen}
 					onOpenChange={setIsOpen}

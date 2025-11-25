@@ -1,3 +1,43 @@
+/**
+ * Workflow Filters Configuration
+ *
+ * This file demonstrates the Filter Adapter Pattern for table filters.
+ * It serves as a reference implementation showing:
+ *
+ * 1. **Checkbox Filter** (statusFilterAdapter):
+ *    - Multi-select with custom rendering (status badges)
+ *    - Custom chip labels
+ *    - Custom cell renderer
+ *
+ * 2. **Dual-Range Filter** (runningCompletedFilterAdapter):
+ *    - Multiple numeric range fields in one filter
+ *    - Number formatting
+ *    - Automatic chip generation
+ *
+ * 3. **Custom Filter** (lastEditedFilterAdapter):
+ *    - Complex filter with editor selection + date range
+ *    - Custom render component
+ *    - Multiple chip types from one filter
+ *    - Custom cell renderer
+ *
+ * ## Usage Pattern:
+ *
+ * ```typescript
+ * // 1. Define filter adapters (this file)
+ * export const myFilter = createCheckboxFilterAdapter({ ... });
+ *
+ * // 2. Export array of adapters
+ * export const workflowFilters = [myFilter, ...];
+ *
+ * // 3. Use in component with useTableFilters hook
+ * const { columnFilters, filterChips, enhancedColumns, handlers } =
+ *   useTableFilters(workflowFilters, columns);
+ * ```
+ *
+ * To add a new filter, simply add a new adapter to the workflowFilters array.
+ * No changes needed in the component!
+ */
+
 import { ReactNode } from 'react';
 import DsStatusBadge from '../../../ds-status-badge/ds-status-badge';
 import { DsStatus } from '../../../ds-status-badge/ds-status-badge.types';
@@ -78,7 +118,17 @@ export const renderStatusBadge = (status: DsStatus): ReactNode => {
 };
 
 /**
- * Status filter adapter
+ * Status filter adapter - Checkbox multi-select filter
+ *
+ * Demonstrates:
+ * - Custom item rendering with DsStatusBadge
+ * - Custom chip label template
+ * - Custom cell renderer for table column
+ *
+ * Features:
+ * - Empty selection = show all (no filter applied)
+ * - Selected items = show only those items
+ * - Automatic chip generation for each selected status
  */
 export const statusFilterAdapter = createCheckboxFilterAdapter<Workflow, DsStatus>({
 	id: 'status',
@@ -90,7 +140,18 @@ export const statusFilterAdapter = createCheckboxFilterAdapter<Workflow, DsStatu
 });
 
 /**
- * Running/Completed filter adapter
+ * Running/Completed filter adapter - Dual-range numeric filter
+ *
+ * Demonstrates:
+ * - Multiple numeric ranges in one filter (running AND completed)
+ * - Custom number formatting
+ * - Custom row value extraction
+ *
+ * Features:
+ * - Each field can have independent from/to ranges
+ * - All ranges must match (AND logic)
+ * - Automatic chip generation for each active range
+ * - Formatted numbers in chips
  */
 export const runningCompletedFilterAdapter = createDualRangeFilterAdapter<Workflow>({
 	id: 'runningCompleted',
@@ -178,7 +239,23 @@ const parseTimestamp = (timestamp: string): Date => {
 };
 
 /**
- * Last Edited filter adapter
+ * Last Edited filter adapter - Custom complex filter
+ *
+ * Demonstrates:
+ * - Complex filter state (editor multi-select + time range)
+ * - Custom filter function with multiple conditions
+ * - Multiple chip types from one filter
+ * - Custom filter UI component
+ * - Custom cell renderer
+ *
+ * Features:
+ * - Filter by multiple editors (multi-select)
+ * - Filter by time range (preset options + custom date range)
+ * - Separate chips for editors and time range
+ * - Both conditions must match (AND logic)
+ *
+ * This is a reference implementation for building custom filters
+ * that don't fit the checkbox or dual-range patterns.
  */
 export const lastEditedFilterAdapter = createCustomFilterAdapter<Workflow, LastEditedFilterValue>({
 	id: 'lastEdited',

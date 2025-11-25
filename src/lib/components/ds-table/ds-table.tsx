@@ -182,6 +182,10 @@ const DsTable = <TData extends { id: string }, TValue>({
 		}));
 	};
 
+	const renderVirtualizedEmptyState = () => (
+		<div className={styles.emptyStateContent}>{emptyState || 'No results.'}</div>
+	);
+
 	const renderEmptyState = () => (
 		<TableRow>
 			<TableCell
@@ -250,10 +254,14 @@ const DsTable = <TData extends { id: string }, TValue>({
 							className={classnames(virtualized && styles.virtualizedBody)}
 						>
 							{virtualized ? (
-								rowVirtualizer.getVirtualItems().map((virtualRow: VirtualItem) => {
-									const row = rows[virtualRow.index];
-									return <DsTableRow key={row.id} row={row} virtualRow={virtualRow} />;
-								})
+								rowVirtualizer.getVirtualItems()?.length ? (
+									rowVirtualizer.getVirtualItems().map((virtualRow: VirtualItem) => {
+										const row = rows[virtualRow.index];
+										return <DsTableRow key={row.id} row={row} virtualRow={virtualRow} />;
+									})
+								) : (
+									renderVirtualizedEmptyState()
+								)
 							) : (
 								<SortableWrapper>
 									{rows.length

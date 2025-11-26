@@ -155,7 +155,7 @@ export const WithTable: Story = {
 						onClear={() => setSearch('')}
 					/>
 
-					<DsButton size="small">Click </DsButton>
+					<DsButton size="small">Click</DsButton>
 				</div>
 				<DsTable columns={columns} data={people} columnFilters={[{ id: 'firstName', value: search }]} />
 			</div>

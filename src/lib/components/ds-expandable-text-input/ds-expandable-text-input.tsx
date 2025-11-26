@@ -55,6 +55,7 @@ export function DsExpandableTextInput({
 				<button
 					className={styles.trigger}
 					aria-label="Open text input"
+					aria-hidden={expanded}
 					tabIndex={expanded ? -1 : 0}
 					onClick={() => {
 						if (props.disabled) {

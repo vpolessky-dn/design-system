@@ -92,6 +92,5 @@ export interface DsTextInputProps {
 
 	tabIndex?: number;
 
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	InputWrapper?: ComponentType<any>;
+	InputWrapper?: ComponentType<{ children: React.ReactNode }>;
 }

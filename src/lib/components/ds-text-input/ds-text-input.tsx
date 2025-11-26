@@ -44,7 +44,7 @@ const DsTextInput: FC<DsTextInputProps> = ({
 
 	return (
 		<div className={containerClass} style={style}>
-			{startAdornment && <div className={classNames(styles.adornment, styles.start)}>{startAdornment}</div>}
+			{startAdornment && <div className={styles.adornment}>{startAdornment}</div>}
 			<InputWrapper>
 				<input
 					id={id}

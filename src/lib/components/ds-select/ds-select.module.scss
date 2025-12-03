@@ -21,7 +21,6 @@
 .viewport {
 	@include dropdown.dropdown-viewport;
 	max-height: 256px;
-	margin-inline-start: calc(-1 * var(--spacing-sm));
 
 	& > .content {
 		overflow-y: auto;

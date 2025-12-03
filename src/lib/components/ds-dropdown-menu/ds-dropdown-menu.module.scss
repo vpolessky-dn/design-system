@@ -103,6 +103,8 @@
 /** Legacy classes */
 .content-legacy {
 	@include dropdown.dropdown-content;
+	min-width: 200px;
+	width: var(--radix-select-trigger-width);
 }
 
 .viewport-legacy {

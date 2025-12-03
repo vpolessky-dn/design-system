@@ -42,14 +42,14 @@ const DsBreadcrumb: React.FC<DsBreadcrumbProps> = ({ items, onSelect, className 
 									{item.label}
 								</Link>
 							) : (
-								<DsDropdownMenu.Root>
+								<DsDropdownMenu.Root onSelect={onSelect}>
 									<DsDropdownMenu.Trigger className={styles.trigger}>
 										{item.icon && <DsIcon icon={item.icon} className={styles.icon} size="small" />}
 										{selectedOption?.label || item.label}
 										<DsIcon icon="arrow_drop_down" className={styles.dropdownIcon} />
 									</DsDropdownMenu.Trigger>
 									<DsDropdownMenu.Content>
-										<DsDropdownMenu.Search>
+										<DsDropdownMenu.Header>
 											<DsTextInput
 												placeholder="Search"
 												value={search}
@@ -59,19 +59,21 @@ const DsBreadcrumb: React.FC<DsBreadcrumbProps> = ({ items, onSelect, className 
 													startAdornment: <DsIcon icon="search" size="tiny" />,
 												}}
 											/>
-										</DsDropdownMenu.Search>
+										</DsDropdownMenu.Header>
 										{filteredOptions.map((opt) => {
 											const selected = selectedOption?.href === opt.href;
 											return (
-												<DsDropdownMenu.Item
+												<DsTypography
 													key={opt.href}
-													selected={selected}
-													onClick={() => onSelect?.(opt.href)}
+													className={styles.itemLabel}
+													variant="body-sm-reg"
+													asChild
 												>
-													<DsTypography className={styles.itemLabel} variant="body-sm-reg">
+													<DsDropdownMenu.Item value={opt.href} selected={selected}>
 														{opt.label}
-													</DsTypography>
-												</DsDropdownMenu.Item>
+														{selected && <DsDropdownMenu.ItemIndicator />}
+													</DsDropdownMenu.Item>
+												</DsTypography>
 											);
 										})}
 									</DsDropdownMenu.Content>

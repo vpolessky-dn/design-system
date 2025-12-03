@@ -266,7 +266,6 @@ $textarea-height-default: 120px;
 	display: grid;
 	grid-template-columns: auto min-content min-content;
 	gap: var(--spacing-3xs);
-	padding: var(--spacing-3xs) var(--spacing-sm);
 	border: 1px solid var(--form-control-border-color, var(--color-border));
 	border-radius: 4px;
 	background-color: var(--color-background);
@@ -306,6 +305,7 @@ $textarea-height-default: 120px;
 	grid-column: 1 / -1;
 	outline: none;
 	align-items: center;
+	padding: var(--spacing-3xs) var(--spacing-sm);
 
 	.triggerIcon {
 		grid-column: 3;

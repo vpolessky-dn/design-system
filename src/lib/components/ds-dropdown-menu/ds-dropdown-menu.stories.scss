@@ -3,6 +3,7 @@
 .trigger {
 	display: flex;
 	align-items: center;
+	justify-content: space-between;
 	gap: 8px;
 	padding: 8px 12px;
 	border: 1px solid var(--neutral-4);
@@ -10,6 +11,7 @@
 	background: var(--white);
 	cursor: pointer;
 	transition: border-color 0.2s;
+	width: 250px;
 
 	&:hover {
 		border-color: var(--action-cta1);

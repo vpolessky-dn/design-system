@@ -1,4 +1,4 @@
-import React, { createContext, Fragment, useContext, useId, useState } from 'react';
+import React, { createContext, Fragment, useContext, useState } from 'react';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import { Menu } from '@ark-ui/react/menu';
 import { Portal } from '@ark-ui/react/portal';
@@ -10,13 +10,14 @@ import DsTextInput from '../ds-text-input/ds-text-input';
 import {
 	DsDropdownMenuActionsProps,
 	DsDropdownMenuContentProps,
-	DsDropdownMenuGroupContentProps,
-	DsDropdownMenuGroupLabelProps,
-	DsDropdownMenuGroupProps,
+	DsDropdownMenuHeaderProps,
+	DsDropdownMenuItemGroupContentProps,
+	DsDropdownMenuItemGroupLabelProps,
+	DsDropdownMenuItemGroupProps,
+	DsDropdownMenuItemIndicatorProps,
 	DsDropdownMenuItemProps,
 	DsDropdownMenuLegacyProps,
 	DsDropdownMenuRootProps,
-	DsDropdownMenuSearchProps,
 	DsDropdownMenuSeparatorProps,
 	DsDropdownMenuTriggerProps,
 } from './ds-dropdown-menu.types';
@@ -39,33 +40,21 @@ const Root: React.FC<DsDropdownMenuRootProps> = ({
 	onOpenChange,
 	onSelect,
 	onHighlightChange,
-	children,
-}) => {
-	const [internalOpen, setInternalOpen] = useState(false);
-
-	const isControlled = open !== undefined;
-	const isOpen = isControlled ? open : internalOpen;
-
-	const handleOpenChange = (details: { open: boolean }) => {
-		if (!isControlled) {
-			setInternalOpen(details.open);
-		}
-		onOpenChange?.(details.open);
-	};
-
-	// Default positioning for dropdown menus
-	const positioning = {
+	positioning = {
 		placement: 'bottom-start' as const,
 		gutter: 4,
-	};
-
+	},
+	preventCloseOnSelect = false,
+	children,
+}) => {
 	return (
 		<Menu.Root
-			open={isOpen}
-			onOpenChange={handleOpenChange}
-			onSelect={(details: { value: string }) => onSelect?.(details.value)}
+			open={open}
+			onOpenChange={(details) => onOpenChange?.(details.open)}
+			onSelect={(details) => onSelect?.(details.value)}
 			onHighlightChange={(details) => onHighlightChange?.(details.highlightedValue)}
 			positioning={positioning}
+			closeOnSelect={!preventCloseOnSelect}
 		>
 			{children}
 		</Menu.Root>
@@ -100,25 +89,21 @@ const Content: React.FC<DsDropdownMenuContentProps> = ({
 };
 
 /**
- * Item component - renders a menu item with optional selection indicator
+ * Item component - renders a menu item
  */
 const Item: React.FC<DsDropdownMenuItemProps> = ({
 	disabled,
 	selected,
-	preventClose = false,
 	value,
+	asChild,
 	onSelect,
 	children,
 	className,
 	style,
 }) => {
-	const generatedId = useId();
-	const itemValue = value ?? generatedId;
-
 	return (
 		<Menu.Item
 			disabled={disabled}
-			closeOnSelect={!preventClose}
 			className={classNames(
 				styles.item,
 				{
@@ -127,19 +112,30 @@ const Item: React.FC<DsDropdownMenuItemProps> = ({
 				className,
 			)}
 			style={style}
-			value={itemValue}
+			value={value}
+			asChild={asChild}
 			onSelect={onSelect}
 		>
 			{children}
-			{selected && <DsIcon className={styles.indicator} icon="check" />}
 		</Menu.Item>
 	);
 };
 
 /**
- * Search component - container for search input
+ * ItemIndicator component - renders a selection indicator (check icon by default)
  */
-const Search: React.FC<DsDropdownMenuSearchProps> = ({ children, className, style }) => {
+const ItemIndicator: React.FC<DsDropdownMenuItemIndicatorProps> = ({ children, className, style }) => {
+	return (
+		<span className={classNames(styles.indicator, className)} style={style}>
+			{children ?? <DsIcon icon="check" />}
+		</span>
+	);
+};
+
+/**
+ * Header component - sticky header container for search, filters, or other controls
+ */
+const Header: React.FC<DsDropdownMenuHeaderProps> = ({ children, className, style }) => {
 	return (
 		<div className={classNames(styles.search, className)} style={style}>
 			{children}
@@ -164,9 +160,9 @@ const Actions: React.FC<DsDropdownMenuActionsProps> = ({ children, className, st
 };
 
 /**
- * Group component - collapsible group container
+ * ItemGroup component - collapsible group container
  */
-const Group: React.FC<DsDropdownMenuGroupProps> = ({
+const ItemGroup: React.FC<DsDropdownMenuItemGroupProps> = ({
 	children,
 	collapsed: controlledCollapsed,
 	onCollapsedChange,
@@ -196,9 +192,9 @@ const Group: React.FC<DsDropdownMenuGroupProps> = ({
 };
 
 /**
- * GroupLabel component - clickable group header with collapse indicator
+ * ItemGroupLabel component - clickable group header with collapse indicator
  */
-const GroupLabel: React.FC<DsDropdownMenuGroupLabelProps> = ({ children, className, style }) => {
+const ItemGroupLabel: React.FC<DsDropdownMenuItemGroupLabelProps> = ({ children, className, style }) => {
 	const context = useContext(GroupContext);
 
 	if (!context) {
@@ -212,13 +208,6 @@ const GroupLabel: React.FC<DsDropdownMenuGroupLabelProps> = ({ children, classNa
 
 	const { collapsed, toggle } = context;
 
-	const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-		if (e.key === 'Enter' || e.key === ' ') {
-			e.preventDefault();
-			toggle();
-		}
-	};
-
 	return (
 		<Menu.ItemGroupLabel asChild>
 			<button
@@ -226,7 +215,7 @@ const GroupLabel: React.FC<DsDropdownMenuGroupLabelProps> = ({ children, classNa
 				className={classNames(styles.groupLabel, styles.groupLabelCollapsible, className)}
 				style={style}
 				onClick={toggle}
-				onKeyDown={handleKeyDown}
+				onKeyDown={(e) => e.stopPropagation()}
 			>
 				<DsTypography variant="body-sm-md">{children}</DsTypography>
 				<DsIcon
@@ -241,24 +230,12 @@ const GroupLabel: React.FC<DsDropdownMenuGroupLabelProps> = ({ children, classNa
 };
 
 /**
- * GroupContent component - collapsible content container
+ * ItemGroupContent component - collapsible content container
  */
-const GroupContent: React.FC<DsDropdownMenuGroupContentProps> = ({ children, className, style }) => {
+const ItemGroupContent: React.FC<DsDropdownMenuItemGroupContentProps> = ({ children, className, style }) => {
 	const context = useContext(GroupContext);
 
-	// If not inside a Group, always render
-	if (!context) {
-		return (
-			<div className={className} style={style}>
-				{children}
-			</div>
-		);
-	}
-
-	const { collapsed } = context;
-
-	// Hide content when collapsed
-	if (collapsed) {
+	if (context?.collapsed) {
 		return null;
 	}
 
@@ -369,16 +346,19 @@ export const DsDropdownMenuLegacy: React.FC<DsDropdownMenuLegacyProps> = ({
  *     <button>Open</button>
  *   </DsDropdownMenu.Trigger>
  *   <DsDropdownMenu.Content>
- *     <DsDropdownMenu.Search>
+ *     <DsDropdownMenu.Header>
  *       <DsTextInput placeholder="Search..." />
- *     </DsDropdownMenu.Search>
- *     <DsDropdownMenu.Item onSelect={...}>Item 1</DsDropdownMenu.Item>
- *     <DsDropdownMenu.Group>
- *       <DsDropdownMenu.GroupLabel>Group Name</DsDropdownMenu.GroupLabel>
- *       <DsDropdownMenu.GroupContent>
- *         <DsDropdownMenu.Item onSelect={...}>Item 2</DsDropdownMenu.Item>
- *       </DsDropdownMenu.GroupContent>
- *     </DsDropdownMenu.Group>
+ *     </DsDropdownMenu.Header>
+ *     <DsDropdownMenu.Item value="item1">
+ *       Item 1
+ *       <DsDropdownMenu.ItemIndicator />
+ *     </DsDropdownMenu.Item>
+ *     <DsDropdownMenu.ItemGroup>
+ *       <DsDropdownMenu.ItemGroupLabel>Group Name</DsDropdownMenu.ItemGroupLabel>
+ *       <DsDropdownMenu.ItemGroupContent>
+ *         <DsDropdownMenu.Item value="item2">Item 2</DsDropdownMenu.Item>
+ *       </DsDropdownMenu.ItemGroupContent>
+ *     </DsDropdownMenu.ItemGroup>
  *     <DsDropdownMenu.Separator />
  *     <DsDropdownMenu.Actions>
  *       <DsButton>Cancel</DsButton>
@@ -392,11 +372,12 @@ export const DsDropdownMenu = {
 	Trigger,
 	Content,
 	Item,
-	Search,
+	ItemIndicator,
+	Header,
 	Actions,
-	Group,
-	GroupLabel,
-	GroupContent,
+	ItemGroup,
+	ItemGroupLabel,
+	ItemGroupContent,
 	Separator,
 };
 

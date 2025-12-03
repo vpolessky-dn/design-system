@@ -3,6 +3,11 @@ import type { Menu } from '@ark-ui/react/menu';
 import { IconType } from '../ds-icon';
 
 /**
+ * Positioning options for dropdown menu
+ */
+export type DsDropdownMenuPositioning = Menu.RootProps['positioning'];
+
+/**
  * DEPRECATED: Legacy dropdown menu option configuration
  * Use compound component pattern instead
  * @deprecated
@@ -91,7 +96,11 @@ export interface DsDropdownMenuLegacyProps {
 /**
  * Props for the DsDropdownMenu Root component
  */
-export interface DsDropdownMenuRootProps extends Pick<Menu.RootProps, 'open' | 'children'> {
+export interface DsDropdownMenuRootProps extends Pick<Menu.RootProps, 'children'> {
+	/**
+	 * Whether the dropdown is open (controlled mode)
+	 */
+	open?: boolean;
 	/**
 	 * Callback when open state changes
 	 */
@@ -104,6 +113,15 @@ export interface DsDropdownMenuRootProps extends Pick<Menu.RootProps, 'open' | '
 	 * Callback when the highlighted item changes
 	 */
 	onHighlightChange?: (value: string | null) => void;
+	/**
+	 * Positioning options for the dropdown
+	 */
+	positioning?: DsDropdownMenuPositioning;
+	/**
+	 * Prevents the menu from closing when any item is selected
+	 * @default false
+	 */
+	preventCloseOnSelect?: boolean;
 }
 
 /**
@@ -114,8 +132,15 @@ export type DsDropdownMenuTriggerProps = Menu.TriggerProps;
 /**
  * Props for the DsDropdownMenu Content component
  */
-export interface DsDropdownMenuContentProps
-	extends Pick<Menu.ContentProps, 'children' | 'className' | 'style'> {
+export interface DsDropdownMenuContentProps extends Pick<Menu.ContentProps, 'children'> {
+	/**
+	 * Optional CSS class name
+	 */
+	className?: string;
+	/**
+	 * Optional inline styles
+	 */
+	style?: CSSProperties;
 	/**
 	 * Whether to render in place instead of using portals
 	 * @default false
@@ -126,30 +151,50 @@ export interface DsDropdownMenuContentProps
 /**
  * Props for the DsDropdownMenu Item component
  */
-export interface DsDropdownMenuItemProps extends Omit<Menu.ItemProps, 'value'> {
+export interface DsDropdownMenuItemProps
+	extends Partial<Pick<Menu.ItemProps, 'disabled' | 'asChild' | 'className' | 'style'>> {
 	/**
-	 * Optional unique value for the menu item
-	 * If not provided, a stable ID will be generated automatically
+	 * Unique value for the menu item
 	 */
-	value?: string;
+	value: string;
 	/**
-	 * Whether the item is selected (shows check indicator)
+	 * Item content
+	 */
+	children?: ReactNode;
+	/**
+	 * Whether the item is selected (applies selected styling)
 	 */
 	selected?: boolean;
 	/**
-	 * Prevents the menu from closing when this item is clicked
-	 * Useful for checkbox/radio items that should allow multiple selections
-	 * @default false
+	 * Callback when this specific item is selected
 	 */
-	preventClose?: boolean;
+	onSelect?: () => void;
 }
 
 /**
- * Props for the DsDropdownMenu Search component
+ * Props for the DsDropdownMenu ItemIndicator component
  */
-export interface DsDropdownMenuSearchProps {
+export interface DsDropdownMenuItemIndicatorProps {
 	/**
-	 * The search input or custom search component
+	 * Custom content to render as the indicator (defaults to check icon)
+	 */
+	children?: ReactNode;
+	/**
+	 * Optional CSS class name
+	 */
+	className?: string;
+	/**
+	 * Optional inline styles
+	 */
+	style?: CSSProperties;
+}
+
+/**
+ * Props for the DsDropdownMenu Header component
+ */
+export interface DsDropdownMenuHeaderProps {
+	/**
+	 * The header content (typically a search input or filter controls)
 	 */
 	children: ReactNode;
 	/**
@@ -181,9 +226,9 @@ export interface DsDropdownMenuActionsProps {
 }
 
 /**
- * Props for the DsDropdownMenu Group component
+ * Props for the DsDropdownMenu ItemGroup component
  */
-export interface DsDropdownMenuGroupProps extends Menu.ItemGroupProps {
+export interface DsDropdownMenuItemGroupProps extends Menu.ItemGroupProps {
 	/**
 	 * Whether the group is collapsed
 	 */
@@ -195,14 +240,14 @@ export interface DsDropdownMenuGroupProps extends Menu.ItemGroupProps {
 }
 
 /**
- * Props for the DsDropdownMenu GroupLabel component
+ * Props for the DsDropdownMenu ItemGroupLabel component
  */
-export type DsDropdownMenuGroupLabelProps = Menu.ItemGroupLabelProps;
+export type DsDropdownMenuItemGroupLabelProps = Menu.ItemGroupLabelProps;
 
 /**
- * Props for the DsDropdownMenu GroupContent component
+ * Props for the DsDropdownMenu ItemGroupContent component
  */
-export interface DsDropdownMenuGroupContentProps {
+export interface DsDropdownMenuItemGroupContentProps {
 	/**
 	 * The content to show/hide based on collapsed state
 	 */

@@ -38,24 +38,24 @@ export const Default: Story = {
 					<DsIcon icon="more_vert" />
 				</DsDropdownMenu.Trigger>
 				<DsDropdownMenu.Content>
-					<DsDropdownMenu.Item onSelect={handleEdit}>
+					<DsDropdownMenu.Item value="edit" onSelect={handleEdit}>
 						<DsIcon icon="edit" />
 						<span>Edit</span>
 					</DsDropdownMenu.Item>
-					<DsDropdownMenu.Item onSelect={handleDuplicate}>
+					<DsDropdownMenu.Item value="duplicate" onSelect={handleDuplicate}>
 						<DsIcon icon="content_copy" />
 						<span>Duplicate</span>
 					</DsDropdownMenu.Item>
-					<DsDropdownMenu.Item onSelect={handleShare}>
+					<DsDropdownMenu.Item value="share" onSelect={handleShare}>
 						<DsIcon icon="share" />
 						<span>Share</span>
 					</DsDropdownMenu.Item>
 					<DsDropdownMenu.Separator />
-					<DsDropdownMenu.Item onSelect={handleDelete} className="danger">
+					<DsDropdownMenu.Item value="delete" onSelect={handleDelete} className="danger">
 						<DsIcon icon="delete" />
 						<span>Delete</span>
 					</DsDropdownMenu.Item>
-					<DsDropdownMenu.Item disabled>
+					<DsDropdownMenu.Item value="disabled" disabled>
 						<DsIcon icon="block" />
 						<span>Disabled Option</span>
 					</DsDropdownMenu.Item>
@@ -89,13 +89,13 @@ export const SelectableList: Story = {
 		const filteredOptions = options.filter((opt) => opt.label.toLowerCase().includes(search.toLowerCase()));
 
 		return (
-			<DsDropdownMenu.Root>
+			<DsDropdownMenu.Root onSelect={setSelected}>
 				<DsDropdownMenu.Trigger className="trigger">
 					<span>{selected || 'Select an option'}</span>
 					<DsIcon icon="arrow_drop_down" />
 				</DsDropdownMenu.Trigger>
 				<DsDropdownMenu.Content>
-					<DsDropdownMenu.Search>
+					<DsDropdownMenu.Header>
 						<DsTextInput
 							placeholder="Search"
 							value={search}
@@ -105,14 +105,11 @@ export const SelectableList: Story = {
 								startAdornment: <DsIcon icon="search" size="tiny" />,
 							}}
 						/>
-					</DsDropdownMenu.Search>
+					</DsDropdownMenu.Header>
 					{filteredOptions.map((option) => (
-						<DsDropdownMenu.Item
-							key={option.value}
-							selected={selected === option.value}
-							onSelect={() => setSelected(option.value)}
-						>
+						<DsDropdownMenu.Item key={option.value} value={option.value} selected={selected === option.value}>
 							{option.label}
+							{selected === option.value && <DsDropdownMenu.ItemIndicator />}
 						</DsDropdownMenu.Item>
 					))}
 				</DsDropdownMenu.Content>
@@ -175,13 +172,13 @@ export const CheckboxList: Story = {
 		};
 
 		return (
-			<DsDropdownMenu.Root open={open} onOpenChange={setOpen}>
+			<DsDropdownMenu.Root open={open} onOpenChange={setOpen} onSelect={toggleSelection} preventCloseOnSelect>
 				<DsDropdownMenu.Trigger className="trigger">
 					<span>Multi Select ({selected.size})</span>
 					<DsIcon icon="arrow_drop_down" />
 				</DsDropdownMenu.Trigger>
 				<DsDropdownMenu.Content>
-					<DsDropdownMenu.Search>
+					<DsDropdownMenu.Header>
 						<DsTextInput
 							placeholder="Search"
 							value={search}
@@ -191,9 +188,9 @@ export const CheckboxList: Story = {
 								startAdornment: <DsIcon icon="search" size="tiny" />,
 							}}
 						/>
-					</DsDropdownMenu.Search>
+					</DsDropdownMenu.Header>
 					{filteredItems.map((item) => (
-						<DsDropdownMenu.Item key={item.id} preventClose onSelect={() => toggleSelection(item.id)}>
+						<DsDropdownMenu.Item key={item.id} value={item.id}>
 							<DsCheckbox
 								tabIndex={-1}
 								checked={selected.has(item.id)}
@@ -210,11 +207,11 @@ export const CheckboxList: Story = {
 						</DsDropdownMenu.Item>
 					))}
 					{!!filteredGroupedItems.length && (
-						<DsDropdownMenu.Group>
-							<DsDropdownMenu.GroupLabel>Group Name</DsDropdownMenu.GroupLabel>
-							<DsDropdownMenu.GroupContent>
+						<DsDropdownMenu.ItemGroup>
+							<DsDropdownMenu.ItemGroupLabel>Group Name</DsDropdownMenu.ItemGroupLabel>
+							<DsDropdownMenu.ItemGroupContent>
 								{filteredGroupedItems.map((item) => (
-									<DsDropdownMenu.Item key={item.id} preventClose onSelect={() => toggleSelection(item.id)}>
+									<DsDropdownMenu.Item key={item.id} value={item.id}>
 										<DsCheckbox
 											tabIndex={-1}
 											checked={selected.has(item.id)}
@@ -230,8 +227,8 @@ export const CheckboxList: Story = {
 										</div>
 									</DsDropdownMenu.Item>
 								))}
-							</DsDropdownMenu.GroupContent>
-						</DsDropdownMenu.Group>
+							</DsDropdownMenu.ItemGroupContent>
+						</DsDropdownMenu.ItemGroup>
 					)}
 					<DsDropdownMenu.Actions>
 						<DsButton design="v1.2" buttonType="secondary" size="small" onClick={handleCancel}>
@@ -290,13 +287,13 @@ export const RadioList: Story = {
 		};
 
 		return (
-			<DsDropdownMenu.Root open={open} onOpenChange={setOpen}>
+			<DsDropdownMenu.Root open={open} onOpenChange={setOpen} onSelect={setTempSelected} preventCloseOnSelect>
 				<DsDropdownMenu.Trigger className="trigger">
 					<span>{tempSelected || 'Select an option'}</span>
 					<DsIcon icon="arrow_drop_down" />
 				</DsDropdownMenu.Trigger>
 				<DsDropdownMenu.Content>
-					<DsDropdownMenu.Search>
+					<DsDropdownMenu.Header>
 						<DsTextInput
 							placeholder="Search"
 							value={search}
@@ -306,13 +303,12 @@ export const RadioList: Story = {
 								startAdornment: <DsIcon icon="search" size="tiny" />,
 							}}
 						/>
-					</DsDropdownMenu.Search>
+					</DsDropdownMenu.Header>
 					<DsRadioGroup.Root className="radio-group" value={tempSelected} onValueChange={setTempSelected}>
 						{filteredOptions.map((option) => (
 							<DsDropdownMenu.Item
 								key={option.value}
-								preventClose
-								onSelect={() => setTempSelected(option.value)}
+								value={option.value}
 								className={tempSelected === option.value ? 'radio-selected' : ''}
 							>
 								<DsRadioGroup.Item value={option.value} id={option.value} />

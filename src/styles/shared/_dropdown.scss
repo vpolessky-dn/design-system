@@ -12,7 +12,7 @@
 	background: var(--color-background);
 	box-shadow: 0 var(--_shadow-y-offset) var(--_shadow-size) 0 rgba(0, 0, 0, 0.15);
 	z-index: 9999;
-	width: calc(var(--reference-width) + var(--spacing-sm) * 2);
+	width: var(--reference-width);
 
 	&[data-state='open'] {
 		animation: expand 0.25s both;

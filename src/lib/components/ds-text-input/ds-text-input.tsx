@@ -10,6 +10,7 @@ const DsTextInput: FC<DsTextInputProps> = ({
 	size = 'default',
 	type = 'text',
 	onBlur,
+	onKeyDown,
 	onChange,
 	onValueChange,
 	className,
@@ -61,6 +62,7 @@ const DsTextInput: FC<DsTextInputProps> = ({
 					placeholder={placeholder}
 					disabled={disabled}
 					onBlur={onBlur}
+					onKeyDown={onKeyDown}
 					onChange={handleChange}
 					tabIndex={tabIndex}
 				/>

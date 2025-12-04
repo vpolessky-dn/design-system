@@ -13,12 +13,12 @@
 		outline-offset: 2px;
 	}
 
-	&:is([hidden]) {
+	&[hidden] {
 		display: none;
 	}
 }
 
-.search {
+.header {
 	position: sticky;
 	top: 0;
 	z-index: 1;

@@ -17,6 +17,7 @@ import {
 	DsDropdownMenuItemIndicatorProps,
 	DsDropdownMenuItemProps,
 	DsDropdownMenuLegacyProps,
+	DsDropdownMenuPositioning,
 	DsDropdownMenuRootProps,
 	DsDropdownMenuSeparatorProps,
 	DsDropdownMenuTriggerProps,
@@ -32,7 +33,7 @@ interface GroupContextValue {
 
 const GroupContext = createContext<GroupContextValue | null>(null);
 
-const DEFAULT_POSITIONING = {
+const DEFAULT_POSITIONING: DsDropdownMenuPositioning = {
 	placement: 'bottom-start' as const,
 	gutter: 4,
 };
@@ -146,7 +147,7 @@ const ItemIndicator: React.FC<DsDropdownMenuItemIndicatorProps> = ({ children, c
  */
 const Header: React.FC<DsDropdownMenuHeaderProps> = ({ children, className, style }) => {
 	return (
-		<div className={classNames(styles.search, className)} style={style}>
+		<div className={classNames(styles.header, className)} style={style}>
 			{children}
 		</div>
 	);

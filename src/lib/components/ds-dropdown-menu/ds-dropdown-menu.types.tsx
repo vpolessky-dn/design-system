@@ -96,7 +96,7 @@ export interface DsDropdownMenuLegacyProps {
 /**
  * Props for the DsDropdownMenu Root component
  */
-export interface DsDropdownMenuRootProps extends Pick<Menu.RootProps, 'children'> {
+export interface DsDropdownMenuRootProps {
 	/**
 	 * Whether the dropdown is open (controlled mode)
 	 */
@@ -122,6 +122,10 @@ export interface DsDropdownMenuRootProps extends Pick<Menu.RootProps, 'children'
 	 * @default false
 	 */
 	preventCloseOnSelect?: boolean;
+	/**
+	 * Root content
+	 */
+	children?: ReactNode;
 }
 
 /**
@@ -132,15 +136,8 @@ export type DsDropdownMenuTriggerProps = Menu.TriggerProps;
 /**
  * Props for the DsDropdownMenu Content component
  */
-export interface DsDropdownMenuContentProps extends Pick<Menu.ContentProps, 'children'> {
-	/**
-	 * Optional CSS class name
-	 */
-	className?: string;
-	/**
-	 * Optional inline styles
-	 */
-	style?: CSSProperties;
+export interface DsDropdownMenuContentProps
+	extends Pick<Menu.ContentProps, 'className' | 'style' | 'children'> {
 	/**
 	 * Whether to render in place instead of using portals
 	 * @default false
@@ -152,27 +149,14 @@ export interface DsDropdownMenuContentProps extends Pick<Menu.ContentProps, 'chi
  * Props for the DsDropdownMenu Item component
  */
 export interface DsDropdownMenuItemProps
-	extends Partial<Pick<Menu.ItemProps, 'disabled' | 'asChild' | 'className' | 'style'>> {
-	/**
-	 * Unique value for the menu item
-	 */
-	value: string;
-	/**
-	 * Item content
-	 */
-	children?: ReactNode;
+	extends Pick<
+		Menu.ItemProps,
+		'disabled' | 'asChild' | 'className' | 'style' | 'onSelect' | 'onClick' | 'value' | 'children'
+	> {
 	/**
 	 * Whether the item is selected (applies selected styling)
 	 */
 	selected?: boolean;
-	/**
-	 * Callback when this specific item is selected
-	 */
-	onSelect?: () => void;
-	/**
-	 * Callback when this specific item is clicked
-	 */
-	onClick?: (e: MouseEvent<HTMLElement>) => void;
 }
 
 /**

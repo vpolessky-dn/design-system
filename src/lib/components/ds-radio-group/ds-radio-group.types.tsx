@@ -1,10 +1,45 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 
 /**
- * Radio option configuration
+ * Props for the DsRadioGroup Root component
  */
-export interface DsRadioOption<ValueType = string> {
+export interface DsRadioGroupRootProps
+	extends Pick<
+		RadioGroupPrimitive.RadioGroupProps,
+		'value' | 'defaultValue' | 'disabled' | 'name' | 'required' | 'className' | 'style'
+	> {
+	/**
+	 * Event handler called when the selected value changes
+	 */
+	onValueChange?: (value: string) => void;
+	/**
+	 * The children to render (Radio items)
+	 */
+	children: ReactNode;
+}
+
+/**
+ * Props for the DsRadioGroup Item component
+ */
+export interface DsRadioGroupItemProps
+	extends Pick<RadioGroupPrimitive.RadioGroupItemProps, 'value' | 'disabled' | 'className' | 'style' | 'id'> {
+	/**
+	 * Optional label text for the radio item
+	 */
+	label?: string;
+	/**
+	 * Optional additional info text displayed below the label
+	 */
+	labelInfo?: string;
+}
+
+/**
+ * DEPRECATED: Legacy radio option configuration
+ * Use compound component pattern instead: <DsRadioGroup.Root><DsRadioGroup.Item /></DsRadioGroup.Root>
+ * @deprecated
+ */
+export interface DsRadioOptionLegacy<ValueType = string> {
 	/**
 	 * Display label for the radio option
 	 */
@@ -23,7 +58,12 @@ export interface DsRadioOption<ValueType = string> {
 	disabled?: boolean;
 }
 
-export interface DsRadioGroupProps<TOption extends DsRadioOption = DsRadioOption>
+/**
+ * DEPRECATED: Legacy props for DsRadioGroupLegacy component
+ * Use compound component pattern instead
+ * @deprecated
+ */
+export interface DsRadioGroupLegacyProps<TOption extends DsRadioOptionLegacy = DsRadioOptionLegacy>
 	extends React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root> {
 	/**
 	 * The radio group options

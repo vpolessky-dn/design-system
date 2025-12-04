@@ -11,21 +11,8 @@ import {
 /**
  * Root component - provides radio group context
  */
-const Root: React.FC<DsRadioGroupRootProps> = ({
-	value,
-	defaultValue,
-	onValueChange,
-	className,
-	children,
-	...props
-}) => (
-	<RadioGroupPrimitive.Root
-		className={classNames(styles.radioGroupRoot, className)}
-		value={value}
-		defaultValue={defaultValue}
-		onValueChange={onValueChange}
-		{...props}
-	>
+const Root: React.FC<DsRadioGroupRootProps> = ({ className, children, ...props }) => (
+	<RadioGroupPrimitive.Root className={classNames(styles.radioGroupRoot, className)} {...props}>
 		{children}
 	</RadioGroupPrimitive.Root>
 );

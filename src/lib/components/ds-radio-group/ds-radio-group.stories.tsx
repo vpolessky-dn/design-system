@@ -10,44 +10,10 @@ const meta: Meta = {
 		layout: 'centered',
 	},
 	tags: ['autodocs'],
-	argTypes: {
-		// Root component props
-		value: {
-			control: 'text',
-			description: 'Controlled selected value',
-			table: { category: 'Root' },
-		},
-		defaultValue: {
-			control: 'text',
-			description: 'Default selected value for uncontrolled usage',
-			table: { category: 'Root' },
-		},
-		onValueChange: {
-			action: 'onValueChange',
-			description: 'Callback when selected value changes',
-			table: { category: 'Root' },
-		},
-		// Item component props
-		label: {
-			control: 'text',
-			description: 'Optional label text for the radio item',
-			table: { category: 'Item' },
-		},
-		labelInfo: {
-			control: 'text',
-			description: 'Optional additional info text displayed below the label',
-			table: { category: 'Item' },
-		},
-		disabled: {
-			control: 'boolean',
-			description: 'Whether the radio item is disabled',
-			table: { category: 'Item' },
-		},
-	},
 };
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<typeof DsRadioGroup>;
 
 export const Default: Story = {
 	parameters: {

@@ -277,7 +277,7 @@ export const DsDropdownMenuLegacy: React.FC<DsDropdownMenuLegacyProps> = ({
 	align = 'center',
 	side = 'bottom',
 	disablePortal = false,
-	disableSearch = false,
+	disableSearch = true,
 	selected,
 	onSelect,
 }) => {
@@ -292,7 +292,7 @@ export const DsDropdownMenuLegacy: React.FC<DsDropdownMenuLegacyProps> = ({
 
 	return (
 		<DropdownMenu.Root open={open} onOpenChange={setOpen}>
-			<DropdownMenu.Trigger>{children}</DropdownMenu.Trigger>
+			<DropdownMenu.Trigger asChild>{children}</DropdownMenu.Trigger>
 			<Wrapper>
 				<DropdownMenu.Content
 					className={classNames(styles.contentLegacy, styles.viewportLegacy)}
@@ -325,6 +325,7 @@ export const DsDropdownMenuLegacy: React.FC<DsDropdownMenuLegacyProps> = ({
 							style={style}
 							onClick={(e) => {
 								e.stopPropagation();
+
 								if (!option.disabled) {
 									if (option.value) onSelect?.(option.value);
 									option.onClick?.(e);

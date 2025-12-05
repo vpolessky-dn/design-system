@@ -26,11 +26,12 @@ export const DsTableCell = <TData, TValue>({
 				<div className={styles.cellActions}>
 					{primaryRowActions.map((action, i) => {
 						const isDisabled = action.disabled?.(row.original);
+						const label = typeof action.label === 'function' ? action.label(row.original) : action.label;
 						return (
 							<button
-								key={action.label || i}
+								key={label || i}
 								className={classnames(styles.rowActionIcon, { [styles.disabled]: isDisabled })}
-								title={action.tooltip || action.label}
+								title={action.tooltip || label}
 								onClick={(e) => {
 									if (isDisabled) {
 										return;
@@ -39,7 +40,7 @@ export const DsTableCell = <TData, TValue>({
 									action.onClick(row.original);
 								}}
 								tabIndex={isDisabled ? -1 : 0}
-								aria-label={action.label}
+								aria-label={label}
 								aria-disabled={isDisabled}
 							>
 								<DsIcon icon={action.icon} size="tiny" />
@@ -49,7 +50,7 @@ export const DsTableCell = <TData, TValue>({
 					{hasSecondaryRowActions && (
 						<DsDropdownMenu
 							options={secondaryRowActions.map((action) => ({
-								label: action.label,
+								label: typeof action.label === 'function' ? action.label(row.original) : action.label,
 								icon: action.icon,
 								disabled: action.disabled?.(row.original),
 								onClick: () => action.onClick(row.original),

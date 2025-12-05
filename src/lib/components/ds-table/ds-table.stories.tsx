@@ -465,6 +465,13 @@ export const WithRowActions: Story = {
 					alert(`Details for ${data.firstName}`);
 				},
 			},
+			{
+				icon: 'call',
+				label: (row) => `Call ${row.firstName}`,
+				onClick: (data) => {
+					alert(`Calling ${data.firstName} ${data.lastName}`);
+				},
+			},
 		],
 	},
 };

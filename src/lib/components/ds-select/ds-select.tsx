@@ -91,7 +91,14 @@ const DsSelect = ({
 	});
 
 	return (
-		<Select.RootProvider value={select}>
+		<Select.RootProvider
+			value={select}
+			// When rendering the Select inside a Modal, it has an `aria-hidden="true"` attribute
+			// which causes screen readers to ignore it.
+			//
+			// See: https://github.com/chakra-ui/ark/issues/3728
+			lazyMount
+		>
 			<Select.Control
 				className={classNames(styles.control, size === 'small' && styles.small, className)}
 				style={style}
@@ -140,19 +147,7 @@ const DsSelect = ({
 				)}
 			</Select.Control>
 			<Portal>
-				<Select.Positioner
-					className={styles.viewport}
-					ref={(node) => {
-						// When rendering the Select inside a Modal, it has an `aria-hidden="true"` attribute
-						// which causes screen readers to ignore it.
-						//
-						// See: https://github.com/chakra-ui/ark/issues/3728
-						if (select.open) {
-							node?.removeAttribute('aria-hidden');
-							node?.removeAttribute('data-aria-hidden');
-						}
-					}}
-				>
+				<Select.Positioner className={styles.viewport}>
 					<Select.Content className={styles.content}>
 						{userOptions.length > SEARCH_THRESHOLD && (
 							<div className={styles.searchInput}>

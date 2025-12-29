@@ -13,7 +13,8 @@
 		"./src/styles/*": "./src/styles/*"
 	},
 	"scripts": {
-		"lint": "concurrently -n eslint,tsc -c magenta,blue 'eslint --max-warnings=0 .' 'tsc'",
+		"lint": "eslint --max-warnings=0 .",
+		"typecheck": "tsc",
 		"storybook": "storybook dev -p 6006",
 		"test": "vitest",
 		"build": "tsdown",
@@ -59,7 +60,6 @@
 		"@types/react": "^19.2.7",
 		"@vitest/browser": "^4.0.16",
 		"@vitest/browser-playwright": "^4.0.15",
-		"concurrently": "^9.2.1",
 		"eslint": "^9.39.2",
 		"eslint-plugin-jsx-a11y": "^6.10.2",
 		"eslint-plugin-react": "^7.37.5",

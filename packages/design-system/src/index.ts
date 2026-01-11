@@ -1,5 +1,4 @@
 export * from './components/ds-alert-banner';
-export * from './components/ds-avatar';
 export * from './components/ds-breadcrumb';
 export * from './components/ds-button';
 export * from './components/ds-checkbox';

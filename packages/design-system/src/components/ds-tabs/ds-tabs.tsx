@@ -88,5 +88,3 @@ DsTabs.List = DsTabsList;
 DsTabs.Tab = DsTabsTab;
 DsTabs.Content = DsTabsContent;
 DsTabs.Indicator = DsTabsIndicator;
-
-export default DsTabs;

@@ -9,7 +9,7 @@ import { useTabsContext } from '../../context/ds-tabs-context';
 import type { DsTabsTabProps } from './ds-tabs-tab.types';
 import styles from './ds-tabs-tab.module.scss';
 
-const DROPDOWN_CLOSE_DELAY = 250;
+export const DROPDOWN_CLOSE_DELAY = 250;
 
 export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 	value,
@@ -29,6 +29,7 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 
 	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 	const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const triggerRef = useRef<HTMLButtonElement>(null);
 
 	const showDropdown = dropdownItems && dropdownItems.length > 0;
 	const showMenuIcon = hasMenu || showDropdown;
@@ -58,6 +59,7 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 
 	const tabContent = (
 		<Tabs.Trigger
+			ref={triggerRef}
 			value={value}
 			disabled={disabled}
 			className={classNames(
@@ -67,6 +69,12 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 				className,
 			)}
 			style={style}
+			onClick={() => {
+				// Remove focus after tab selection to prevent focus state styling
+				requestAnimationFrame(() => {
+					triggerRef.current?.blur();
+				});
+			}}
 		>
 			{children ? (
 				children
@@ -91,11 +99,7 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 
 	if (showDropdown) {
 		const tabWithDropdown = (
-			<div
-				className="ds-tabs-dropdown-wrapper"
-				onMouseEnter={handleMouseEnter}
-				onMouseLeave={handleMouseLeave}
-			>
+			<div className={styles.dropdownWrapper} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
 				{tabContent}
 				<DsDropdownMenu.Root
 					open={isDropdownOpen}

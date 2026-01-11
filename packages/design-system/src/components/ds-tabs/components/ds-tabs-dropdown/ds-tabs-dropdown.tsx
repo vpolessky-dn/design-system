@@ -1,10 +1,13 @@
 import type React from 'react';
 import { useState, useEffect, useRef } from 'react';
+import classNames from 'classnames';
 import { DsIcon } from '../../../ds-icon';
 import { DsDropdownMenu } from '../../../ds-dropdown-menu';
-import type { TabDropdownProps } from './tab-dropdown.types';
+import type { DsTabsDropdownProps } from './ds-tabs-dropdown.types';
+import styles from '../../ds-tabs.module.scss';
+import { DROPDOWN_CLOSE_DELAY } from '../ds-tabs-tab/ds-tabs-tab';
 
-export const TabDropdown: React.FC<TabDropdownProps> = ({
+export const DsTabsDropdown: React.FC<DsTabsDropdownProps> = ({
 	trigger,
 	items,
 	onItemSelect,
@@ -12,6 +15,7 @@ export const TabDropdown: React.FC<TabDropdownProps> = ({
 }) => {
 	const [dropdownOpen, setDropdownOpen] = useState<boolean>(false);
 	const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+	const wrapperRef = useRef<HTMLDivElement>(null);
 
 	const handleMouseEnter = () => {
 		if (closeTimeoutRef.current) {
@@ -25,7 +29,7 @@ export const TabDropdown: React.FC<TabDropdownProps> = ({
 		closeTimeoutRef.current = setTimeout(() => {
 			setDropdownOpen(false);
 			closeTimeoutRef.current = null;
-		}, 250);
+		}, DROPDOWN_CLOSE_DELAY);
 	};
 
 	useEffect(() => {
@@ -37,7 +41,7 @@ export const TabDropdown: React.FC<TabDropdownProps> = ({
 	}, []);
 
 	return (
-		<div onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
+		<div ref={wrapperRef} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
 			<DsDropdownMenu.Root
 				open={dropdownOpen}
 				onOpenChange={setDropdownOpen}
@@ -50,21 +54,40 @@ export const TabDropdown: React.FC<TabDropdownProps> = ({
 							key={item.value}
 							value={item.value}
 							disabled={item.disabled}
-							className={isOverflowDropdown ? 'ds-dropdown-menu-item-tab' : undefined}
+							className={classNames({
+								[styles.dropdownMenuItem]: isOverflowDropdown,
+							})}
 							onSelect={() => {
 								onItemSelect(item.value);
 								setDropdownOpen(false);
+								// Remove focus from trigger button after selection
+								requestAnimationFrame(() => {
+									const button = wrapperRef.current?.querySelector('button');
+									button?.blur();
+								});
 							}}
 						>
 							{item.icon && (
-								<span className={isOverflowDropdown ? 'tab-icon' : undefined}>
-									<DsIcon icon={item.icon} size="small" />
-								</span>
+								<DsIcon
+									icon={item.icon}
+									size="small"
+									className={classNames({
+										[styles.dropdownMenuIcon]: isOverflowDropdown,
+									})}
+								/>
 							)}
-							<span className={isOverflowDropdown ? 'tab-label' : undefined}>{item.label || item.value}</span>
+							<span
+								className={classNames({
+									[styles.dropdownMenuLabel]: isOverflowDropdown,
+								})}
+							>
+								{item.label || item.value}
+							</span>
 							{item.badge !== undefined && (
 								<span
-									className={isOverflowDropdown ? 'tab-badge' : undefined}
+									className={classNames({
+										[styles.dropdownMenuBadge]: isOverflowDropdown,
+									})}
 									style={!isOverflowDropdown ? { marginLeft: 'auto', opacity: 0.6 } : undefined}
 								>
 									{isOverflowDropdown ? item.badge : `(${String(item.badge)})`}

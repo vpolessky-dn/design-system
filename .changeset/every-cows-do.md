@@ -2,4 +2,4 @@
 '@drivenets/design-system': minor
 ---
 
-Add tabs
+Add `DsTabs` component

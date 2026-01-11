@@ -1,12 +1,11 @@
-import type React from 'react';
 import { useState, useEffect, useRef, type CSSProperties } from 'react';
 import classNames from 'classnames';
 import { useTabsContext } from '../../context/ds-tabs-context';
 import type { DsTabsIndicatorProps } from './ds-tabs-indicator.types';
 import styles from './ds-tabs-indicator.module.scss';
 
-export const DsTabsIndicator: React.FC<DsTabsIndicatorProps> = ({ className, style }) => {
-	const { orientation, currentValue } = useTabsContext();
+export const DsTabsIndicator = ({ className, style }: DsTabsIndicatorProps) => {
+	const { orientation, currentValue, size } = useTabsContext();
 	const [indicatorStyle, setIndicatorStyle] = useState<CSSProperties>({});
 	const indicatorRef = useRef<HTMLDivElement>(null);
 
@@ -17,13 +16,7 @@ export const DsTabsIndicator: React.FC<DsTabsIndicatorProps> = ({ className, sty
 				return;
 			}
 
-			let selectedTrigger = tabsList.querySelector(
-				'button[data-scope="tabs"][data-part="trigger"][data-selected]',
-			);
-
-			if (!selectedTrigger) {
-				selectedTrigger = tabsList.querySelector('button[data-overflow-trigger="true"][data-selected]');
-			}
+			const selectedTrigger = tabsList.querySelector('button[aria-selected="true"]');
 
 			if (selectedTrigger) {
 				const tabsListRect = tabsList.getBoundingClientRect();
@@ -59,7 +52,7 @@ export const DsTabsIndicator: React.FC<DsTabsIndicatorProps> = ({ className, sty
 		const observer = new MutationObserver(updateIndicator);
 		observer.observe(tabsList, {
 			attributes: true,
-			attributeFilter: ['data-selected', 'data-value'],
+			attributeFilter: ['aria-selected'],
 			childList: true,
 			characterData: true,
 			subtree: true,
@@ -68,14 +61,14 @@ export const DsTabsIndicator: React.FC<DsTabsIndicatorProps> = ({ className, sty
 		const resizeObserver = new ResizeObserver(updateIndicator);
 		resizeObserver.observe(tabsList);
 
-		const timeout = setTimeout(updateIndicator, 100);
+		const frameId = requestAnimationFrame(updateIndicator);
 
 		return () => {
 			observer.disconnect();
 			resizeObserver.disconnect();
-			clearTimeout(timeout);
+			cancelAnimationFrame(frameId);
 		};
-	}, [orientation, currentValue]);
+	}, [orientation, currentValue, size]);
 
 	return (
 		<div

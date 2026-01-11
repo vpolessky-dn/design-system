@@ -2,12 +2,43 @@
 	display: flex;
 	gap: var(--spacing-lg);
 	width: 100%;
+}
 
-	&:has([data-orientation='vertical']) {
-		flex-direction: row;
-	}
+.root-vertical {
+	flex-direction: row;
+}
 
-	&:has([data-orientation='horizontal']) {
-		flex-direction: column;
-	}
+.root-horizontal {
+	flex-direction: column;
+}
+
+// Tab dropdown menu item styles
+.dropdownMenuItem {
+	display: flex;
+	align-items: center;
+	gap: var(--spacing-2xs);
+}
+
+.dropdownMenuIcon {
+	display: flex;
+	align-items: center;
+	color: var(--color-font-secondary);
+}
+
+.dropdownMenuLabel {
+	flex: 1;
+	min-width: 0;
+}
+
+.dropdownMenuBadge {
+	margin-left: auto;
+	padding: 0 var(--spacing-2xs);
+	border-radius: 10px;
+	background: var(--color-background-tertiary);
+	color: var(--color-font-secondary);
+	font-size: 12px;
+	line-height: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
 }

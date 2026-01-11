@@ -1,4 +1,5 @@
 import type React from 'react';
+import { useMemo } from 'react';
 import { Tabs } from '@ark-ui/react/tabs';
 import classNames from 'classnames';
 import TabsContext from './context/ds-tabs-context';
@@ -7,7 +8,7 @@ import { DsTabsList } from './components/ds-tabs-list';
 import { DsTabsTab } from './components/ds-tabs-tab';
 import { DsTabsContent } from './components/ds-tabs-content';
 import { DsTabsIndicator } from './components/ds-tabs-indicator';
-import type { DsTabsRootProps } from './ds-tabs.types';
+import type { DsTabsProps } from './ds-tabs.types';
 import styles from './ds-tabs.module.scss';
 
 /**
@@ -29,28 +30,31 @@ import styles from './ds-tabs.module.scss';
  * </DsTabs>
  * ```
  */
-const DsTabsRoot: React.FC<DsTabsRootProps> = ({
+const DsTabsRoot = ({
 	value,
 	defaultValue,
 	onValueChange,
 	orientation = 'horizontal',
-	size = 'base',
+	size = 'medium',
 	maxVisibleTabs,
 	className,
 	style,
 	children,
-}) => {
+}: DsTabsProps) => {
 	const handleValueChange = (details: { value: string | null }) => {
 		onValueChange?.(details.value);
 	};
 
-	const contextValue: DsTabsContextType = {
-		orientation,
-		size,
-		maxVisibleTabs,
-		currentValue: value,
-		onValueChange,
-	};
+	const contextValue: DsTabsContextType = useMemo(
+		() => ({
+			orientation,
+			size,
+			maxVisibleTabs,
+			currentValue: value,
+			onValueChange,
+		}),
+		[orientation, size, maxVisibleTabs, value, onValueChange],
+	);
 
 	return (
 		<TabsContext.Provider value={contextValue}>
@@ -60,7 +64,9 @@ const DsTabsRoot: React.FC<DsTabsRootProps> = ({
 				defaultValue={defaultValue}
 				onValueChange={handleValueChange}
 				activationMode="manual"
-				className={classNames(styles.root, className)}
+				lazyMount
+				unmountOnExit
+				className={classNames(styles.root, styles[`root-${orientation}`], className)}
 				style={style}
 			>
 				{children}
@@ -69,14 +75,14 @@ const DsTabsRoot: React.FC<DsTabsRootProps> = ({
 	);
 };
 
-type DsTabsComponent = typeof DsTabsRoot & {
+export interface DsTabsComponent extends React.FC<DsTabsProps> {
 	List: typeof DsTabsList;
 	Tab: typeof DsTabsTab;
 	Content: typeof DsTabsContent;
 	Indicator: typeof DsTabsIndicator;
-};
+}
 
-const DsTabs = DsTabsRoot as DsTabsComponent;
+export const DsTabs = DsTabsRoot as DsTabsComponent;
 
 DsTabs.List = DsTabsList;
 DsTabs.Tab = DsTabsTab;

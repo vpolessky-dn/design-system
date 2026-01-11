@@ -3,7 +3,7 @@ import type { DsTabsContextType } from './ds-tabs-context.types';
 
 const TabsContext = createContext<DsTabsContextType>({
 	orientation: 'horizontal',
-	size: 'base',
+	size: 'medium',
 });
 
 export const useTabsContext = (): DsTabsContextType => useContext(TabsContext);

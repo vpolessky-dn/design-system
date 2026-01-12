@@ -1,8 +1,8 @@
 import type { FC } from 'react';
 import classNames from 'classnames';
-import styles from './ds-avatar.module.scss';
-import type { DsAvatarGroupProps } from './ds-avatar.types';
-import { DsAvatar } from './ds-avatar';
+import styles from './ds-avatar-group.module.scss';
+import type { DsAvatarGroupProps } from './ds-avatar-group.types';
+import { DsAvatar } from '../ds-avatar';
 import { DsTooltip } from '../ds-tooltip';
 import { DsTypography } from '../ds-typography';
 
@@ -43,9 +43,7 @@ export const DsAvatarGroup: FC<DsAvatarGroupProps> = ({
 						</div>
 					}
 				>
-					<div className={classNames(styles.avatar, styles.moreAvatar, styles[size], styles[type])}>
-						+{remainingCount}
-					</div>
+					<div className={classNames(styles.moreAvatar, styles[size], styles[type])}>+{remainingCount}</div>
 				</DsTooltip>
 			)}
 		</div>

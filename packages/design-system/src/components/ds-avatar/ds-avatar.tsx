@@ -17,23 +17,24 @@ export const DsAvatar: FC<DsAvatarProps> = ({
 	className,
 	onStatusChange,
 }) => {
-	const getInitials = (name: string) => {
-		const names = name.split(' ');
-		if (names.length >= 2) {
-			return `${names[0]?.[0]}${names[1]?.[0]}`.toUpperCase();
-		}
-		return name.slice(0, 2).toUpperCase();
-	};
+	const getInitials = (name: string) =>
+		name
+			.trim()
+			.split(' ')
+			.map((w) => w[0].toUpperCase())
+			.join('');
 
-	const avatarContent = (
-		<Avatar.Root
-			onStatusChange={(details) => onStatusChange?.(details.status)}
-			className={classNames(styles.avatar, styles[size], styles[type], className)}
-		>
-			<Avatar.Fallback className={styles.fallback}>{getInitials(name)}</Avatar.Fallback>
-			{src && <Avatar.Image src={src} alt={alt || name} />}
-		</Avatar.Root>
+	return (
+		<DsTooltip content={name}>
+			{
+				<Avatar.Root
+					onStatusChange={(details) => onStatusChange?.(details.status)}
+					className={classNames(styles.avatar, styles[size], styles[type], className)}
+				>
+					<Avatar.Fallback className={styles.fallback}>{getInitials(name)}</Avatar.Fallback>
+					{src && <Avatar.Image src={src} alt={alt || name} />}
+				</Avatar.Root>
+			}
+		</DsTooltip>
 	);
-
-	return <DsTooltip content={name}>{avatarContent}</DsTooltip>;
 };

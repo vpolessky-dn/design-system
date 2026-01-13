@@ -21,7 +21,7 @@ export const DsTabsOverflowDropdown: React.FC<DsTabsOverflowDropdownProps> = ({
 
 	const isOverflowTabSelected = overflowTabs.some((tab) => tab.props.value === currentValue);
 
-	// Blur the trigger button when a non-overflow tab is selected
+	// Remove focus from "More" button when user selects a regular (non-overflow) tab
 	useEffect(() => {
 		if (!isOverflowTabSelected && triggerRef.current) {
 			triggerRef.current.blur();

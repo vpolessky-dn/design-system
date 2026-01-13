@@ -18,6 +18,7 @@ export const DsTabsDropdown: React.FC<DsTabsDropdownProps> = ({
 	const wrapperRef = useRef<HTMLDivElement>(null);
 
 	const handleMouseEnter = () => {
+		// Cancel any pending close operation if user moves mouse back
 		if (closeTimeoutRef.current) {
 			clearTimeout(closeTimeoutRef.current);
 			closeTimeoutRef.current = null;
@@ -26,12 +27,15 @@ export const DsTabsDropdown: React.FC<DsTabsDropdownProps> = ({
 	};
 
 	const handleMouseLeave = () => {
+		// Delay closing dropdown by DROPDOWN_CLOSE_DELAY (250ms)
+		// Allows user to move mouse from trigger to dropdown content without it closing
 		closeTimeoutRef.current = setTimeout(() => {
 			setDropdownOpen(false);
 			closeTimeoutRef.current = null;
 		}, DROPDOWN_CLOSE_DELAY);
 	};
 
+	// Cleanup: clear timeout on unmount to prevent memory leaks
 	useEffect(() => {
 		return () => {
 			if (closeTimeoutRef.current) {
@@ -60,7 +64,9 @@ export const DsTabsDropdown: React.FC<DsTabsDropdownProps> = ({
 							onSelect={() => {
 								onItemSelect(item.value);
 								setDropdownOpen(false);
-								// Remove focus from trigger button after selection
+								// Remove focus from trigger button after item selection
+								// requestAnimationFrame ensures blur happens after dropdown closes
+								// Prevents the trigger from showing focus outline after selection
 								requestAnimationFrame(() => {
 									const button = wrapperRef.current?.querySelector('button');
 									button?.blur();

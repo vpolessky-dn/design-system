@@ -34,6 +34,7 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 	const showDropdown = dropdownItems && dropdownItems.length > 0;
 	const showMenuIcon = hasMenu || showDropdown;
 
+	// Cleanup: clear timeout on unmount to prevent memory leaks
 	useEffect(() => {
 		return () => {
 			if (closeTimeoutRef.current) {
@@ -43,6 +44,7 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 	}, []);
 
 	const handleMouseEnter = () => {
+		// Cancel any pending close operation if user moves mouse back to tab
 		if (closeTimeoutRef.current) {
 			clearTimeout(closeTimeoutRef.current);
 			closeTimeoutRef.current = null;
@@ -51,6 +53,8 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 	};
 
 	const handleMouseLeave = () => {
+		// Delay closing dropdown by DROPDOWN_CLOSE_DELAY (250ms)
+		// Allows user to move mouse from tab to dropdown menu without it closing
 		closeTimeoutRef.current = setTimeout(() => {
 			setIsDropdownOpen(false);
 			closeTimeoutRef.current = null;
@@ -70,7 +74,9 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 			)}
 			style={style}
 			onClick={() => {
-				// Remove focus after tab selection to prevent focus state styling
+				// Remove focus styling after tab selection to prevent persistent focus border
+				// requestAnimationFrame ensures blur happens after click event completes
+				// This provides better UX by showing only the "selected" state, not "focused" state
 				requestAnimationFrame(() => {
 					triggerRef.current?.blur();
 				});

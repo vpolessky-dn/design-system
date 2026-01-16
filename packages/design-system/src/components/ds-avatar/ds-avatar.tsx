@@ -15,13 +15,14 @@ export const DsAvatar: FC<DsAvatarProps> = ({
 	size = 'regular',
 	type = 'circle',
 	className,
+	style,
 	onStatusChange,
 }) => {
 	const getInitials = (name: string) =>
 		name
 			.trim()
 			.split(' ')
-			.map((w) => w[0].toUpperCase())
+			.map((w) => w[0])
 			.join('');
 
 	return (
@@ -30,6 +31,7 @@ export const DsAvatar: FC<DsAvatarProps> = ({
 				<Avatar.Root
 					onStatusChange={(details) => onStatusChange?.(details.status)}
 					className={classNames(styles.avatar, styles[size], styles[type], className)}
+					style={style}
 				>
 					<Avatar.Fallback className={styles.fallback}>{getInitials(name)}</Avatar.Fallback>
 					{src && <Avatar.Image src={src} alt={alt || name} />}

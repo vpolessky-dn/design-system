@@ -1,11 +1,13 @@
+@import './mixins';
+
 .avatar {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	position: relative;
 	overflow: hidden;
-	background-color: var(--neutral-4);
-	color: var(--white);
+	background-color: var(--color-secondary-400);
+	color: var(--color-secondary-white);
 	flex-shrink: 0;
 	user-select: none;
 
@@ -26,42 +28,7 @@
 		}
 	}
 
-	// Sizes
-	&.xsm {
-		width: 18px;
-		height: 18px;
-		font-size: 8px;
-	}
-
-	&.sm {
-		width: 24px;
-		height: 24px;
-		font-size: 10px;
-	}
-
-	&.regular {
-		width: 32px;
-		height: 32px;
-		font-size: var(--font-size-xs);
-	}
-
-	&.md {
-		width: 48px;
-		height: 48px;
-		font-size: var(--font-size-md);
-	}
-
-	&.lg {
-		width: 80px;
-		height: 80px;
-		font-size: var(--font-size-2xl);
-	}
-
-	&.xl {
-		width: 144px;
-		height: 144px;
-		font-size: var(--font-size-3xl);
-	}
+	@include avatar-sizes;
 
 	img {
 		position: absolute;

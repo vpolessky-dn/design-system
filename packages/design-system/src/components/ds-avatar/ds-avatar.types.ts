@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react';
+
 export type DsAvatarSize = 'xsm' | 'sm' | 'regular' | 'md' | 'lg' | 'xl';
 export type DsAvatarType = 'circle' | 'rounded';
 
@@ -28,6 +30,10 @@ export interface DsAvatarProps {
 	 * Custom class name
 	 */
 	className?: string;
+	/**
+	 * Custom inline styles
+	 */
+	style?: CSSProperties;
 	/**
 	 * Callback when the status of the image changes
 	 */

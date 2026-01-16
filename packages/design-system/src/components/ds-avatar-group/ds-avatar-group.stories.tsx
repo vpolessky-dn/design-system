@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { DsAvatarGroup } from './ds-avatar-group';
+import styles from './ds-avatar-group.stories.module.scss';
 
 const meta: Meta<typeof DsAvatarGroup> = {
 	title: 'Design System/Avatar Group',
@@ -50,7 +51,7 @@ export const Default: GroupStory = {
 
 export const Variants: GroupStory = {
 	render: () => (
-		<div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+		<div className={styles.variantsContainer}>
 			<div>
 				<h3>Default Group (max 5)</h3>
 				<DsAvatarGroup avatars={sampleAvatars} />

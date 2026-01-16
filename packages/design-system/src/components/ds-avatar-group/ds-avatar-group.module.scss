@@ -1,9 +1,11 @@
+@import '../ds-avatar/mixins';
+
 .avatarGroup {
 	display: flex;
 	align-items: center;
 
 	.avatarItem {
-		border: 2px solid var(--white);
+		border: 2px solid var(--color-secondary-white);
 
 		&:not(:first-child) {
 			margin-left: -8px;
@@ -22,9 +24,9 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		background-color: var(--neutral-10);
-		color: var(--action-cta1);
-		border: 2px solid var(--white);
+		background-color: var(--color-background-secondary);
+		color: var(--color-font-action);
+		border: 2px solid var(--color-secondary-white);
 		margin-left: -8px;
 		font-weight: var(--font-weight-medium);
 		z-index: 1;
@@ -48,43 +50,14 @@
 			}
 		}
 
-		// Sizes
+		@include avatar-sizes;
+
 		&.xsm {
-			width: 18px;
-			height: 18px;
-			font-size: 8px;
 			margin-left: -4px;
 		}
 
 		&.sm {
-			width: 24px;
-			height: 24px;
-			font-size: 10px;
 			margin-left: -6px;
-		}
-
-		&.regular {
-			width: 32px;
-			height: 32px;
-			font-size: var(--font-size-xs);
-		}
-
-		&.md {
-			width: 48px;
-			height: 48px;
-			font-size: var(--font-size-md);
-		}
-
-		&.lg {
-			width: 80px;
-			height: 80px;
-			font-size: var(--font-size-2xl);
-		}
-
-		&.xl {
-			width: 144px;
-			height: 144px;
-			font-size: var(--font-size-3xl);
 		}
 	}
 

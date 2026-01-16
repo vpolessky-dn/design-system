@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { DsAvatar } from './ds-avatar';
+import styles from './ds-avatar.stories.module.scss';
 
 const meta: Meta<typeof DsAvatar> = {
 	title: 'Design System/Avatar',
@@ -60,7 +61,7 @@ export const WithImage: AvatarStory = {
 
 export const Sizes: AvatarStory = {
 	render: (args) => (
-		<div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+		<div className={styles.sizesContainer}>
 			<DsAvatar {...args} size="xsm" name="XSmall" />
 			<DsAvatar {...args} size="sm" name="Small" />
 			<DsAvatar {...args} size="regular" name="Regular" />
@@ -83,7 +84,7 @@ export const Sizes: AvatarStory = {
 
 export const Shapes: AvatarStory = {
 	render: (args) => (
-		<div style={{ display: 'flex', gap: '16px' }}>
+		<div className={styles.shapesContainer}>
 			<DsAvatar {...args} type="circle" name="Circle" />
 			<DsAvatar {...args} type="rounded" name="Rounded" />
 		</div>

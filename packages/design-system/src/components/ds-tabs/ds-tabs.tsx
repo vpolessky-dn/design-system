@@ -1,5 +1,4 @@
 import type React from 'react';
-import { useMemo } from 'react';
 import { Tabs } from '@ark-ui/react/tabs';
 import classNames from 'classnames';
 import DsTabsContext from './context/ds-tabs-context';
@@ -24,15 +23,12 @@ const DsTabsRoot = ({
 		onValueChange?.(details.value);
 	};
 
-	const contextValue: DsTabsContextType = useMemo(
-		() => ({
-			orientation,
-			size,
-			currentValue: value,
-			onValueChange,
-		}),
-		[orientation, size, value, onValueChange],
-	);
+	const contextValue: DsTabsContextType = {
+		orientation,
+		size,
+		currentValue: value,
+		onValueChange,
+	};
 
 	return (
 		<DsTabsContext.Provider value={contextValue}>

@@ -1,10 +1,10 @@
 .sizesContainer {
 	display: flex;
-	gap: 16px;
+	gap: var(--spacing-standard);
 	align-items: center;
 }
 
 .shapesContainer {
 	display: flex;
-	gap: 16px;
+	gap: var(--spacing-standard);
 }

@@ -1,4 +1,3 @@
-// Local size variables
 $avatar-size-xsm: 18px;
 $avatar-size-sm: 24px;
 $avatar-size-regular: 32px;
@@ -6,7 +5,13 @@ $avatar-size-md: 48px;
 $avatar-size-lg: 80px;
 $avatar-size-xl: 144px;
 
-// Mixin for avatar sizes to avoid code duplication
+$avatar-border-width: var(--spacing-4xs);
+$avatar-border-radius-small: var(--spacing-3xs);
+$avatar-border-radius-large: var(--spacing-xs);
+$avatar-overlap-xsm: -4px;
+$avatar-overlap-sm: -6px;
+$avatar-overlap-default: -8px;
+
 @mixin avatar-size($size, $font-size) {
 	width: $size;
 	height: $size;

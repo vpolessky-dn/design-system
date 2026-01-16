@@ -1,76 +1,81 @@
 import type { CSSProperties, ReactNode } from 'react';
+import type { IconType } from '../ds-icon';
 
-/**
- * Orientation of the tabs component
- * @type {string}
- */
+export type DsTabsSize = 'medium' | 'small';
 export type DsTabsOrientation = 'horizontal' | 'vertical';
 
 /**
- * Size variant for tabs
- * @type {string}
+ * Menu action item configuration
  */
-export type DsTabsSize = 'medium' | 'small';
+export interface DsTabsMenuActionItem {
+	/** Unique value for the action */
+	value: string;
+	/** Display label */
+	label: string;
+	/** Whether the action is disabled */
+	disabled?: boolean;
+}
 
-/**
- * Props for the DsTabs root component
- * @interface DsTabsProps
- */
 export interface DsTabsProps {
-	/**
-	 * Currently selected tab value (controlled mode)
-	 * @type {string}
-	 */
+	/** Current active tab value */
 	value?: string;
-
-	/**
-	 * Default selected tab value (uncontrolled mode)
-	 * @type {string}
-	 */
+	/** Default tab value for uncontrolled mode */
 	defaultValue?: string;
-
-	/**
-	 * Callback fired when the selected tab changes
-	 * @param {string | null} value - The new selected tab value
-	 */
+	/** Callback when tab changes */
 	onValueChange?: (value: string | null) => void;
-
-	/**
-	 * Tab orientation - horizontal or vertical layout
-	 * @type {DsTabsOrientation}
-	 * @default 'horizontal'
-	 */
+	/** Tab orientation */
 	orientation?: DsTabsOrientation;
-
-	/**
-	 * Size variant of the tabs
-	 * @type {DsTabsSize}
-	 * @default 'medium'
-	 */
+	/** Tab size variant */
 	size?: DsTabsSize;
-
-	/**
-	 * Maximum number of visible tabs before showing overflow dropdown
-	 * When exceeded, remaining tabs are shown in a "More" dropdown
-	 * @type {number}
-	 */
-	maxVisibleTabs?: number;
-
-	/**
-	 * Additional CSS class name
-	 * @type {string}
-	 */
+	/** Custom className */
 	className?: string;
-
-	/**
-	 * Inline styles
-	 * @type {CSSProperties}
-	 */
+	/** Custom styles */
 	style?: CSSProperties;
+	/** Children components */
+	children: ReactNode;
+}
 
-	/**
-	 * Tab components and content
-	 * @type {ReactNode}
-	 */
+export interface DsTabsListProps {
+	/** Custom className */
+	className?: string;
+	/** Custom styles */
+	style?: CSSProperties;
+	/** Children components (DsTabsTab) */
+	children: ReactNode;
+}
+
+export interface DsTabsTabProps {
+	/** Unique value for this tab */
+	value: string;
+	/** Tab label text */
+	label?: string;
+	/** Leading icon name (Material Icons) or SVG component */
+	icon?: IconType;
+	/** Badge count or text */
+	badge?: string | number;
+	/** Menu action items to display in dropdown */
+	menuActionItems?: DsTabsMenuActionItem[];
+	/** Callback when a menu action is selected */
+	onMenuActionSelect?: (value: string) => void;
+	/** Tooltip text to show on hover */
+	tooltip?: string;
+	/** Disabled state */
+	disabled?: boolean;
+	/** Custom className */
+	className?: string;
+	/** Custom styles */
+	style?: CSSProperties;
+	/** Custom children (overrides default rendering) */
+	children?: ReactNode;
+}
+
+export interface DsTabsContentProps {
+	/** Value matching the tab this content belongs to */
+	value: string;
+	/** Custom className */
+	className?: string;
+	/** Custom styles */
+	style?: CSSProperties;
+	/** Content to display */
 	children: ReactNode;
 }

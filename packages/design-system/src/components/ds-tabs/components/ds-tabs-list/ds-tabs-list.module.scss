@@ -1,4 +1,4 @@
-@use '../../../../styles/typography';
+$border-width: 1px;
 
 .tabList {
 	display: flex;
@@ -7,12 +7,21 @@
 
 .tabList-horizontal {
 	flex-direction: row;
-	gap: var(--spacing-xs);
 	align-items: center;
+	border-bottom: $border-width solid var(--color-border-main);
+	gap: var(--spacing-xs);
 }
 
 .tabList-vertical {
 	flex-direction: column;
+	align-items: stretch;
+	border-right: $border-width solid var(--color-border-main);
+}
+
+.tabList-vertical-medium {
+	gap: var(--spacing-xs);
+}
+
+.tabList-vertical-small {
 	gap: var(--spacing-3xs);
-	align-items: flex-start;
 }

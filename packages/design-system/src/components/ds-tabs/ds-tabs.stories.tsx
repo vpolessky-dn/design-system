@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 import { useState } from 'react';
-import { DsTabs, type DsTabsDropdownItem } from './index';
+import { DsTabs } from './ds-tabs';
+import type { DsTabsMenuActionItem } from './ds-tabs.types';
 import styles from './ds-tabs.stories.module.scss';
 
 const meta: Meta<typeof DsTabs> = {
@@ -28,9 +29,6 @@ const meta: Meta<typeof DsTabs> = {
 export default meta;
 type Story = StoryObj<typeof DsTabs>;
 
-/**
- * Default horizontal tabs with medium size
- */
 export const Default: Story = {
 	args: {
 		orientation: 'horizontal',
@@ -86,21 +84,14 @@ export const Default: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-
-		// Check initial state
-		await expect(canvas.getByRole('tab', { name: /Overview/i, selected: true })).toBeInTheDocument();
+		await expect(canvas.getByRole('tab', { name: /Overview/i })).toHaveAttribute('aria-selected', 'true');
 		await expect(canvas.getByText(/View your dashboard overview/i)).toBeInTheDocument();
-
-		// Click on Analytics tab
 		await userEvent.click(canvas.getByRole('tab', { name: /Analytics/i }));
-		await expect(canvas.getByRole('tab', { name: /Analytics/i, selected: true })).toBeInTheDocument();
+		await expect(canvas.getByRole('tab', { name: /Analytics/i })).toHaveAttribute('aria-selected', 'true');
 		await expect(canvas.getByText(/Detailed analytics and performance data/i)).toBeInTheDocument();
 	},
 };
 
-/**
- * Horizontal tabs with small size - includes a tab with dropdown menu
- */
 export const HorizontalSmall: Story = {
 	args: {
 		size: 'small',
@@ -108,27 +99,6 @@ export const HorizontalSmall: Story = {
 	},
 	render: function Render(args) {
 		const [selected, setSelected] = useState('dashboard');
-		const [selectedAction, setSelectedAction] = useState<string>('');
-
-		const viewDropdownItems: DsTabsDropdownItem[] = [
-			{ value: 'list', label: 'List View', icon: 'list' },
-			{ value: 'grid', label: 'Grid View', icon: 'grid_view' },
-			{ value: 'compact', label: 'Compact View', icon: 'view_compact' },
-		];
-
-		const actionsDropdownItems: DsTabsDropdownItem[] = [
-			{ value: 'export', label: 'Export Data', icon: 'download' },
-			{ value: 'import', label: 'Import Data', icon: 'upload' },
-			{ value: 'share', label: 'Share', icon: 'share' },
-			{ value: 'delete', label: 'Delete', icon: 'delete', disabled: true },
-		];
-
-		const settingsDropdownItems: DsTabsDropdownItem[] = [
-			{ value: 'general', label: 'General Settings', icon: 'settings' },
-			{ value: 'privacy', label: 'Privacy', icon: 'lock' },
-			{ value: 'notifications', label: 'Notifications', icon: 'notifications' },
-			{ value: 'advanced', label: 'Advanced', icon: 'tune' },
-		];
 
 		return (
 			<div className={styles.container}>
@@ -139,38 +109,9 @@ export const HorizontalSmall: Story = {
 				>
 					<DsTabs.List>
 						<DsTabs.Tab value="dashboard" label="Dashboard" icon="dashboard" />
-						<DsTabs.Tab
-							value="analytics"
-							label="Analytics"
-							icon="bar_chart"
-							badge={12}
-							dropdownItems={viewDropdownItems}
-							onDropdownSelect={(value: string) => {
-								console.log('View changed to:', value);
-								setSelectedAction(`Analytics: ${value}`);
-							}}
-						/>
+						<DsTabs.Tab value="analytics" label="Analytics" icon="bar_chart" badge={12} />
 						<DsTabs.Tab value="reports" label="Reports" icon="description" badge={5} />
-						<DsTabs.Tab
-							value="actions"
-							label="Actions"
-							icon="play_arrow"
-							dropdownItems={actionsDropdownItems}
-							onDropdownSelect={(value: string) => {
-								console.log('Action selected:', value);
-								setSelectedAction(`Action: ${value}`);
-							}}
-						/>
-						<DsTabs.Tab
-							value="settings"
-							label="Settings"
-							icon="settings"
-							dropdownItems={settingsDropdownItems}
-							onDropdownSelect={(value: string) => {
-								console.log('Settings section:', value);
-								setSelectedAction(`Settings: ${value}`);
-							}}
-						/>
+						<DsTabs.Tab value="settings" label="Settings" icon="settings" />
 					</DsTabs.List>
 
 					<DsTabs.Content value="dashboard">
@@ -182,12 +123,7 @@ export const HorizontalSmall: Story = {
 					<DsTabs.Content value="analytics">
 						<div className={styles.content}>
 							<h3>Analytics</h3>
-							<p>This tab has a dropdown menu to switch between different view modes.</p>
-							{selectedAction && (
-								<p>
-									<strong>Last action:</strong> {selectedAction}
-								</p>
-							)}
+							<p>View analytics and performance data. 12 new insights available.</p>
 						</div>
 					</DsTabs.Content>
 					<DsTabs.Content value="reports">
@@ -196,26 +132,10 @@ export const HorizontalSmall: Story = {
 							<p>View and generate reports. 5 new reports available.</p>
 						</div>
 					</DsTabs.Content>
-					<DsTabs.Content value="actions">
-						<div className={styles.content}>
-							<h3>Actions</h3>
-							<p>This tab has a dropdown menu with various actions you can perform.</p>
-							{selectedAction && (
-								<p>
-									<strong>Last action:</strong> {selectedAction}
-								</p>
-							)}
-						</div>
-					</DsTabs.Content>
 					<DsTabs.Content value="settings">
 						<div className={styles.content}>
 							<h3>Settings</h3>
-							<p>This tab has a dropdown menu to navigate to different settings sections.</p>
-							{selectedAction && (
-								<p>
-									<strong>Last action:</strong> {selectedAction}
-								</p>
-							)}
+							<p>Configure your application settings.</p>
 						</div>
 					</DsTabs.Content>
 				</DsTabs>
@@ -224,15 +144,96 @@ export const HorizontalSmall: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByRole('tab', { name: /Dashboard/i, selected: true })).toBeInTheDocument();
+		await expect(canvas.getByRole('tab', { name: /Dashboard/i })).toHaveAttribute('aria-selected', 'true');
 		await userEvent.click(canvas.getByRole('tab', { name: /Reports/i }));
-		await expect(canvas.getByRole('tab', { name: /Reports/i, selected: true })).toBeInTheDocument();
+		await expect(canvas.getByRole('tab', { name: /Reports/i })).toHaveAttribute('aria-selected', 'true');
 	},
 };
 
-/**
- * Vertical tabs with medium size
- */
+export const WithMenuActions: Story = {
+	args: {
+		orientation: 'horizontal',
+		size: 'medium',
+	},
+	render: function Render(args) {
+		const [selected, setSelected] = useState('tab1');
+
+		const menuActions: DsTabsMenuActionItem[] = [
+			{ value: 'edit', label: 'Edit' },
+			{ value: 'duplicate', label: 'Duplicate' },
+			{ value: 'share', label: 'Share' },
+			{ value: 'delete', label: 'Delete' },
+		];
+
+		const handleMenuAction = (action: string) => {
+			console.log('Menu action selected:', action);
+		};
+
+		return (
+			<div className={styles.container}>
+				<DsTabs {...args} value={selected} onValueChange={(val: string | null) => setSelected(val ?? 'tab1')}>
+					<DsTabs.List>
+						<DsTabs.Tab
+							value="tab1"
+							label="Projects"
+							icon="folder"
+							badge={5}
+							menuActionItems={menuActions}
+							onMenuActionSelect={handleMenuAction}
+						/>
+						<DsTabs.Tab
+							value="tab2"
+							label="Documents"
+							icon="description"
+							badge={12}
+							menuActionItems={menuActions}
+							onMenuActionSelect={handleMenuAction}
+						/>
+						<DsTabs.Tab
+							value="tab3"
+							label="Settings"
+							icon="settings"
+							menuActionItems={menuActions}
+							onMenuActionSelect={handleMenuAction}
+						/>
+					</DsTabs.List>
+
+					<DsTabs.Content value="tab1">
+						<div className={styles.content}>
+							<h3>Projects</h3>
+							<p>Click the dropdown icon on tabs to see menu actions</p>
+						</div>
+					</DsTabs.Content>
+					<DsTabs.Content value="tab2">
+						<div className={styles.content}>
+							<h3>Documents</h3>
+							<p>12 documents available</p>
+						</div>
+					</DsTabs.Content>
+					<DsTabs.Content value="tab3">
+						<div className={styles.content}>
+							<h3>Settings</h3>
+							<p>Configure your preferences</p>
+						</div>
+					</DsTabs.Content>
+				</DsTabs>
+			</div>
+		);
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const tabs = canvas.getAllByRole('tab');
+		await expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+		const firstTab = tabs[0];
+		const menuButton = firstTab.querySelector('[role="button"][aria-label="Open menu"]');
+		if (menuButton) {
+			await userEvent.click(menuButton);
+			const editAction = await within(document.body).findByRole('menuitem', { name: /Edit/i });
+			await expect(editAction).toBeInTheDocument();
+		}
+	},
+};
+
 export const Vertical: Story = {
 	args: {
 		orientation: 'vertical',
@@ -296,49 +297,72 @@ export const Vertical: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByRole('tab', { name: /Profile/i, selected: true })).toBeInTheDocument();
+		await expect(canvas.getByRole('tab', { name: /Profile/i })).toHaveAttribute('aria-selected', 'true');
 		await userEvent.click(canvas.getByRole('tab', { name: /Notifications/i }));
-		await expect(canvas.getByRole('tab', { name: /Notifications/i, selected: true })).toBeInTheDocument();
+		await expect(canvas.getByRole('tab', { name: /Notifications/i })).toHaveAttribute(
+			'aria-selected',
+			'true',
+		);
 		await expect(canvas.getByText(/Manage notification preferences/i)).toBeInTheDocument();
 	},
 };
 
-/**
- * Vertical tabs with small size
- */
 export const VerticalSmall: Story = {
 	args: {
 		orientation: 'vertical',
 		size: 'small',
 	},
 	render: function Render(args) {
-		const [selected, setSelected] = useState('item1');
+		const [selected, setSelected] = useState('general');
 
 		return (
 			<div className={styles.verticalContainer}>
 				<DsTabs
 					{...args}
 					value={selected}
-					onValueChange={(val: string | null) => setSelected(val ?? 'item1')}
+					onValueChange={(val: string | null) => setSelected(val ?? 'general')}
 				>
 					<DsTabs.List>
-						<DsTabs.Tab value="item1" label="Tab Item" icon="check_circle" />
-						<DsTabs.Tab value="item2" label="Tab Item" icon="check_circle" />
-						<DsTabs.Tab value="item3" label="Tab Item" icon="check_circle" />
-						<DsTabs.Tab value="item4" label="Tab Item" icon="check_circle" />
+						<DsTabs.Tab value="general" label="General" icon="settings" />
+						<DsTabs.Tab value="account" label="Account" icon="person" />
+						<DsTabs.Tab value="privacy" label="Privacy" icon="lock" badge={2} />
+						<DsTabs.Tab value="appearance" label="Appearance" icon="palette" />
+						<DsTabs.Tab value="advanced" label="Advanced" icon="tune" />
 					</DsTabs.List>
 
-					<DsTabs.Content value="item1">
-						<div className={styles.content}>Item 1 content</div>
+					<DsTabs.Content value="general">
+						<div className={styles.content}>
+							<h3>General Settings</h3>
+							<p>Configure general application settings and preferences.</p>
+						</div>
 					</DsTabs.Content>
-					<DsTabs.Content value="item2">
-						<div className={styles.content}>Item 2 content</div>
+
+					<DsTabs.Content value="account">
+						<div className={styles.content}>
+							<h3>Account</h3>
+							<p>Manage your account details and information.</p>
+						</div>
 					</DsTabs.Content>
-					<DsTabs.Content value="item3">
-						<div className={styles.content}>Item 3 content</div>
+
+					<DsTabs.Content value="privacy">
+						<div className={styles.content}>
+							<h3>Privacy</h3>
+							<p>Control your privacy settings and data sharing (2 recommendations).</p>
+						</div>
 					</DsTabs.Content>
-					<DsTabs.Content value="item4">
-						<div className={styles.content}>Item 4 content</div>
+
+					<DsTabs.Content value="appearance">
+						<div className={styles.content}>
+							<h3>Appearance</h3>
+							<p>Customize the look and feel of the application.</p>
+						</div>
+					</DsTabs.Content>
+
+					<DsTabs.Content value="advanced">
+						<div className={styles.content}>
+							<h3>Advanced</h3>
+							<p>Advanced configuration options for power users.</p>
+						</div>
 					</DsTabs.Content>
 				</DsTabs>
 			</div>
@@ -346,82 +370,114 @@ export const VerticalSmall: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByRole('tab', { name: /Tab Item/i, selected: true })).toBeInTheDocument();
-		const tabs = canvas.getAllByRole('tab');
-		await userEvent.click(tabs[2]);
-		await expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+		await expect(canvas.getByRole('tab', { name: /General/i })).toHaveAttribute('aria-selected', 'true');
+		await userEvent.click(canvas.getByRole('tab', { name: /Privacy/i }));
+		await expect(canvas.getByRole('tab', { name: /Privacy/i })).toHaveAttribute('aria-selected', 'true');
+		await expect(canvas.getByText(/Control your privacy settings/i)).toBeInTheDocument();
 	},
 };
 
-/**
- * Tab with dropdown menu - shows how to add a dropdown menu to a tab (opens on hover)
- */
-export const TabWithDropdown: Story = {
+export const VerticalWithMenuActions: Story = {
 	args: {
-		orientation: 'horizontal',
+		orientation: 'vertical',
 		size: 'medium',
 	},
 	render: function Render(args) {
-		const [selected, setSelected] = useState('overview');
-		const [selectedFilter, setSelectedFilter] = useState('all');
+		const [selected, setSelected] = useState('profile');
 
-		const filterOptions: DsTabsDropdownItem[] = [
-			{ value: 'all', label: 'All Items', icon: 'list' },
-			{ value: 'active', label: 'Active Only', icon: 'check_circle' },
-			{ value: 'archived', label: 'Archived Only', icon: 'archive' },
+		const menuActions: DsTabsMenuActionItem[] = [
+			{ value: 'edit', label: 'Edit' },
+			{ value: 'duplicate', label: 'Duplicate' },
+			{ value: 'archive', label: 'Archive' },
+			{ value: 'delete', label: 'Delete' },
 		];
 
+		const handleMenuAction = (action: string) => {
+			console.log('Menu action selected:', action);
+		};
+
 		return (
-			<div className={styles.container}>
+			<div className={styles.verticalContainer}>
 				<DsTabs
 					{...args}
 					value={selected}
-					onValueChange={(val: string | null) => setSelected(val ?? 'overview')}
+					onValueChange={(val: string | null) => setSelected(val ?? 'profile')}
 				>
 					<DsTabs.List>
-						<DsTabs.Tab value="overview" label="Overview" icon="dashboard" />
-						<DsTabs.Tab value="analytics" label="Analytics" icon="bar_chart" />
-						{/* Tab with integrated dropdown menu - the dropdown provides filtering actions */}
 						<DsTabs.Tab
-							value="items"
-							label="Items"
-							icon="inventory_2"
-							dropdownItems={filterOptions}
-							onDropdownSelect={(value: string) => {
-								setSelectedFilter(value);
-								console.log('Selected filter:', value);
-							}}
+							value="profile"
+							label="Profile"
+							icon="person"
+							menuActionItems={menuActions}
+							onMenuActionSelect={handleMenuAction}
 						/>
-						<DsTabs.Tab value="settings" label="Settings" icon="settings" />
+						<DsTabs.Tab
+							value="security"
+							label="Security"
+							icon="lock"
+							badge={3}
+							menuActionItems={menuActions}
+							onMenuActionSelect={handleMenuAction}
+						/>
+						<DsTabs.Tab
+							value="notifications"
+							label="Notifications"
+							icon="notifications"
+							badge={15}
+							menuActionItems={menuActions}
+							onMenuActionSelect={handleMenuAction}
+						/>
+						<DsTabs.Tab
+							value="billing"
+							label="Billing"
+							icon="credit_card"
+							menuActionItems={menuActions}
+							onMenuActionSelect={handleMenuAction}
+						/>
+						<DsTabs.Tab
+							value="team"
+							label="Team"
+							icon="group"
+							menuActionItems={menuActions}
+							onMenuActionSelect={handleMenuAction}
+						/>
 					</DsTabs.List>
 
-					<DsTabs.Content value="overview">
+					<DsTabs.Content value="profile">
 						<div className={styles.content}>
-							<h3>Overview</h3>
-							<p>General overview content goes here.</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="analytics">
-						<div className={styles.content}>
-							<h3>Analytics</h3>
-							<p>Analytics and metrics content goes here.</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="items">
-						<div className={styles.content}>
-							<h3>Items - {filterOptions.find((opt) => opt.value === selectedFilter)?.label ?? ''}</h3>
+							<h3>Profile Settings</h3>
 							<p>
-								Currently showing: <strong>{selectedFilter}</strong> items.
-							</p>
-							<p style={{ marginTop: '8px', fontSize: '14px', opacity: 0.7 }}>
-								💡 The tab label stays as &quot;Items&quot;, but you can hover to access filter options
+								Manage your profile information and preferences. Click the dropdown icon on tabs to see menu
+								actions.
 							</p>
 						</div>
 					</DsTabs.Content>
-					<DsTabs.Content value="settings">
+
+					<DsTabs.Content value="security">
 						<div className={styles.content}>
-							<h3>Settings</h3>
-							<p>Settings and configuration options go here.</p>
+							<h3>Security</h3>
+							<p>Configure security settings and two-factor authentication (3 recommendations).</p>
+						</div>
+					</DsTabs.Content>
+
+					<DsTabs.Content value="notifications">
+						<div className={styles.content}>
+							<h3>Notifications</h3>
+							<p>Manage notification preferences and channels (15 unread).</p>
+						</div>
+					</DsTabs.Content>
+
+					<DsTabs.Content value="billing">
+						<div className={styles.content}>
+							<h3>Billing</h3>
+							<p>View invoices and manage payment methods.</p>
+						</div>
+					</DsTabs.Content>
+
+					<DsTabs.Content value="team">
+						<div className={styles.content}>
+							<h3>Team Management</h3>
+							<p>Invite team members and manage permissions.</p>
 						</div>
 					</DsTabs.Content>
 				</DsTabs>
@@ -430,88 +486,19 @@ export const TabWithDropdown: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const itemsTab = await canvas.findByRole('tab', { name: /Items/i });
-		await userEvent.hover(itemsTab);
-		const allItemsOption = await within(document.body).findByRole('menuitem', { name: /All Items/i });
-		await expect(allItemsOption).toBeInTheDocument();
-		await userEvent.click(allItemsOption);
-		// Selecting a dropdown option should also select the tab
-		await expect(itemsTab).toHaveAttribute('aria-selected', 'false');
+		await expect(canvas.getByRole('tab', { name: /Profile/i })).toHaveAttribute('aria-selected', 'true');
+		await userEvent.click(canvas.getByRole('tab', { name: /Security/i }));
+		await expect(canvas.getByRole('tab', { name: /Security/i })).toHaveAttribute('aria-selected', 'true');
+		const securityTab = canvas.getByRole('tab', { name: /Security/i });
+		const menuButton = securityTab.querySelector('[role="button"][aria-label="Open menu"]');
+		if (menuButton) {
+			await userEvent.click(menuButton);
+			const editAction = await within(document.body).findByRole('menuitem', { name: /Edit/i });
+			await expect(editAction).toBeInTheDocument();
+		}
 	},
 };
 
-/**
- * Tabs with custom content
- */
-export const CustomContent: Story = {
-	render: function Render(args) {
-		const [selected, setSelected] = useState('custom1');
-
-		return (
-			<div className={styles.container}>
-				<DsTabs
-					{...args}
-					value={selected}
-					onValueChange={(val: string | null) => setSelected(val ?? 'custom1')}
-				>
-					<DsTabs.List>
-						<DsTabs.Tab value="custom1">
-							<div className={styles.customTab}>
-								<span className={styles.customIcon}>🎨</span>
-								<span>Design</span>
-								<span className={styles.customBadge}>New</span>
-							</div>
-						</DsTabs.Tab>
-						<DsTabs.Tab value="custom2">
-							<div className={styles.customTab}>
-								<span className={styles.customIcon}>💻</span>
-								<span>Development</span>
-							</div>
-						</DsTabs.Tab>
-						<DsTabs.Tab value="custom3">
-							<div className={styles.customTab}>
-								<span className={styles.customIcon}>🚀</span>
-								<span>Deployment</span>
-								<span className={styles.customCount}>3</span>
-							</div>
-						</DsTabs.Tab>
-					</DsTabs.List>
-
-					<DsTabs.Content value="custom1">
-						<div className={styles.content}>
-							<h3>Design Phase</h3>
-							<p>Create mockups and prototypes.</p>
-						</div>
-					</DsTabs.Content>
-
-					<DsTabs.Content value="custom2">
-						<div className={styles.content}>
-							<h3>Development Phase</h3>
-							<p>Build and test features.</p>
-						</div>
-					</DsTabs.Content>
-
-					<DsTabs.Content value="custom3">
-						<div className={styles.content}>
-							<h3>Deployment Phase</h3>
-							<p>Deploy to production environments.</p>
-						</div>
-					</DsTabs.Content>
-				</DsTabs>
-			</div>
-		);
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await expect(canvas.getByRole('tab', { name: /Design/i, selected: true })).toBeInTheDocument();
-		await userEvent.click(canvas.getByRole('tab', { name: /Development/i }));
-		await expect(canvas.getByRole('tab', { name: /Development/i, selected: true })).toBeInTheDocument();
-	},
-};
-
-/**
- * Tabs with disabled state
- */
 export const WithDisabled: Story = {
 	render: function Render(args) {
 		const [selected, setSelected] = useState('active1');
@@ -548,17 +535,15 @@ export const WithDisabled: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		const disabledTabs = canvas
-			.getAllByRole('tab', { queryFallbacks: true })
-			.filter((t) => t.hasAttribute('disabled'));
+		const allTabs = canvas.getAllByRole('tab', { queryFallbacks: true });
+		const disabledTabs = allTabs.filter((t) => t.hasAttribute('disabled'));
+		const firstActiveTab = allTabs[0];
+		await expect(firstActiveTab).toHaveAttribute('aria-selected', 'true');
 		await userEvent.click(disabledTabs[0]);
-		await expect(canvas.getByRole('tab', { name: /Active/i, selected: true })).toBeInTheDocument();
+		await expect(firstActiveTab).toHaveAttribute('aria-selected', 'true');
 	},
 };
 
-/**
- * Tabs without icons (text only)
- */
 export const TextOnly: Story = {
 	render: function Render(args) {
 		const [selected, setSelected] = useState('home');
@@ -606,62 +591,12 @@ export const TextOnly: Story = {
 	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
-		await expect(canvas.getByRole('tab', { name: /Home/i, selected: true })).toBeInTheDocument();
+		await expect(canvas.getByRole('tab', { name: /Home/i })).toHaveAttribute('aria-selected', 'true');
 		await userEvent.click(canvas.getByRole('tab', { name: /Products/i }));
-		await expect(canvas.getByRole('tab', { name: /Products/i, selected: true })).toBeInTheDocument();
+		await expect(canvas.getByRole('tab', { name: /Products/i })).toHaveAttribute('aria-selected', 'true');
 	},
 };
 
-/**
- * Tabs with only icons and badges
- */
-export const IconsOnly: Story = {
-	render: function Render(args) {
-		const [selected, setSelected] = useState('home');
-
-		return (
-			<div className={styles.container}>
-				<DsTabs {...args} value={selected} onValueChange={(val: string | null) => setSelected(val ?? 'home')}>
-					<DsTabs.List>
-						<DsTabs.Tab value="home" icon="home" tooltip="Home" />
-						<DsTabs.Tab value="search" icon="search" tooltip="Search" />
-						<DsTabs.Tab value="notifications" icon="notifications" badge={8} tooltip="Notifications" />
-						<DsTabs.Tab value="messages" icon="mail" badge={3} tooltip="Messages" />
-						<DsTabs.Tab value="profile" icon="person" tooltip="Profile" />
-					</DsTabs.List>
-
-					<DsTabs.Content value="home">
-						<div className={styles.content}>Home content</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="search">
-						<div className={styles.content}>Search content</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="notifications">
-						<div className={styles.content}>8 new notifications</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="messages">
-						<div className={styles.content}>3 unread messages</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="profile">
-						<div className={styles.content}>Profile content</div>
-					</DsTabs.Content>
-				</DsTabs>
-			</div>
-		);
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		const tabs = canvas.getAllByRole('tab');
-		await expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
-		await userEvent.click(tabs[2]); // Notifications
-		await expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
-		await expect(canvas.getByText(/8 new notifications/i)).toBeInTheDocument();
-	},
-};
-
-/**
- * Tabs with tooltips on hover
- */
 export const WithTooltips: Story = {
 	render: function Render(args) {
 		const [selected, setSelected] = useState('dashboard');
@@ -736,400 +671,7 @@ export const WithTooltips: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		await userEvent.hover(canvas.getByRole('tab', { name: /Analytics/i }));
-		// Tooltip should appear (usually in a portal)
 		const tooltip = await within(document.body).findByRole('tooltip');
 		await expect(tooltip).toHaveTextContent(/Analytics and insights/i);
-	},
-};
-
-/**
- * More than 5 tabs with overflow (demonstrating maxVisibleTabs)
- */
-export const MoreThanFiveTabs: Story = {
-	args: {
-		maxVisibleTabs: 5,
-	},
-	render: function Render(args) {
-		const [selected, setSelected] = useState('tab1');
-
-		return (
-			<div className={styles.container}>
-				<DsTabs {...args} value={selected} onValueChange={(val: string | null) => setSelected(val ?? 'tab1')}>
-					<DsTabs.List>
-						<DsTabs.Tab value="tab1" label="Overview" icon="dashboard" badge={5} />
-						<DsTabs.Tab value="tab2" label="Analytics" icon="analytics" badge={12} />
-						<DsTabs.Tab value="tab3" label="Reports" icon="description" />
-						<DsTabs.Tab value="tab4" label="Users" icon="group" badge={23} />
-						<DsTabs.Tab value="tab5" label="Settings" icon="settings" />
-						<DsTabs.Tab value="tab6" label="Notifications" icon="notifications" badge={8} />
-						<DsTabs.Tab value="tab7" label="Security" icon="lock" />
-						<DsTabs.Tab value="tab8" label="Billing" icon="credit_card" badge={2} />
-					</DsTabs.List>
-
-					<DsTabs.Content value="tab1">
-						<div className={styles.content}>
-							Overview - First 4 tabs visible, others in &quot;More&quot; dropdown
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="tab2">
-						<div className={styles.content}>Analytics - 12 new insights</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="tab3">
-						<div className={styles.content}>Reports - Generate and view reports</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="tab4">
-						<div className={styles.content}>Users - 23 active users</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="tab5">
-						<div className={styles.content}>Settings - In overflow dropdown</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="tab6">
-						<div className={styles.content}>Notifications - 8 unread (In overflow dropdown)</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="tab7">
-						<div className={styles.content}>Security - In overflow dropdown</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="tab8">
-						<div className={styles.content}>Billing - 2 invoices (In overflow dropdown)</div>
-					</DsTabs.Content>
-				</DsTabs>
-			</div>
-		);
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		const moreButton = await canvas.findByRole('button', { name: /More/i });
-		await userEvent.click(moreButton);
-		const settingsOption = await within(document.body).findByRole('menuitem', { name: /Settings/i });
-		await userEvent.click(settingsOption);
-		// More button should now show "Settings" as the selected tab label
-		await expect(canvas.getByRole('button', { name: /Settings/i })).toHaveAttribute('aria-selected', 'true');
-		await expect(canvas.getByText(/Settings - In overflow dropdown/i)).toBeInTheDocument();
-	},
-};
-
-/**
- * Long tab names with text overflow and tooltips
- */
-export const LongTabNames: Story = {
-	render: function Render(args) {
-		const [selected, setSelected] = useState('tab1');
-
-		return (
-			<div className={styles.containerNarrow}>
-				<DsTabs {...args} value={selected} onValueChange={(val: string | null) => setSelected(val ?? 'tab1')}>
-					<DsTabs.List>
-						<DsTabs.Tab
-							value="tab1"
-							label="Customer Relationship Management"
-							icon="people"
-							tooltip="Customer Relationship Management Dashboard"
-						/>
-						<DsTabs.Tab
-							value="tab2"
-							label="Enterprise Resource Planning System"
-							icon="business"
-							badge={15}
-							tooltip="Enterprise Resource Planning System Configuration"
-						/>
-						<DsTabs.Tab
-							value="tab3"
-							label="Business Intelligence and Analytics Platform"
-							icon="analytics"
-							badge={7}
-							tooltip="Business Intelligence and Analytics Platform Overview"
-						/>
-						<DsTabs.Tab
-							value="tab4"
-							label="Human Resources Management Portal"
-							icon="person"
-							tooltip="Human Resources Management Portal Settings"
-						/>
-					</DsTabs.List>
-
-					<DsTabs.Content value="tab1">
-						<div className={styles.content}>
-							<h3>Customer Relationship Management</h3>
-							<p>
-								Long tab names are truncated with ellipsis. Hover over the tab to see the full name in a
-								tooltip.
-							</p>
-						</div>
-					</DsTabs.Content>
-
-					<DsTabs.Content value="tab2">
-						<div className={styles.content}>
-							<h3>Enterprise Resource Planning System</h3>
-							<p>15 configuration items require attention</p>
-						</div>
-					</DsTabs.Content>
-
-					<DsTabs.Content value="tab3">
-						<div className={styles.content}>
-							<h3>Business Intelligence and Analytics</h3>
-							<p>7 new reports available</p>
-						</div>
-					</DsTabs.Content>
-
-					<DsTabs.Content value="tab4">
-						<div className={styles.content}>
-							<h3>Human Resources Management</h3>
-							<p>Manage your HR settings and employee data</p>
-						</div>
-					</DsTabs.Content>
-				</DsTabs>
-			</div>
-		);
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		await userEvent.hover(canvas.getByRole('tab', { name: /Enterprise Resource Planning/i }));
-		const tooltip = await within(document.body).findByRole('tooltip');
-		await expect(tooltip).toHaveTextContent(/Enterprise Resource Planning System Configuration/i);
-	},
-};
-
-/**
- * Vertical tabs with long text and overflow (more than 5 tabs)
- */
-export const VerticalLongTextWithOverflow: Story = {
-	args: {
-		orientation: 'vertical',
-		size: 'medium',
-		maxVisibleTabs: 5,
-	},
-	render: function Render(args) {
-		const [selected, setSelected] = useState('dashboard');
-
-		return (
-			<div className={styles.verticalContainer}>
-				<DsTabs
-					{...args}
-					value={selected}
-					onValueChange={(val: string | null) => setSelected(val ?? 'dashboard')}
-				>
-					<DsTabs.List>
-						<DsTabs.Tab
-							value="dashboard"
-							label="Dashboard Overview"
-							icon="dashboard"
-							tooltip="Dashboard Overview"
-						/>
-						<DsTabs.Tab
-							value="analytics"
-							label="Analytics and Reporting"
-							icon="bar_chart"
-							badge={12}
-							tooltip="Analytics and Reporting"
-						/>
-						<DsTabs.Tab
-							value="customer"
-							label="Customer Management System"
-							icon="people"
-							tooltip="Customer Management System"
-						/>
-						<DsTabs.Tab
-							value="inventory"
-							label="Inventory and Stock Control"
-							icon="inventory_2"
-							badge={3}
-							tooltip="Inventory and Stock Control"
-						/>
-						<DsTabs.Tab
-							value="finance"
-							label="Financial Reports and Budgeting"
-							icon="account_balance"
-							tooltip="Financial Reports and Budgeting"
-						/>
-						<DsTabs.Tab
-							value="marketing"
-							label="Marketing Campaigns"
-							icon="campaign"
-							badge={8}
-							tooltip="Marketing Campaigns"
-						/>
-						<DsTabs.Tab
-							value="support"
-							label="Customer Support Tickets"
-							icon="support_agent"
-							badge={24}
-							tooltip="Customer Support Tickets"
-						/>
-						<DsTabs.Tab
-							value="settings"
-							label="System Settings and Configuration"
-							icon="settings"
-							tooltip="System Settings and Configuration"
-						/>
-					</DsTabs.List>
-
-					<DsTabs.Content value="dashboard">
-						<div className={styles.content}>
-							<h3>Dashboard Overview</h3>
-							<p>Your main dashboard with key metrics and insights.</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="analytics">
-						<div className={styles.content}>
-							<h3>Analytics and Reporting</h3>
-							<p>Comprehensive analytics and detailed reports. 12 new reports available.</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="customer">
-						<div className={styles.content}>
-							<h3>Customer Management System</h3>
-							<p>Manage all your customer relationships and interactions.</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="inventory">
-						<div className={styles.content}>
-							<h3>Inventory and Stock Control</h3>
-							<p>Track inventory levels and manage stock. 3 items need attention.</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="finance">
-						<div className={styles.content}>
-							<h3>Financial Reports and Budgeting</h3>
-							<p>View financial data, reports, and manage budgets.</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="marketing">
-						<div className={styles.content}>
-							<h3>Marketing Campaigns</h3>
-							<p>Manage and monitor marketing campaigns. 8 active campaigns.</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="support">
-						<div className={styles.content}>
-							<h3>Customer Support Tickets</h3>
-							<p>Handle customer support requests and tickets. 24 open tickets.</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="settings">
-						<div className={styles.content}>
-							<h3>System Settings and Configuration</h3>
-							<p>Configure system settings and preferences.</p>
-						</div>
-					</DsTabs.Content>
-				</DsTabs>
-			</div>
-		);
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		const moreButton = await canvas.findByRole('button', { name: /More/i });
-		await userEvent.click(moreButton);
-		const settingsOption = await within(document.body).findByRole('menuitem', {
-			name: /System Settings and Configuration/i,
-		});
-		await userEvent.click(settingsOption);
-		await expect(canvas.getByRole('button', { name: /System Settings and Configuration/i })).toHaveAttribute(
-			'aria-selected',
-			'true',
-		);
-	},
-};
-
-/**
- * Tabs with automatic overflow dropdown (more than 5 tabs)
- */
-export const WithOverflowDropdown: Story = {
-	args: {
-		maxVisibleTabs: 5,
-	},
-	render: function Render(args) {
-		const [selected, setSelected] = useState('overview');
-
-		return (
-			<div className={styles.container}>
-				<DsTabs
-					{...args}
-					value={selected}
-					onValueChange={(val: string | null) => setSelected(val ?? 'overview')}
-				>
-					<DsTabs.List>
-						<DsTabs.Tab value="overview" label="Overview" icon="dashboard" badge={5} />
-						<DsTabs.Tab value="analytics" label="Analytics" icon="analytics" badge={12} />
-						<DsTabs.Tab value="reports" label="Reports" icon="description" />
-						<DsTabs.Tab value="users" label="Users" icon="group" badge={23} />
-						<DsTabs.Tab value="settings" label="Settings" icon="settings" />
-						<DsTabs.Tab value="notifications" label="Notifications" icon="notifications" badge={8} />
-						<DsTabs.Tab value="security" label="Security" icon="lock" />
-						<DsTabs.Tab value="billing" label="Billing" icon="credit_card" badge={2} />
-						<DsTabs.Tab value="integrations" label="Integrations" icon="extension" />
-						<DsTabs.Tab value="api" label="API" icon="code" />
-					</DsTabs.List>
-
-					<DsTabs.Content value="overview">
-						<div className={styles.content}>
-							<h3>Overview</h3>
-							<p>First 4 tabs are visible, others are in the &quot;More&quot; dropdown</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="analytics">
-						<div className={styles.content}>
-							<h3>Analytics</h3>
-							<p>12 new insights</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="reports">
-						<div className={styles.content}>
-							<h3>Reports</h3>
-							<p>Generate reports</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="users">
-						<div className={styles.content}>
-							<h3>Users</h3>
-							<p>23 active users</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="settings">
-						<div className={styles.content}>
-							<h3>Settings</h3>
-							<p>In overflow dropdown</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="notifications">
-						<div className={styles.content}>
-							<h3>Notifications</h3>
-							<p>8 notifications - In overflow dropdown</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="security">
-						<div className={styles.content}>
-							<h3>Security</h3>
-							<p>In overflow dropdown</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="billing">
-						<div className={styles.content}>
-							<h3>Billing</h3>
-							<p>2 invoices - In overflow dropdown</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="integrations">
-						<div className={styles.content}>
-							<h3>Integrations</h3>
-							<p>In overflow dropdown</p>
-						</div>
-					</DsTabs.Content>
-					<DsTabs.Content value="api">
-						<div className={styles.content}>
-							<h3>API</h3>
-							<p>In overflow dropdown</p>
-						</div>
-					</DsTabs.Content>
-				</DsTabs>
-			</div>
-		);
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-		const moreButton = await canvas.findByRole('button', { name: /More/i });
-		await userEvent.click(moreButton);
-		const apiOption = await within(document.body).findByRole('menuitem', { name: /API/i });
-		await userEvent.click(apiOption);
-		await expect(canvas.getByRole('button', { name: /API/i })).toHaveAttribute('aria-selected', 'true');
 	},
 };

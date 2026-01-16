@@ -1,64 +1,37 @@
-import type React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Tabs } from '@ark-ui/react/tabs';
 import classNames from 'classnames';
-import { DsIcon } from '../../../ds-icon';
+import DsIcon from '../../../ds-icon/ds-icon';
+import type { IconType } from '../../../ds-icon';
 import { DsTooltip } from '../../../ds-tooltip';
 import { DsDropdownMenu } from '../../../ds-dropdown-menu';
 import { useTabsContext } from '../../context/ds-tabs-context';
-import type { DsTabsTabProps } from './ds-tabs-tab.types';
+import type { DsTabsTabProps } from '../../ds-tabs.types';
 import styles from './ds-tabs-tab.module.scss';
 
-export const DROPDOWN_CLOSE_DELAY = 250;
-
-export const DsTabsTab: React.FC<DsTabsTabProps> = ({
+export const DsTabsTab = ({
 	value,
 	disabled,
 	icon,
 	label,
 	badge,
+	menuActionItems,
+	onMenuActionSelect,
 	tooltip,
-	hasMenu,
-	dropdownItems,
-	onDropdownSelect,
 	className,
 	style,
 	children,
-}) => {
+}: DsTabsTabProps) => {
 	const { orientation, size } = useTabsContext();
-
-	const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-	const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const triggerRef = useRef<HTMLButtonElement>(null);
+	const menuTriggerRef = useRef<HTMLDivElement>(null);
+	const [menuOpen, setMenuOpen] = useState(false);
 
-	const showDropdown = dropdownItems && dropdownItems.length > 0;
-	const showMenuIcon = hasMenu || showDropdown;
+	const hasMenuActions = menuActionItems && menuActionItems.length > 0;
 
-	// Cleanup: clear timeout on unmount to prevent memory leaks
-	useEffect(() => {
-		return () => {
-			if (closeTimeoutRef.current) {
-				clearTimeout(closeTimeoutRef.current);
-			}
-		};
-	}, []);
-
-	const handleMouseEnter = () => {
-		// Cancel any pending close operation if user moves mouse back to tab
-		if (closeTimeoutRef.current) {
-			clearTimeout(closeTimeoutRef.current);
-			closeTimeoutRef.current = null;
-		}
-		setIsDropdownOpen(true);
-	};
-
-	const handleMouseLeave = () => {
-		// Delay closing dropdown by DROPDOWN_CLOSE_DELAY (250ms)
-		// Allows user to move mouse from tab to dropdown menu without it closing
-		closeTimeoutRef.current = setTimeout(() => {
-			setIsDropdownOpen(false);
-			closeTimeoutRef.current = null;
-		}, DROPDOWN_CLOSE_DELAY);
+	const handleMenuActionSelect = (actionValue: string) => {
+		onMenuActionSelect?.(actionValue);
+		setMenuOpen(false);
 	};
 
 	const tabContent = (
@@ -73,14 +46,6 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 				className,
 			)}
 			style={style}
-			onClick={() => {
-				// Remove focus styling after tab selection to prevent persistent focus border
-				// requestAnimationFrame ensures blur happens after click event completes
-				// This provides better UX by showing only the "selected" state, not "focused" state
-				requestAnimationFrame(() => {
-					triggerRef.current?.blur();
-				});
-			}}
 		>
 			{children ? (
 				children
@@ -92,59 +57,78 @@ export const DsTabsTab: React.FC<DsTabsTabProps> = ({
 						</div>
 					)}
 					{label && <span className={styles.label}>{label}</span>}
-					{showMenuIcon && (
-						<div className={styles.menu}>
-							<DsIcon icon="arrow_drop_down" size="tiny" />
+					{badge !== undefined && <div className={styles.badge}>{badge}</div>}
+					{hasMenuActions && (
+						<div
+							ref={menuTriggerRef}
+							className={styles.menuTrigger}
+							onClick={(e) => {
+								e.stopPropagation();
+								e.preventDefault();
+								setMenuOpen(!menuOpen);
+							}}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.stopPropagation();
+									e.preventDefault();
+									setMenuOpen(!menuOpen);
+								}
+							}}
+							role="button"
+							tabIndex={0}
+							aria-label="Open menu"
+							aria-expanded={menuOpen}
+						>
+							<DsIcon icon={(menuOpen ? 'arrow_drop_up' : 'arrow_drop_down') as IconType} size="tiny" />
 						</div>
 					)}
-					{badge !== undefined && <div className={styles.badge}>{badge}</div>}
 				</>
 			)}
 		</Tabs.Trigger>
 	);
 
-	if (showDropdown) {
-		const tabWithDropdown = (
-			<div className={styles.dropdownWrapper} onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-				{tabContent}
-				<DsDropdownMenu.Root
-					open={isDropdownOpen}
-					onOpenChange={setIsDropdownOpen}
-					positioning={{ placement: 'bottom-start', gutter: 4 }}
-				>
-					<DsDropdownMenu.Trigger asChild>
-						<span style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }} />
-					</DsDropdownMenu.Trigger>
-					<DsDropdownMenu.Content>
-						{dropdownItems.map((item) => (
-							<DsDropdownMenu.Item
-								key={item.value}
-								value={item.value}
-								disabled={item.disabled}
-								onSelect={() => {
-									onDropdownSelect?.(item.value);
-									setIsDropdownOpen(false);
-								}}
-							>
-								{item.icon && <DsIcon icon={item.icon} size="small" />}
-								{item.label}
-							</DsDropdownMenu.Item>
-						))}
-					</DsDropdownMenu.Content>
-				</DsDropdownMenu.Root>
-			</div>
-		);
-
-		if (tooltip) {
-			return <DsTooltip content={tooltip}>{tabWithDropdown}</DsTooltip>;
-		}
-
-		return tabWithDropdown;
-	}
+	const menuDropdown = menuActionItems && menuActionItems.length > 0 && (
+		<DsDropdownMenu.Root
+			open={menuOpen}
+			onOpenChange={setMenuOpen}
+			onSelect={handleMenuActionSelect}
+			positioning={{
+				placement: 'bottom-start',
+				gutter: 4,
+				getAnchorRect: () => menuTriggerRef.current?.getBoundingClientRect() ?? null,
+			}}
+		>
+			<DsDropdownMenu.Trigger asChild>
+				<div style={{ display: 'none' }} aria-hidden="true" />
+			</DsDropdownMenu.Trigger>
+			<DsDropdownMenu.Content className={styles.menuContent}>
+				{menuActionItems.map((item) => (
+					<DsDropdownMenu.Item
+						key={item.value}
+						value={item.value}
+						disabled={item.disabled}
+						className={styles.menuItem}
+					>
+						<span className={styles.menuItemLabel}>{item.label}</span>
+					</DsDropdownMenu.Item>
+				))}
+			</DsDropdownMenu.Content>
+		</DsDropdownMenu.Root>
+	);
 
 	if (tooltip) {
-		return <DsTooltip content={tooltip}>{tabContent}</DsTooltip>;
+		return (
+			<>
+				<DsTooltip content={tooltip}>{tabContent}</DsTooltip>
+				{menuDropdown}
+			</>
+		);
 	}
 
-	return tabContent;
+	return (
+		<>
+			{tabContent}
+			{menuDropdown}
+		</>
+	);
 };

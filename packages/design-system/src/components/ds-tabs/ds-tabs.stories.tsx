@@ -5,9 +5,9 @@ import { DsTabs } from './ds-tabs';
 import type { DsTabsMenuActionItem } from './ds-tabs.types';
 import styles from './ds-tabs.stories.module.scss';
 
-const meta: Meta<typeof DsTabs> = {
+const meta: Meta<typeof DsTabs.Root> = {
 	title: 'Design System/Tabs',
-	component: DsTabs,
+	component: DsTabs.Root,
 	parameters: {
 		layout: 'centered',
 	},
@@ -27,7 +27,7 @@ const meta: Meta<typeof DsTabs> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof DsTabs>;
+type Story = StoryObj<typeof DsTabs.Root>;
 
 export const Default: Story = {
 	args: {
@@ -39,7 +39,7 @@ export const Default: Story = {
 
 		return (
 			<div className={styles.container}>
-				<DsTabs
+				<DsTabs.Root
 					{...args}
 					value={selected}
 					onValueChange={(val: string | null) => setSelected(val ?? 'overview')}
@@ -78,7 +78,7 @@ export const Default: Story = {
 							<p>Configure your application settings.</p>
 						</div>
 					</DsTabs.Content>
-				</DsTabs>
+				</DsTabs.Root>
 			</div>
 		);
 	},
@@ -102,7 +102,7 @@ export const HorizontalSmall: Story = {
 
 		return (
 			<div className={styles.container}>
-				<DsTabs
+				<DsTabs.Root
 					{...args}
 					value={selected}
 					onValueChange={(val: string | null) => setSelected(val ?? 'dashboard')}
@@ -138,7 +138,7 @@ export const HorizontalSmall: Story = {
 							<p>Configure your application settings.</p>
 						</div>
 					</DsTabs.Content>
-				</DsTabs>
+				</DsTabs.Root>
 			</div>
 		);
 	},
@@ -171,7 +171,11 @@ export const WithMenuActions: Story = {
 
 		return (
 			<div className={styles.container}>
-				<DsTabs {...args} value={selected} onValueChange={(val: string | null) => setSelected(val ?? 'tab1')}>
+				<DsTabs.Root
+					{...args}
+					value={selected}
+					onValueChange={(val: string | null) => setSelected(val ?? 'tab1')}
+				>
 					<DsTabs.List>
 						<DsTabs.Tab
 							value="tab1"
@@ -216,7 +220,7 @@ export const WithMenuActions: Story = {
 							<p>Configure your preferences</p>
 						</div>
 					</DsTabs.Content>
-				</DsTabs>
+				</DsTabs.Root>
 			</div>
 		);
 	},
@@ -244,7 +248,7 @@ export const Vertical: Story = {
 
 		return (
 			<div className={styles.verticalContainer}>
-				<DsTabs
+				<DsTabs.Root
 					{...args}
 					value={selected}
 					onValueChange={(val: string | null) => setSelected(val ?? 'profile')}
@@ -291,7 +295,7 @@ export const Vertical: Story = {
 							<p>Invite team members and manage permissions.</p>
 						</div>
 					</DsTabs.Content>
-				</DsTabs>
+				</DsTabs.Root>
 			</div>
 		);
 	},
@@ -317,7 +321,7 @@ export const VerticalSmall: Story = {
 
 		return (
 			<div className={styles.verticalContainer}>
-				<DsTabs
+				<DsTabs.Root
 					{...args}
 					value={selected}
 					onValueChange={(val: string | null) => setSelected(val ?? 'general')}
@@ -364,7 +368,7 @@ export const VerticalSmall: Story = {
 							<p>Advanced configuration options for power users.</p>
 						</div>
 					</DsTabs.Content>
-				</DsTabs>
+				</DsTabs.Root>
 			</div>
 		);
 	},
@@ -398,7 +402,7 @@ export const VerticalWithMenuActions: Story = {
 
 		return (
 			<div className={styles.verticalContainer}>
-				<DsTabs
+				<DsTabs.Root
 					{...args}
 					value={selected}
 					onValueChange={(val: string | null) => setSelected(val ?? 'profile')}
@@ -480,7 +484,7 @@ export const VerticalWithMenuActions: Story = {
 							<p>Invite team members and manage permissions.</p>
 						</div>
 					</DsTabs.Content>
-				</DsTabs>
+				</DsTabs.Root>
 			</div>
 		);
 	},
@@ -505,7 +509,7 @@ export const WithDisabled: Story = {
 
 		return (
 			<div className={styles.container}>
-				<DsTabs
+				<DsTabs.Root
 					{...args}
 					value={selected}
 					onValueChange={(val: string | null) => setSelected(val ?? 'active1')}
@@ -529,7 +533,7 @@ export const WithDisabled: Story = {
 					<DsTabs.Content value="disabled2">
 						<div className={styles.content}>This content should not be accessible</div>
 					</DsTabs.Content>
-				</DsTabs>
+				</DsTabs.Root>
 			</div>
 		);
 	},
@@ -550,7 +554,11 @@ export const TextOnly: Story = {
 
 		return (
 			<div className={styles.container}>
-				<DsTabs {...args} value={selected} onValueChange={(val: string | null) => setSelected(val ?? 'home')}>
+				<DsTabs.Root
+					{...args}
+					value={selected}
+					onValueChange={(val: string | null) => setSelected(val ?? 'home')}
+				>
 					<DsTabs.List>
 						<DsTabs.Tab value="home" label="Home" />
 						<DsTabs.Tab value="products" label="Products" badge={23} />
@@ -585,7 +593,7 @@ export const TextOnly: Story = {
 							<p>Get in touch with our team.</p>
 						</div>
 					</DsTabs.Content>
-				</DsTabs>
+				</DsTabs.Root>
 			</div>
 		);
 	},
@@ -603,7 +611,7 @@ export const WithTooltips: Story = {
 
 		return (
 			<div className={styles.container}>
-				<DsTabs
+				<DsTabs.Root
 					{...args}
 					value={selected}
 					onValueChange={(val: string | null) => setSelected(val ?? 'dashboard')}
@@ -664,7 +672,7 @@ export const WithTooltips: Story = {
 							<p>Configure your application</p>
 						</div>
 					</DsTabs.Content>
-				</DsTabs>
+				</DsTabs.Root>
 			</div>
 		);
 	},

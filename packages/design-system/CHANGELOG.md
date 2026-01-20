@@ -1,5 +1,26 @@
 # @drivenets/design-system
 
+## 0.2.0
+
+### Minor Changes
+
+- 9bd668b: Add 'DsAvatar' component
+- 1881953: - Added `DsTag` component
+  - Added `DsTagFilter` component
+  - Deprecated `DsChip` component
+  - Deprecated `DsChipGroup` component
+
+## 0.1.0
+
+### Minor Changes
+
+- 631b216: Add `DsToggle` component
+- 4f9a5c1: Added `DsDateInput` component
+- 117b26d: Prevent button from being stretched
+- 1efac4c: Add 'DsDivider' component
+- e8f00ab: Action menu within 2 levels hierarchy
+- fbc439a: Fix `DsTable` filters exports
+
 ## 0.0.5
 
 ### Patch Changes

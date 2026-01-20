@@ -228,12 +228,14 @@ export const WithMenuActions: Story = {
 		const canvas = within(canvasElement);
 		const tabs = canvas.getAllByRole('tab');
 		await expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
-		const firstTab = tabs[0];
-		const menuButton = firstTab.querySelector('[role="button"][aria-label="Open menu"]');
-		if (menuButton) {
-			await userEvent.click(menuButton);
-			const editAction = await within(document.body).findByRole('menuitem', { name: /Edit/i });
-			await expect(editAction).toBeInTheDocument();
+		const firstTab: HTMLElement | undefined = tabs[0];
+		if (firstTab) {
+			const menuButton = firstTab.querySelector('[role="button"][aria-label="Open menu"]');
+			if (menuButton) {
+				await userEvent.click(menuButton);
+				const editAction = await within(document.body).findByRole('menuitem', { name: /Edit/i });
+				await expect(editAction).toBeInTheDocument();
+			}
 		}
 	},
 };
@@ -543,7 +545,9 @@ export const WithDisabled: Story = {
 		const disabledTabs = allTabs.filter((t) => t.hasAttribute('disabled'));
 		const firstActiveTab = allTabs[0];
 		await expect(firstActiveTab).toHaveAttribute('aria-selected', 'true');
-		await userEvent.click(disabledTabs[0]);
+		if (disabledTabs[0]) {
+			await userEvent.click(disabledTabs[0]);
+		}
 		await expect(firstActiveTab).toHaveAttribute('aria-selected', 'true');
 	},
 };

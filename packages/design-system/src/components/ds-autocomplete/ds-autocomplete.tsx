@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useState, useRef, useMemo } from 'react';
+import { forwardRef, useEffect, useState, useRef } from 'react';
 import { Combobox, useListCollection } from '@ark-ui/react/combobox';
 import { useFilter } from '@ark-ui/react/locale';
 import { Highlight } from '@ark-ui/react/highlight';
@@ -8,25 +8,11 @@ import styles from './ds-autocomplete.module.scss';
 import type { DsAutocompleteProps } from './ds-autocomplete.types';
 import { DsIcon } from '../ds-icon';
 
-/**
- * @example
- * const options = [
- *   { value: 'apple', label: 'Apple' },
- *   { value: 'banana', label: 'Banana' },
- * ];
- *
- * <DsAutocomplete
- *   initialOptions={options}
- *   value={selectedValue}
- *   onValueChange={(value) => setSelectedValue(value)}
- *   placeholder="Select fruit..."
- * />
- */
 export const DsAutocomplete = forwardRef<HTMLInputElement, DsAutocompleteProps>(
 	(
 		{
 			id,
-			initialOptions,
+			options,
 			value,
 			style,
 			className,
@@ -48,33 +34,26 @@ export const DsAutocomplete = forwardRef<HTMLInputElement, DsAutocompleteProps>(
 		const [inputValue, setInputValue] = useState('');
 		const inputRef = useRef<HTMLInputElement>(null);
 
-		const initialItems = useMemo(() => initialOptions.map((opt) => opt.label), [initialOptions]);
-
 		const { collection, filter } = useListCollection({
-			initialItems,
+			initialItems: options.map((opt) => opt.label),
 			filter: (item, query) => filterUtils.contains(item, query),
 		});
 
-		const optionsMap = useMemo(
-			() => new Map(initialOptions.map((opt) => [opt.label, opt])),
-			[initialOptions],
-		);
-
 		useEffect(() => {
-			collection.setItems(initialItems);
+			collection.setItems(options.map((opt) => opt.label));
 			// eslint-disable-next-line react-hooks/exhaustive-deps
-		}, [initialItems]);
+		}, [options]);
 
 		useEffect(() => {
 			if (value) {
-				const selectedOption = initialOptions.find((opt) => opt.value === value);
+				const selectedOption = options.find((opt) => opt.value === value);
 				if (selectedOption) {
 					setInputValue(selectedOption.label);
 				}
 			} else {
 				setInputValue('');
 			}
-		}, [value, initialOptions]);
+		}, [value, options]);
 
 		const handleInputValueChange = (details: Combobox.InputValueChangeDetails) => {
 			setInputValue(details.inputValue);
@@ -88,7 +67,7 @@ export const DsAutocomplete = forwardRef<HTMLInputElement, DsAutocompleteProps>(
 				return;
 			}
 
-			const selectedOption = optionsMap.get(selectedLabel);
+			const selectedOption = options.find((opt) => opt.label === selectedLabel);
 
 			if (selectedOption) {
 				onValueChange?.(selectedOption.value);
@@ -117,12 +96,7 @@ export const DsAutocomplete = forwardRef<HTMLInputElement, DsAutocompleteProps>(
 
 		const showClearButton = (inputValue || value) && !disabled;
 
-		const selectedLabel = useMemo(() => {
-			if (!value) {
-				return undefined;
-			}
-			return initialOptions.find((opt) => opt.value === value)?.label;
-		}, [value, initialOptions]);
+		const selectedLabel = value ? options.find((opt) => opt.value === value)?.label : undefined;
 
 		return (
 			<Combobox.Root
@@ -177,7 +151,7 @@ export const DsAutocomplete = forwardRef<HTMLInputElement, DsAutocompleteProps>(
 							) : (
 								<Combobox.ItemGroup className={styles.itemGroup}>
 									{collection.items.map((item) => {
-										const option = optionsMap.get(item);
+										const option = options.find((opt) => opt.label === item);
 										return (
 											<Combobox.Item key={item} item={item} className={styles.item}>
 												{option?.icon && (

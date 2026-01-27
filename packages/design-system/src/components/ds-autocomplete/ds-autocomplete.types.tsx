@@ -24,7 +24,7 @@ export interface DsAutocompleteProps {
 	/**
 	 * Options to display in the dropdown
 	 */
-	initialOptions: DsAutocompleteOption[];
+	options: DsAutocompleteOption[];
 	/**
 	 * The current value of the input
 	 */

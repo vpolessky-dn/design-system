@@ -1,3 +1,4 @@
+// cSpell:words dslam Gbps mgmt msan roadm
 import { useState } from 'react';
 import { createTreeCollection } from '@ark-ui/react/tree-view';
 import type { Meta, StoryObj } from '@storybook/react-vite';
@@ -8,191 +9,174 @@ import { DsIcon } from '../ds-icon';
 import { DsTree } from './ds-tree';
 import { dsTreeSizes, type DsTreeNode, type DsTreeSize } from './ds-tree.types';
 
-const sideNavCollection = createTreeCollection<DsTreeNode>({
-	nodeToValue: (node) => node.id,
-	nodeToString: (node) => node.name,
-	rootNode: {
-		id: 'ROOT',
-		name: '',
+const sideNavNodes: DsTreeNode[] = [
+	{
+		id: 'network',
+		name: 'Network',
 		children: [
-			{
-				id: 'network',
-				name: 'Network',
-				children: [
-					{
-						id: 'routers',
-						name: 'Routers',
-						children: [
-							{ id: 'router-1', name: 'Router Alpha' },
-							{ id: 'router-2', name: 'Router Beta' },
-							{ id: 'router-3', name: 'Router Gamma' },
-						],
-					},
-					{
-						id: 'switches',
-						name: 'Switches',
-						children: [
-							{ id: 'switch-1', name: 'Switch A' },
-							{ id: 'switch-2', name: 'Switch B' },
-						],
-					},
-					{ id: 'firewall-1', name: 'Firewall Primary' },
-					{ id: 'firewall-2', name: 'Firewall Secondary' },
-				],
-			},
-			{
-				id: 'monitoring',
-				name: 'Monitoring',
-				children: [
-					{ id: 'alerts', name: 'Alerts' },
-					{ id: 'dashboards', name: 'Dashboards' },
-					{ id: 'logs', name: 'Logs' },
-				],
-			},
-			{
-				id: 'settings',
-				name: 'Settings',
-				children: [
-					{ id: 'general', name: 'General' },
-					{ id: 'users', name: 'Users' },
-				],
-			},
-		],
-	},
-});
-
-const mapLayersWithIconsCollection = createTreeCollection<DsTreeNode>({
-	nodeToValue: (node) => node.id,
-	nodeToString: (node) => node.name,
-	rootNode: {
-		id: 'ROOT',
-		name: '',
-		children: [
-			{
-				id: 'facilities',
-				name: 'Facilities',
-				children: [
-					{ id: 'facility-1', name: 'Data Center A' },
-					{ id: 'facility-2', name: 'Data Center B' },
-					{ id: 'facility-3', name: 'Data Center C' },
-				],
-			},
-			{
-				id: 'data-centers',
-				name: 'Data Centers',
-				children: [
-					{ id: 'dc-east', name: 'East' },
-					{ id: 'dc-west', name: 'West' },
-				],
-			},
-			{
-				id: 'customer-premise',
-				name: 'Customer Premise',
-				children: [
-					{ id: 'cp-1', name: 'Site Alpha' },
-					{ id: 'cp-2', name: 'Site Beta' },
-				],
-			},
-			{
-				id: 'devices',
-				name: 'Devices',
-				children: [
-					{
-						id: 'optical',
-						name: 'Optical',
-						children: [
-							{ id: 'olt', name: 'OLT', icon: 'layers' },
-							{ id: 'roadm', name: 'ROADM', icon: 'layers' },
-							{ id: 'oms', name: 'OMS', icon: 'layers' },
-						],
-					},
-					{
-						id: 'copper',
-						name: 'Copper',
-						children: [
-							{ id: 'dslam', name: 'DSLAM', icon: 'layers' },
-							{ id: 'msan', name: 'MSAN', icon: 'layers' },
-						],
-					},
-				],
-			},
 			{
 				id: 'routers',
 				name: 'Routers',
 				children: [
-					{ id: 'router-core', name: 'Core Router' },
-					{ id: 'router-edge', name: 'Edge Router' },
+					{ id: 'router-1', name: 'Router Alpha' },
+					{ id: 'router-2', name: 'Router Beta' },
+					{ id: 'router-3', name: 'Router Gamma' },
 				],
 			},
 			{
-				id: 'tdm',
-				name: 'TDM',
-				children: [{ id: 'tdm-1', name: 'TDM Switch A' }],
-			},
-			{
-				id: 'network-mgmt',
-				name: 'Network Management',
+				id: 'switches',
+				name: 'Switches',
 				children: [
-					{ id: 'nms', name: 'NMS' },
-					{ id: 'ems', name: 'EMS' },
+					{ id: 'switch-1', name: 'Switch A' },
+					{ id: 'switch-2', name: 'Switch B' },
 				],
 			},
-			{
-				id: 'link-type',
-				name: 'Link Type',
-				children: [
-					{ id: 'fiber', name: 'Fiber' },
-					{ id: 'wireless', name: 'Wireless' },
-				],
-			},
-			{
-				id: 'link-speeds',
-				name: 'Link Speeds',
-				children: [
-					{ id: 'speed-1g', name: '1 Gbps' },
-					{ id: 'speed-10g', name: '10 Gbps' },
-				],
-			},
+			{ id: 'firewall-1', name: 'Firewall Primary' },
+			{ id: 'firewall-2', name: 'Firewall Secondary' },
 		],
 	},
-});
+	{
+		id: 'monitoring',
+		name: 'Monitoring',
+		children: [
+			{ id: 'alerts', name: 'Alerts' },
+			{ id: 'dashboards', name: 'Dashboards' },
+			{ id: 'logs', name: 'Logs' },
+		],
+	},
+	{
+		id: 'settings',
+		name: 'Settings',
+		children: [
+			{ id: 'general', name: 'General' },
+			{ id: 'users', name: 'Users' },
+		],
+	},
+];
 
-const workflowCollection = createTreeCollection<DsTreeNode>({
-	nodeToValue: (node) => node.id,
-	nodeToString: (node) => node.name,
-	rootNode: {
-		id: 'ROOT',
-		name: '',
+const mapLayersNodes: DsTreeNode[] = [
+	{
+		id: 'facilities',
+		name: 'Facilities',
+		children: [
+			{ id: 'facility-1', name: 'Data Center A' },
+			{ id: 'facility-2', name: 'Data Center B' },
+			{ id: 'facility-3', name: 'Data Center C' },
+		],
+	},
+	{
+		id: 'data-centers',
+		name: 'Data Centers',
+		children: [
+			{ id: 'dc-east', name: 'East' },
+			{ id: 'dc-west', name: 'West' },
+		],
+	},
+	{
+		id: 'customer-premise',
+		name: 'Customer Premise',
+		children: [
+			{ id: 'cp-1', name: 'Site Alpha' },
+			{ id: 'cp-2', name: 'Site Beta' },
+		],
+	},
+	{
+		id: 'devices',
+		name: 'Devices',
 		children: [
 			{
-				id: 'workflow-1234',
-				name: 'Workflow 1234',
-				icon: 'home',
+				id: 'optical',
+				name: 'Optical',
 				children: [
-					{
-						id: 'sw-running-02',
-						name: 'SW running 02',
-						icon: 'account_tree',
-						children: [
-							{ id: 'task-1', name: 'Task Alpha', status: 'running', icon: 'dns' },
-							{ id: 'task-2', name: 'Task Beta', status: 'running', icon: 'storage' },
-							{ id: 'task-3', name: 'Task Gamma', status: 'failed', icon: 'memory', disabled: true },
-						],
-					},
-					{
-						id: 'sw-running-06',
-						name: 'SW running 06',
-						icon: 'account_tree',
-						disabled: true,
-						children: [{ id: 'task-4', name: 'Task Delta', status: 'paused', icon: 'cloud' }],
-					},
-					{ id: 'error-task', name: 'Error task name', status: 'failed', icon: 'warning' },
-					{ id: 'running-task', name: 'Running task name', status: 'running', icon: 'dns' },
+					{ id: 'olt', name: 'OLT', icon: 'layers' },
+					{ id: 'roadm', name: 'ROADM', icon: 'layers' },
+					{ id: 'oms', name: 'OMS', icon: 'layers' },
+				],
+			},
+			{
+				id: 'copper',
+				name: 'Copper',
+				children: [
+					{ id: 'dslam', name: 'DSLAM', icon: 'layers' },
+					{ id: 'msan', name: 'MSAN', icon: 'layers' },
 				],
 			},
 		],
 	},
-});
+	{
+		id: 'routers',
+		name: 'Routers',
+		children: [
+			{ id: 'router-core', name: 'Core Router' },
+			{ id: 'router-edge', name: 'Edge Router' },
+		],
+	},
+	{
+		id: 'tdm',
+		name: 'TDM',
+		children: [{ id: 'tdm-1', name: 'TDM Switch A' }],
+	},
+	{
+		id: 'network-mgmt',
+		name: 'Network Management',
+		children: [
+			{ id: 'nms', name: 'NMS' },
+			{ id: 'ems', name: 'EMS' },
+		],
+	},
+	{
+		id: 'link-type',
+		name: 'Link Type',
+		children: [
+			{ id: 'fiber', name: 'Fiber' },
+			{ id: 'wireless', name: 'Wireless' },
+		],
+	},
+	{
+		id: 'link-speeds',
+		name: 'Link Speeds',
+		children: [
+			{ id: 'speed-1g', name: '1 Gbps' },
+			{ id: 'speed-10g', name: '10 Gbps' },
+		],
+	},
+];
+
+const workflowNodes: DsTreeNode[] = [
+	{
+		id: 'workflow-1234',
+		name: 'Workflow 1234',
+		icon: 'home',
+		children: [
+			{
+				id: 'sw-running-02',
+				name: 'SW running 02',
+				icon: 'account_tree',
+				children: [
+					{ id: 'task-1', name: 'Task Alpha', status: 'running', icon: 'dns' },
+					{ id: 'task-2', name: 'Task Beta', status: 'running', icon: 'storage' },
+					{ id: 'task-3', name: 'Task Gamma', status: 'failed', icon: 'memory', disabled: true },
+				],
+			},
+			{
+				id: 'sw-running-06',
+				name: 'SW running 06',
+				icon: 'account_tree',
+				disabled: true,
+				children: [{ id: 'task-4', name: 'Task Delta', status: 'paused', icon: 'cloud' }],
+			},
+			{ id: 'error-task', name: 'Error task name', status: 'failed', icon: 'warning' },
+			{ id: 'running-task', name: 'Running task name', status: 'running', icon: 'dns' },
+		],
+	},
+];
+
+const createCollection = (nodes: DsTreeNode[]) =>
+	createTreeCollection<DsTreeNode>({
+		nodeToValue: (node) => node.id,
+		nodeToString: (node) => node.name,
+		rootNode: { id: 'ROOT', name: '', children: nodes },
+	});
 
 const SideNavDsTreeNode = ({ node, indexPath }: { node: DsTreeNode; indexPath: number[] }) => (
 	<DsTree.NodeProvider node={node} indexPath={indexPath}>
@@ -306,10 +290,62 @@ const meta: Meta<typeof DsTree.Root> = {
 	component: DsTree.Root,
 	parameters: {
 		layout: 'padded',
+		docs: {
+			source: {
+				code: ` 
+const collection = createTreeCollection<DsTreeNode>({
+	nodeToValue: (node) => node.id,
+	nodeToString: (node) => node.name,
+	rootNode: {
+		id: 'ROOT',
+		name: '',
+		children: [
+			{
+				id: 'network',
+				name: 'Network',
+				children: [
+					{ id: 'routers', name: 'Routers', children: [...] },
+					{ id: 'switches', name: 'Switches', children: [...] },
+					{ id: 'firewall-1', name: 'Firewall Primary' },
+				],
+			},
+			{ id: 'monitoring', name: 'Monitoring', children: [...] },
+		],
+	},
+});
+
+<DsTree.Root collection={collection} defaultExpandedValue={['network']}>
+	<DsTree.Tree>
+		{collection.rootNode.children?.map((node, index) => (
+			<DsTree.NodeProvider key={node.id} node={node} indexPath={[index]}>
+				{node.children ? (
+					<DsTree.Branch>
+						<DsTree.BranchControl>
+							<DsTree.BranchIndicator />
+							<DsTree.BranchText>{node.name}</DsTree.BranchText>
+						</DsTree.BranchControl>
+						<DsTree.BranchContent>
+							<DsTree.BranchIndentGuide />
+							{/* recursive children */}
+						</DsTree.BranchContent>
+					</DsTree.Branch>
+				) : (
+					<DsTree.Item>
+						<DsTree.ItemIndicator />
+						<DsTree.ItemText>{node.name}</DsTree.ItemText>
+					</DsTree.Item>
+				)}
+			</DsTree.NodeProvider>
+		))}
+	</DsTree.Tree>
+</DsTree.Root>`,
+			},
+		},
 	},
 	tags: ['autodocs'],
 	argTypes: {
 		size: { control: 'select', options: dsTreeSizes },
+		collection: { table: { disable: true } },
 		className: { table: { disable: true } },
 		style: { table: { disable: true } },
 		ref: { table: { disable: true } },
@@ -326,21 +362,68 @@ export const Default: Story = {
 		onSelectionChange: fn(),
 		onExpandedChange: fn(),
 	},
-	render: (args) => (
-		<DsTree.Root
-			collection={sideNavCollection}
-			defaultExpandedValue={['network']}
-			size={args.size}
-			onSelectionChange={args.onSelectionChange}
-			onExpandedChange={args.onExpandedChange}
-		>
-			<DsTree.Tree>
-				{sideNavCollection.rootNode.children?.map((node, index) => (
-					<SideNavDsTreeNode key={node.id} node={node} indexPath={[index]} />
-				))}
-			</DsTree.Tree>
-		</DsTree.Root>
-	),
+	render: (args) => {
+		const collection = createCollection(sideNavNodes);
+
+		return (
+			<DsTree.Root
+				collection={createCollection([
+					{
+						id: 'network',
+						name: 'Network',
+						children: [
+							{
+								id: 'routers',
+								name: 'Routers',
+								children: [
+									{ id: 'router-1', name: 'Router Alpha' },
+									{ id: 'router-2', name: 'Router Beta' },
+									{ id: 'router-3', name: 'Router Gamma' },
+								],
+							},
+							{
+								id: 'switches',
+								name: 'Switches',
+								children: [
+									{ id: 'switch-1', name: 'Switch A' },
+									{ id: 'switch-2', name: 'Switch B' },
+								],
+							},
+							{ id: 'firewall-1', name: 'Firewall Primary' },
+							{ id: 'firewall-2', name: 'Firewall Secondary' },
+						],
+					},
+					{
+						id: 'monitoring',
+						name: 'Monitoring',
+						children: [
+							{ id: 'alerts', name: 'Alerts' },
+							{ id: 'dashboards', name: 'Dashboards' },
+							{ id: 'logs', name: 'Logs' },
+						],
+					},
+					{
+						id: 'settings',
+						name: 'Settings',
+						children: [
+							{ id: 'general', name: 'General' },
+							{ id: 'users', name: 'Users' },
+						],
+					},
+				])}
+				defaultExpandedValue={['network']}
+				size={args.size}
+				onSelectionChange={args.onSelectionChange}
+				onExpandedChange={args.onExpandedChange}
+			>
+				<DsTree.Tree>
+					{collection.rootNode.children?.map((node, index) => (
+						<SideNavDsTreeNode key={node.id} node={node} indexPath={[index]} />
+					))}
+				</DsTree.Tree>
+			</DsTree.Root>
+		);
+	},
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 
@@ -364,6 +447,7 @@ export const Controlled: Story = {
 		size: 'medium',
 	},
 	render: function Render(args) {
+		const collection = createCollection(sideNavNodes);
 		const [selectedValue, setSelectedValue] = useState<string[]>([]);
 		const [expandedValue, setExpandedValue] = useState<string[]>(['network']);
 
@@ -375,7 +459,7 @@ export const Controlled: Story = {
 
 				<DsTree.Root
 					size={args.size}
-					collection={sideNavCollection}
+					collection={collection}
 					selectedValue={selectedValue}
 					onSelectionChange={(details: { selectedValue: string[] }) =>
 						setSelectedValue(details.selectedValue)
@@ -384,7 +468,7 @@ export const Controlled: Story = {
 					onExpandedChange={(details: { expandedValue: string[] }) => setExpandedValue(details.expandedValue)}
 				>
 					<DsTree.Tree>
-						{sideNavCollection.rootNode.children?.map((node, index) => (
+						{collection.rootNode.children?.map((node, index) => (
 							<SideNavDsTreeNode key={node.id} node={node} indexPath={[index]} />
 						))}
 					</DsTree.Tree>
@@ -412,22 +496,26 @@ export const CheckboxWithIcons: Story = {
 		onCheckedChange: fn(),
 		onExpandedChange: fn(),
 	},
-	render: (args) => (
-		<DsTree.Root
-			size={args.size}
-			collection={mapLayersWithIconsCollection}
-			defaultCheckedValue={['data-centers', 'dc-east', 'dc-west', 'oms']}
-			defaultExpandedValue={['devices', 'optical']}
-			onCheckedChange={args.onCheckedChange}
-			onExpandedChange={args.onExpandedChange}
-		>
-			<DsTree.Tree>
-				{mapLayersWithIconsCollection.rootNode.children?.map((node, index) => (
-					<CheckboxWithIconsNode key={node.id} node={node} indexPath={[index]} />
-				))}
-			</DsTree.Tree>
-		</DsTree.Root>
-	),
+	render: (args) => {
+		const collection = createCollection(mapLayersNodes);
+
+		return (
+			<DsTree.Root
+				size={args.size}
+				collection={collection}
+				defaultCheckedValue={['data-centers', 'dc-east', 'dc-west', 'oms']}
+				defaultExpandedValue={['devices', 'optical']}
+				onCheckedChange={args.onCheckedChange}
+				onExpandedChange={args.onExpandedChange}
+			>
+				<DsTree.Tree>
+					{collection.rootNode.children?.map((node, index) => (
+						<CheckboxWithIconsNode key={node.id} node={node} indexPath={[index]} />
+					))}
+				</DsTree.Tree>
+			</DsTree.Root>
+		);
+	},
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 
@@ -450,18 +538,19 @@ export const WithStatusIcons: Story = {
 		onExpandedChange: fn(),
 	},
 	render: function Render(args) {
+		const collection = createCollection(workflowNodes);
 		const onNavigate = fn();
 
 		return (
 			<DsTree.Root
 				size={args.size}
-				collection={workflowCollection}
+				collection={collection}
 				defaultExpandedValue={['workflow-1234', 'sw-running-02', 'sw-running-06']}
 				onSelectionChange={args.onSelectionChange}
 				onExpandedChange={args.onExpandedChange}
 			>
 				<DsTree.Tree>
-					{workflowCollection.rootNode.children?.map((node, index) => (
+					{collection.rootNode.children?.map((node, index) => (
 						<WorkflowDsTreeNode
 							key={node.id}
 							node={node}

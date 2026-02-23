@@ -45,7 +45,13 @@ export interface DsTreeRootProps extends DsTreeBasePropsWithChildren {
 	defaultCheckedValue?: string[];
 	onCheckedChange?: ArkRootProps['onCheckedChange'];
 
+	/**
+	 * Whether to enable typeahead navigation — typing characters focuses matching nodes
+	 */
 	typeahead?: boolean;
+	/**
+	 * Whether to defer mounting of branch content until a branch is first expanded
+	 */
 	lazyMount?: boolean;
 	unmountOnExit?: boolean;
 }

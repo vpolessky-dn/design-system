@@ -1,0 +1,57 @@
+$icon-medium-size: 44px;
+$transition-duration: 0.2s;
+
+.root {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.svg {
+	position: absolute;
+	inset: 0;
+}
+
+.track {
+	stroke: var(--color-background-tertiary);
+	transition: stroke $transition-duration;
+}
+
+.progress {
+	transition: stroke-dasharray $transition-duration;
+}
+
+.default {
+	stroke: var(--color-background-selected);
+}
+
+.success {
+	stroke: var(--color-background-success-strong);
+}
+
+.error {
+	stroke: var(--color-background-danger-strong);
+}
+
+.center {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--color-font-main);
+}
+
+.iconSuccess {
+	color: var(--color-icon-success);
+}
+
+.iconError {
+	color: var(--color-icon-danger);
+}
+
+.iconMediumSize.iconMediumSize {
+	font-size: $icon-medium-size;
+	width: 1em;
+	height: 1em;
+}

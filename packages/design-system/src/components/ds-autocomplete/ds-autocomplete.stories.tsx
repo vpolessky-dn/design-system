@@ -171,6 +171,7 @@ export const SearchWithIcon: Story = {
 		await userEvent.click(usOption);
 		await expect(args.onInputValueChange).toHaveBeenCalledWith('United States');
 		await expect(args.onValueChange).toHaveBeenCalledWith('us');
+		await expect(input).toHaveValue('United States');
 	},
 };
 
@@ -298,11 +299,13 @@ export const AsyncSearch: Story = {
 		await userEvent.click(usOption);
 		await expect(args.onValueChange).toHaveBeenCalledWith('us');
 		await expect(args.onInputValueChange).toHaveBeenLastCalledWith('United States');
+		await expect(input).toHaveValue('United States');
 
 		// Clear and verify reset
 		const clearButton = canvas.getByLabelText('Clear');
 		await userEvent.click(clearButton);
 		await expect(args.onInputValueChange).toHaveBeenLastCalledWith('');
+		await expect(input).toHaveValue('');
 
 		// Type a query with no matches
 		await userEvent.type(input, 'zzz');

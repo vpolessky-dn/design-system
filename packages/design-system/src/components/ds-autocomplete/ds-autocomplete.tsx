@@ -20,7 +20,7 @@ export const DsAutocomplete = ({
 	onValueChange,
 	onInputValueChange,
 	noMatchesMessage = 'No matches found',
-	loadingMessage = 'Loading...',
+	locale: { loading: loadingMessage = 'Loading...' } = {},
 	highlightMatch = true,
 	showTrigger = true,
 	startAdornment,
@@ -120,11 +120,13 @@ export const DsAutocomplete = ({
 			<Portal>
 				<Combobox.Positioner className={styles.positioner}>
 					<Combobox.Content className={styles.content}>
-						{list.loading ? (
-							<div className={styles.noMatches}>{loadingMessage}</div>
-						) : collection.items.length === 0 ? (
+						{list.loading && <div className={styles.noMatches}>{loadingMessage}</div>}
+
+						{!list.loading && collection.items.length === 0 && (
 							<div className={styles.noMatches}>{noMatchesMessage}</div>
-						) : (
+						)}
+
+						{!list.loading && collection.items.length > 0 && (
 							<Combobox.ItemGroup className={styles.itemGroup}>
 								{collection.items.map((option) => (
 									<Combobox.Item key={option.value} item={option} className={styles.item}>

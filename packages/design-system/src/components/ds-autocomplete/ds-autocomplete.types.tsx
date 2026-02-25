@@ -33,14 +33,12 @@ export interface DsAutocompleteProps {
 	/**
 	 * Static options to display in the dropdown.
 	 * The component handles client-side filtering automatically.
-	 * For async/server-driven search, use the `load` prop instead.
-	 * @default []
+	 * For async/server-driven search, use the `onLoadOptions` prop instead.
 	 */
 	options?: DsAutocompleteOption[];
 	/**
 	 * Async load function called when the user types.
 	 * Receives the current filter text and an abort signal.
-	 * When provided, the component manages a loading/error state via `useAsyncList`.
 	 */
 	onLoadOptions?: (details: DsAutocompleteLoadDetails) => Promise<DsAutocompleteLoadResult>;
 	/**
@@ -77,10 +75,15 @@ export interface DsAutocompleteProps {
 	 */
 	noMatchesMessage?: string;
 	/**
-	 * Message to display while results are loading (async mode only)
-	 * @default 'Loading...'
+	 * Locale strings for the autocomplete component
 	 */
-	loadingMessage?: string;
+	locale?: {
+		/**
+		 * Message to display while results are loading (async mode only)
+		 * @default 'Loading...'
+		 */
+		loading?: string;
+	};
 	/**
 	 * Whether to highlight the matching text in the dropdown options
 	 * @default true

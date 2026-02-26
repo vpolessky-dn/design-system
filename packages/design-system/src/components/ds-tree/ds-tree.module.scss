@@ -13,7 +13,6 @@ $transition-duration: 0.2s;
 	border-radius: 4px;
 	cursor: pointer;
 	user-select: none;
-	position: relative;
 	width: 100%;
 	background: transparent;
 	color: var(--color-font-secondary);
@@ -31,9 +30,19 @@ $transition-duration: 0.2s;
 	}
 
 	&[data-focus] {
-		outline: $focus-outline;
-		outline-offset: $focus-outline-offset;
+		position: relative;
+		outline: none;
 		background: var(--color-background-action-hover-weak);
+
+		&::after {
+			content: '';
+			position: absolute;
+			inset: 0;
+			z-index: 2;
+			border: 2px solid var(--color-border-action-primary-hover);
+			border-radius: inherit;
+			pointer-events: none;
+		}
 	}
 
 	&[data-selected] {

@@ -1,12 +1,13 @@
 // cSpell:words dslam Gbps mgmt msan roadm
 import { useState } from 'react';
-import { createTreeCollection } from '@ark-ui/react/tree-view';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
 import { DsFilterStatusIcon } from '../ds-filter-status-icon';
 import { DsIcon } from '../ds-icon';
 import { DsTree } from './ds-tree';
+import storyStyles from './ds-tree.stories.module.scss';
+import { createDsTreeCollection } from './ds-tree.utils';
 import { dsTreeSizes, type DsTreeNode, type DsTreeSize } from './ds-tree.types';
 
 const sideNavNodes: DsTreeNode[] = [
@@ -171,13 +172,6 @@ const workflowNodes: DsTreeNode[] = [
 	},
 ];
 
-const createCollection = (nodes: DsTreeNode[]) =>
-	createTreeCollection<DsTreeNode>({
-		nodeToValue: (node) => node.id,
-		nodeToString: (node) => node.name,
-		rootNode: { id: 'ROOT', name: '', children: nodes },
-	});
-
 const SideNavDsTreeNode = ({ node, indexPath }: { node: DsTreeNode; indexPath: number[] }) => (
 	<DsTree.NodeProvider node={node} indexPath={indexPath}>
 		{node.children ? (
@@ -278,7 +272,7 @@ const WorkflowDsTreeNode = ({
 				</DsTree.ItemText>
 
 				<DsTree.ItemAction onClick={() => onNavigate(node.id)}>
-					<DsIcon icon="outbound" size="tiny" style={{ color: 'var(--color-info-700)' }} />
+					<DsIcon icon="outbound" size="tiny" className={storyStyles.navigateIcon} />
 				</DsTree.ItemAction>
 			</DsTree.Item>
 		)}
@@ -292,26 +286,22 @@ const meta: Meta<typeof DsTree.Root> = {
 		layout: 'padded',
 		docs: {
 			source: {
-				code: ` 
-const collection = createTreeCollection<DsTreeNode>({
-	nodeToValue: (node) => node.id,
-	nodeToString: (node) => node.name,
-	rootNode: {
-		id: 'ROOT',
-		name: '',
-		children: [
-			{
-				id: 'network',
-				name: 'Network',
-				children: [
-					{ id: 'routers', name: 'Routers', children: [...] },
-					{ id: 'switches', name: 'Switches', children: [...] },
-					{ id: 'firewall-1', name: 'Firewall Primary' },
-				],
-			},
-			{ id: 'monitoring', name: 'Monitoring', children: [...] },
-		],
-	},
+				code: `
+import { DsTree, createDsTreeCollection } from '@drivenets/design-system';
+
+const collection = createDsTreeCollection({
+	nodes: [
+		{
+			id: 'network',
+			name: 'Network',
+			children: [
+				{ id: 'routers', name: 'Routers', children: [...] },
+				{ id: 'switches', name: 'Switches', children: [...] },
+				{ id: 'firewall-1', name: 'Firewall Primary' },
+			],
+		},
+		{ id: 'monitoring', name: 'Monitoring', children: [...] },
+	],
 });
 
 <DsTree.Root collection={collection} defaultExpandedValue={['network']}>
@@ -363,54 +353,11 @@ export const Default: Story = {
 		onExpandedChange: fn(),
 	},
 	render: (args) => {
-		const collection = createCollection(sideNavNodes);
+		const collection = createDsTreeCollection({ nodes: sideNavNodes });
 
 		return (
 			<DsTree.Root
-				collection={createCollection([
-					{
-						id: 'network',
-						name: 'Network',
-						children: [
-							{
-								id: 'routers',
-								name: 'Routers',
-								children: [
-									{ id: 'router-1', name: 'Router Alpha' },
-									{ id: 'router-2', name: 'Router Beta' },
-									{ id: 'router-3', name: 'Router Gamma' },
-								],
-							},
-							{
-								id: 'switches',
-								name: 'Switches',
-								children: [
-									{ id: 'switch-1', name: 'Switch A' },
-									{ id: 'switch-2', name: 'Switch B' },
-								],
-							},
-							{ id: 'firewall-1', name: 'Firewall Primary' },
-							{ id: 'firewall-2', name: 'Firewall Secondary' },
-						],
-					},
-					{
-						id: 'monitoring',
-						name: 'Monitoring',
-						children: [
-							{ id: 'alerts', name: 'Alerts' },
-							{ id: 'dashboards', name: 'Dashboards' },
-							{ id: 'logs', name: 'Logs' },
-						],
-					},
-					{
-						id: 'settings',
-						name: 'Settings',
-						children: [
-							{ id: 'general', name: 'General' },
-							{ id: 'users', name: 'Users' },
-						],
-					},
-				])}
+				collection={collection}
 				defaultExpandedValue={['network']}
 				size={args.size}
 				onSelectionChange={args.onSelectionChange}
@@ -427,18 +374,15 @@ export const Default: Story = {
 	play: async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 
-		await expect(canvas.getByText('Network')).toBeVisible();
+		await expect(canvas.getByRole('treeitem', { name: 'Network' })).toBeVisible();
 
-		const routersText = canvas.getByText('Routers');
-		await expect(routersText).toBeVisible();
+		const routers = canvas.getByRole('treeitem', { name: 'Routers' });
+		await expect(routers).toBeVisible();
+		await userEvent.click(routers);
 
-		await userEvent.click(routersText);
-
-		const routerAlphaText = await canvas.findByText('Router Alpha');
-		await userEvent.click(routerAlphaText);
-
-		const routerAlphaItem = routerAlphaText.closest('[role="treeitem"]');
-		await expect(routerAlphaItem).toHaveAttribute('data-selected');
+		const routerAlpha = await canvas.findByRole('treeitem', { name: 'Router Alpha' });
+		await userEvent.click(routerAlpha);
+		await expect(routerAlpha).toHaveAttribute('aria-selected', 'true');
 	},
 };
 
@@ -447,7 +391,7 @@ export const Controlled: Story = {
 		size: 'medium',
 	},
 	render: function Render(args) {
-		const collection = createCollection(sideNavNodes);
+		const collection = createDsTreeCollection({ nodes: sideNavNodes });
 		const [selectedValue, setSelectedValue] = useState<string[]>([]);
 		const [expandedValue, setExpandedValue] = useState<string[]>(['network']);
 
@@ -482,11 +426,11 @@ export const Controlled: Story = {
 		await expect(canvas.getByText('Selected: none')).toBeVisible();
 		await expect(canvas.getByText(/Expanded:.*network/)).toBeVisible();
 
-		await userEvent.click(canvas.getByText('Routers'));
+		await userEvent.click(canvas.getByRole('treeitem', { name: 'Routers' }));
 		await expect(canvas.getByText(/Expanded:.*routers/)).toBeVisible();
 
-		const routerAlphaText = await canvas.findByText('Router Alpha');
-		await userEvent.click(routerAlphaText);
+		const routerAlpha = await canvas.findByRole('treeitem', { name: 'Router Alpha' });
+		await userEvent.click(routerAlpha);
 		await expect(canvas.getByText('Selected: router-1')).toBeVisible();
 	},
 };
@@ -497,7 +441,7 @@ export const CheckboxWithIcons: Story = {
 		onExpandedChange: fn(),
 	},
 	render: (args) => {
-		const collection = createCollection(mapLayersNodes);
+		const collection = createDsTreeCollection({ nodes: mapLayersNodes });
 
 		return (
 			<DsTree.Root
@@ -519,15 +463,13 @@ export const CheckboxWithIcons: Story = {
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 
-		await expect(canvas.getByText('Devices')).toBeVisible();
-		await expect(canvas.getByText('OLT')).toBeVisible();
+		await expect(canvas.getByRole('treeitem', { name: 'Devices' })).toBeVisible();
+		await expect(canvas.getByRole('treeitem', { name: 'OLT' })).toBeVisible();
 
-		const oltItem = canvas.getByText('OLT').closest('[role="treeitem"]');
-		const oltCheckbox = oltItem?.querySelector('[data-part="node-checkbox"]');
-		if (oltCheckbox) {
-			await userEvent.click(oltCheckbox);
-			await expect(args.onCheckedChange).toHaveBeenCalled();
-		}
+		const oltItem = canvas.getByRole('treeitem', { name: 'OLT' });
+		const oltCheckbox = within(oltItem).getByRole('checkbox');
+		await userEvent.click(oltCheckbox);
+		await expect(args.onCheckedChange).toHaveBeenCalled();
 	},
 };
 
@@ -538,7 +480,7 @@ export const WithStatusIcons: Story = {
 		onExpandedChange: fn(),
 	},
 	render: function Render(args) {
-		const collection = createCollection(workflowNodes);
+		const collection = createDsTreeCollection({ nodes: workflowNodes });
 		const onNavigate = fn();
 
 		return (
@@ -566,24 +508,22 @@ export const WithStatusIcons: Story = {
 	play: async ({ canvasElement, args }) => {
 		const canvas = within(canvasElement);
 
-		await expect(canvas.getByText('Workflow 1234')).toBeVisible();
-		await expect(canvas.getByText('Task Alpha')).toBeVisible();
+		await expect(canvas.getByRole('treeitem', { name: 'Workflow 1234' })).toBeVisible();
+		await expect(canvas.getByRole('treeitem', { name: 'Task Alpha' })).toBeVisible();
 
-		const taskGammaItem = canvas.getByText('Task Gamma').closest('[role="treeitem"]');
+		const taskGammaItem = canvas.getByRole('treeitem', { name: 'Task Gamma' });
 		await expect(taskGammaItem).toHaveAttribute('data-disabled');
 
-		const swRunning06Item = canvas.getByText('SW running 06').closest('[role="treeitem"]');
+		const swRunning06Item = canvas.getByRole('treeitem', { name: 'SW running 06' });
 		await expect(swRunning06Item).toHaveAttribute('data-disabled');
 
-		await userEvent.click(canvas.getByText('Task Alpha'));
-		const taskAlphaItem = canvas.getByText('Task Alpha').closest('[role="treeitem"]');
-		await expect(taskAlphaItem).toHaveAttribute('data-selected');
+		const taskAlphaItem = canvas.getByRole('treeitem', { name: 'Task Alpha' });
+		await userEvent.click(taskAlphaItem);
+		await expect(taskAlphaItem).toHaveAttribute('aria-selected', 'true');
 		await expect(args.onSelectionChange).toHaveBeenCalled();
 
-		const actionButton = taskAlphaItem?.querySelector('button');
-		if (actionButton) {
-			await userEvent.click(actionButton);
-			await expect(taskAlphaItem).toHaveAttribute('data-selected');
-		}
+		const actionButton = within(taskAlphaItem).getByRole('button');
+		await userEvent.click(actionButton);
+		await expect(taskAlphaItem).toHaveAttribute('aria-selected', 'true');
 	},
 };

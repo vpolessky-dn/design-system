@@ -1,3 +1,3 @@
 export { DsTree } from './ds-tree';
-export { createTreeCollection } from '@ark-ui/react/tree-view';
+export { createDsTreeCollection } from './ds-tree.utils';
 export type * from './ds-tree.types';

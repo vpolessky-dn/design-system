@@ -129,21 +129,9 @@ const DsTreeNodeCheckbox = ({ className, style }: DsTreeNodeCheckboxProps) => (
 		<div className={styles.nodeCheckboxBox}>
 			<TreeView.NodeCheckboxIndicator
 				className={styles.nodeCheckboxIndicator}
-				indeterminate={
-					<DsIcon
-						icon="check_indeterminate_small"
-						size="tiny"
-						variant="outlined"
-						style={{ color: 'var(--color-secondary-white)' }}
-					/>
-				}
+				indeterminate={<DsIcon icon="check_indeterminate_small" size="tiny" variant="outlined" />}
 			>
-				<DsIcon
-					icon="check_small"
-					size="tiny"
-					variant="outlined"
-					style={{ color: 'var(--color-secondary-white)' }}
-				/>
+				<DsIcon icon="check_small" size="tiny" variant="outlined" />
 			</TreeView.NodeCheckboxIndicator>
 		</div>
 	</TreeView.NodeCheckbox>

@@ -1,8 +1,7 @@
 @use '../../styles/typography';
 
-$icon-size: 16px;
 $indent-per-level: 12px;
-$half-icon: calc($icon-size * 0.5);
+$half-icon: calc(var(--icon-width-tiny) * 0.5);
 $focus-outline: 2px solid var(--color-border-action-primary-hover);
 $focus-outline-offset: -2px;
 $transition-duration: 0.2s;
@@ -81,11 +80,6 @@ $transition-duration: 0.2s;
 		.itemText {
 			@include typography.body-sm-reg;
 		}
-
-		.itemIndicator {
-			width: var(--icon-width-tiny);
-			height: var(--icon-width-tiny);
-		}
 	}
 
 	&[data-size='small'] {
@@ -97,11 +91,6 @@ $transition-duration: 0.2s;
 		.branchText,
 		.itemText {
 			@include typography.body-xs-reg;
-		}
-
-		.itemIndicator {
-			width: var(--icon-width-tiny);
-			height: var(--icon-width-tiny);
 		}
 	}
 }
@@ -124,8 +113,8 @@ $transition-duration: 0.2s;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
-	width: $icon-size;
-	height: $icon-size;
+	width: var(--icon-width-tiny);
+	height: var(--icon-width-tiny);
 	color: var(--color-font-main);
 	transform-origin: center;
 	transition: transform $transition-duration;
@@ -182,6 +171,8 @@ $transition-duration: 0.2s;
 	align-items: center;
 	justify-content: center;
 	flex-shrink: 0;
+	width: var(--icon-width-tiny);
+	height: var(--icon-width-tiny);
 }
 
 .itemDot {
@@ -248,6 +239,7 @@ $transition-duration: 0.2s;
 	height: 16px;
 	border: 1.5px solid var(--color-background-deselected);
 	border-radius: 2px;
+	color: var(--color-secondary-white);
 	transition:
 		background-color $transition-duration,
 		border-color $transition-duration;
@@ -258,7 +250,6 @@ $transition-duration: 0.2s;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	color: white;
 }
 
 @keyframes ds-tree-expand {

@@ -32,6 +32,7 @@ $actions-gap: var(--spacing-3xs);
 $drag-handle-size: 20px;
 
 $horizontal-current-min-width: 256px;
+$horizontal-other-min-width: 50px;
 $horizontal-description-line-clamp: 2;
 
 .dragHandle {
@@ -46,6 +47,10 @@ $horizontal-description-line-clamp: 2;
 .root {
 	background: var(--color-background);
 	overflow-y: auto;
+
+	&.floating {
+		border-radius: inherit;
+	}
 }
 
 .verticalActions {
@@ -213,7 +218,7 @@ $horizontal-description-line-clamp: 2;
 	.stepsContainer {
 		display: flex;
 		flex: 1 1 0;
-		align-items: flex-start;
+		align-items: stretch;
 		min-width: 0;
 		overflow-x: auto;
 	}
@@ -227,14 +232,23 @@ $horizontal-description-line-clamp: 2;
 
 	.step {
 		flex: 1 1 0;
+		align-self: stretch;
+		align-items: center;
 		padding: var(--spacing-3xs) var(--spacing-xs);
 		gap: var(--spacing-sm);
 		border-radius: var(--spacing-2xs);
 		overflow: clip;
+		min-width: $horizontal-other-min-width;
 
 		&[data-current] {
+			flex-grow: 2;
+			max-width: none;
 			min-width: $horizontal-current-min-width;
 			border-radius: var(--spacing-2xs);
+
+			.stepLabel {
+				flex-shrink: 0;
+			}
 		}
 	}
 
@@ -266,7 +280,7 @@ $horizontal-description-line-clamp: 2;
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
-		flex-shrink: 0;
+		flex-shrink: 1;
 	}
 
 	.horizontalSeparator {

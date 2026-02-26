@@ -346,6 +346,11 @@ export default meta;
 
 type Story = StoryObj<typeof DsTree.Root>;
 
+const getTreeItem = (container: HTMLElement, value: string) =>
+	within(container).getByRole('treeitem', {
+		name: (_: string, el: Element | null) => el?.getAttribute('data-value') === value,
+	});
+
 export const Default: Story = {
 	args: {
 		size: 'medium',
@@ -372,15 +377,13 @@ export const Default: Story = {
 		);
 	},
 	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
+		await expect(getTreeItem(canvasElement, 'network')).toBeVisible();
 
-		await expect(canvas.getByRole('treeitem', { name: 'Network' })).toBeVisible();
-
-		const routers = canvas.getByRole('treeitem', { name: 'Routers' });
+		const routers = getTreeItem(canvasElement, 'routers');
 		await expect(routers).toBeVisible();
-		await userEvent.click(routers);
+		await userEvent.click(within(routers).getByRole('button'));
 
-		const routerAlpha = await canvas.findByRole('treeitem', { name: 'Router Alpha' });
+		const routerAlpha = getTreeItem(canvasElement, 'router-1');
 		await userEvent.click(routerAlpha);
 		await expect(routerAlpha).toHaveAttribute('aria-selected', 'true');
 	},
@@ -426,10 +429,11 @@ export const Controlled: Story = {
 		await expect(canvas.getByText('Selected: none')).toBeVisible();
 		await expect(canvas.getByText(/Expanded:.*network/)).toBeVisible();
 
-		await userEvent.click(canvas.getByRole('treeitem', { name: 'Routers' }));
+		const routers = getTreeItem(canvasElement, 'routers');
+		await userEvent.click(within(routers).getByRole('button'));
 		await expect(canvas.getByText(/Expanded:.*routers/)).toBeVisible();
 
-		const routerAlpha = await canvas.findByRole('treeitem', { name: 'Router Alpha' });
+		const routerAlpha = getTreeItem(canvasElement, 'router-1');
 		await userEvent.click(routerAlpha);
 		await expect(canvas.getByText('Selected: router-1')).toBeVisible();
 	},
@@ -461,13 +465,10 @@ export const CheckboxWithIcons: Story = {
 		);
 	},
 	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
+		await expect(getTreeItem(canvasElement, 'devices')).toBeVisible();
+		await expect(getTreeItem(canvasElement, 'olt')).toBeVisible();
 
-		await expect(canvas.getByRole('treeitem', { name: 'Devices' })).toBeVisible();
-		await expect(canvas.getByRole('treeitem', { name: 'OLT' })).toBeVisible();
-
-		const oltItem = canvas.getByRole('treeitem', { name: 'OLT' });
-		const oltCheckbox = within(oltItem).getByRole('checkbox');
+		const oltCheckbox = within(getTreeItem(canvasElement, 'olt')).getByRole('checkbox');
 		await userEvent.click(oltCheckbox);
 		await expect(args.onCheckedChange).toHaveBeenCalled();
 	},
@@ -506,18 +507,13 @@ export const WithStatusIcons: Story = {
 		);
 	},
 	play: async ({ canvasElement, args }) => {
-		const canvas = within(canvasElement);
+		await expect(getTreeItem(canvasElement, 'workflow-1234')).toBeVisible();
+		await expect(getTreeItem(canvasElement, 'task-1')).toBeVisible();
 
-		await expect(canvas.getByRole('treeitem', { name: 'Workflow 1234' })).toBeVisible();
-		await expect(canvas.getByRole('treeitem', { name: 'Task Alpha' })).toBeVisible();
+		await expect(getTreeItem(canvasElement, 'task-3')).toHaveAttribute('data-disabled');
+		await expect(getTreeItem(canvasElement, 'sw-running-06')).toHaveAttribute('data-disabled');
 
-		const taskGammaItem = canvas.getByRole('treeitem', { name: 'Task Gamma' });
-		await expect(taskGammaItem).toHaveAttribute('data-disabled');
-
-		const swRunning06Item = canvas.getByRole('treeitem', { name: 'SW running 06' });
-		await expect(swRunning06Item).toHaveAttribute('data-disabled');
-
-		const taskAlphaItem = canvas.getByRole('treeitem', { name: 'Task Alpha' });
+		const taskAlphaItem = getTreeItem(canvasElement, 'task-1');
 		await userEvent.click(taskAlphaItem);
 		await expect(taskAlphaItem).toHaveAttribute('aria-selected', 'true');
 		await expect(args.onSelectionChange).toHaveBeenCalled();

@@ -16,31 +16,22 @@ export interface DsAutocompleteOption {
 	icon?: IconName;
 }
 
-export interface DsAutocompleteLoadDetails {
-	filterText: string;
-	signal: AbortSignal | undefined;
-}
-
-export interface DsAutocompleteLoadResult {
-	items: DsAutocompleteOption[];
-}
-
 export interface DsAutocompleteProps {
 	/**
 	 * Unique identifier for the autocomplete component
 	 */
 	id?: string;
 	/**
-	 * Static options to display in the dropdown.
-	 * The component handles client-side filtering automatically.
-	 * For async/server-driven search, use the `onLoadOptions` prop instead.
+	 * Options to display in the dropdown.
+	 * For async/server-driven search, update this prop with fetched results.
 	 */
 	options?: DsAutocompleteOption[];
 	/**
-	 * Async load function called when the user types.
-	 * Receives the current filter text and an abort signal.
+	 * Whether the autocomplete is in a loading state.
+	 * When true, a loading message is shown in the dropdown.
 	 */
-	onLoadOptions?: (details: DsAutocompleteLoadDetails) => Promise<DsAutocompleteLoadResult>;
+	loading?: boolean;
+
 	/**
 	 * Additional styles to apply to the component
 	 */
@@ -61,25 +52,13 @@ export interface DsAutocompleteProps {
 	 * Whether the autocomplete is in an invalid state
 	 */
 	invalid?: boolean;
-	/**
-	 * Event handler called when the value changes (when an option is selected or custom value is entered)
-	 */
-	onValueChange?: (value: string) => void;
-	/**
-	 * Event handler called when the input value changes (on every keystroke)
-	 */
-	onInputValueChange?: (value: string) => void;
-	/**
-	 * Message to display when no options match the input
-	 * @default 'No matches found'
-	 */
-	noMatchesMessage?: string;
+
 	/**
 	 * Locale strings for the autocomplete component
 	 */
 	locale?: {
 		/**
-		 * Message to display while results are loading (async mode only)
+		 * Message to display while results are loading
 		 * @default 'Loading...'
 		 */
 		loading?: string;
@@ -99,4 +78,22 @@ export interface DsAutocompleteProps {
 	 * Content to display at the start of the input (e.g., a search icon).
 	 */
 	startAdornment?: React.ReactNode;
+	/**
+	 * Message to display when no options match the input
+	 * @default 'No matches found'
+	 */
+	noMatchesMessage?: string;
+
+	/**
+	 * Event handler called when the value changes (when an option is selected)
+	 */
+	onValueChange?: (value: string) => void;
+	/**
+	 * Event handler called when the input value changes (on every keystroke)
+	 */
+	onInputValueChange?: (value: string) => void;
+	/**
+	 * Event handler called when the dropdown opens or closes
+	 */
+	onOpenChange?: (open: boolean) => void;
 }

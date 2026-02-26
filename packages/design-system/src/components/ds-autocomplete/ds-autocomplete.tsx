@@ -1,4 +1,4 @@
-import { useAsyncList } from '@ark-ui/react/collection';
+import { useState } from 'react';
 import { Combobox, createListCollection } from '@ark-ui/react/combobox';
 import { useFilter } from '@ark-ui/react/locale';
 import { Highlight } from '@ark-ui/react/highlight';
@@ -11,7 +11,7 @@ import { DsIcon } from '../ds-icon';
 export const DsAutocomplete = ({
 	id,
 	options = [],
-	onLoadOptions,
+	loading = false,
 	style,
 	className,
 	placeholder = 'Start typing to search...',
@@ -19,46 +19,31 @@ export const DsAutocomplete = ({
 	invalid = false,
 	onValueChange,
 	onInputValueChange,
+	onOpenChange,
 	noMatchesMessage = 'No matches found',
 	locale: { loading: loadingMessage = 'Loading...' } = {},
 	highlightMatch = true,
 	showTrigger = true,
 	startAdornment,
 }: DsAutocompleteProps) => {
+	const [filterText, setFilterText] = useState('');
 	const filterUtils = useFilter({ sensitivity: 'base' });
-	const isAsync = Boolean(onLoadOptions);
 
-	const loadHandler = (details: {
-		filterText: string;
-		signal: AbortSignal | undefined;
-	}): Promise<{ items: DsAutocompleteOption[] }> => {
-		if (onLoadOptions) {
-			return onLoadOptions(details);
-		}
-
-		if (!details.filterText) {
-			return Promise.resolve({ items: options });
-		}
-
-		return Promise.resolve({
-			items: options.filter((opt) => filterUtils.contains(opt.label, details.filterText)),
-		});
-	};
-
-	const list = useAsyncList<DsAutocompleteOption>({
-		load: loadHandler,
-		initialItems: isAsync ? undefined : options,
-	});
+	const filteredOptions = filterText
+		? options.filter((opt) => filterUtils.contains(opt.label, filterText))
+		: options;
 
 	const collection = createListCollection<DsAutocompleteOption>({
-		items: list.items,
+		items: filteredOptions,
 		itemToString: (item) => item.label,
 		itemToValue: (item) => item.value,
 	});
 
 	const handleInputValueChange = (details: Combobox.InputValueChangeDetails) => {
-		if (!isAsync || details.reason === 'input-change') {
-			list.setFilterText(details.inputValue);
+		if (details.reason === 'input-change') {
+			setFilterText(details.inputValue);
+		} else {
+			setFilterText('');
 		}
 
 		onInputValueChange?.(details.inputValue);
@@ -70,6 +55,10 @@ export const DsAutocomplete = ({
 		if (selectedValue) {
 			onValueChange?.(selectedValue);
 		}
+	};
+
+	const handleOpenChange = (details: Combobox.OpenChangeDetails) => {
+		onOpenChange?.(details.open);
 	};
 
 	const rootClass = classNames(
@@ -91,6 +80,7 @@ export const DsAutocomplete = ({
 			invalid={invalid}
 			onInputValueChange={handleInputValueChange}
 			onValueChange={handleValueChange}
+			onOpenChange={handleOpenChange}
 			closeOnSelect
 		>
 			<Combobox.Control className={styles.control}>
@@ -120,13 +110,13 @@ export const DsAutocomplete = ({
 			<Portal>
 				<Combobox.Positioner className={styles.positioner}>
 					<Combobox.Content className={styles.content}>
-						{list.loading && <div className={styles.noMatches}>{loadingMessage}</div>}
+						{loading && <div className={styles.noMatches}>{loadingMessage}</div>}
 
-						{!list.loading && collection.items.length === 0 && (
+						{!loading && collection.items.length === 0 && (
 							<div className={styles.noMatches}>{noMatchesMessage}</div>
 						)}
 
-						{!list.loading && collection.items.length > 0 && (
+						{!loading && collection.items.length > 0 && (
 							<Combobox.ItemGroup className={styles.itemGroup}>
 								{collection.items.map((option) => (
 									<Combobox.Item key={option.value} item={option} className={styles.item}>
@@ -136,7 +126,7 @@ export const DsAutocomplete = ({
 
 										<Combobox.ItemText className={styles.itemText}>
 											{highlightMatch ? (
-												<Highlight query={list.filterText} text={option.label} ignoreCase />
+												<Highlight query={filterText} text={option.label} ignoreCase />
 											) : (
 												option.label
 											)}

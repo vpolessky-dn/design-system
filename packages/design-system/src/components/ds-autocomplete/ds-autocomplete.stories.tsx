@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, screen, userEvent, within } from 'storybook/test';
 import { DsIcon } from '../ds-icon';
 import { DsAutocomplete } from './ds-autocomplete';
-import type { DsAutocompleteLoadDetails } from './ds-autocomplete.types';
+import type { DsAutocompleteOption } from './ds-autocomplete.types';
 
 const meta: Meta<typeof DsAutocomplete> = {
 	title: 'Design System/Autocomplete',
@@ -252,42 +253,49 @@ export const States: Story = {
 
 const ASYNC_DELAY_MS = 150;
 
-const simulateServerSearch = async ({
-	filterText,
-	signal,
-}: DsAutocompleteLoadDetails): Promise<{ items: typeof countries }> => {
-	if (!filterText) {
-		return { items: [] };
-	}
-
+const fetchCountries = async (query: string): Promise<DsAutocompleteOption[]> => {
 	await new Promise((resolve) => setTimeout(resolve, ASYNC_DELAY_MS));
 
-	if (signal?.aborted) {
-		return { items: [] };
-	}
-
-	return {
-		items: countries.filter((c) => c.label.toLowerCase().includes(filterText.toLowerCase())),
-	};
+	return countries.filter((c) => c.label.toLowerCase().includes(query.toLowerCase()));
 };
 
 export const AsyncSearch: Story = {
-	render: (args) => (
-		<DsAutocomplete
-			{...args}
-			onLoadOptions={simulateServerSearch}
-			showTrigger={false}
-			startAdornment={<DsIcon icon="search" size="medium" aria-label="search icon" />}
-			placeholder="Search countries (async)..."
-			noMatchesMessage="No results found"
-			style={{ width: '300px' }}
-		/>
-	),
+	render: (args) => {
+		const [options, setOptions] = useState<DsAutocompleteOption[]>([]);
+		const [loading, setLoading] = useState(false);
+
+		const handleInputValueChange = async (value: string) => {
+			args.onInputValueChange?.(value);
+
+			if (!value) {
+				setOptions([]);
+				return;
+			}
+
+			setLoading(true);
+			const results = await fetchCountries(value);
+			setOptions(results);
+			setLoading(false);
+		};
+
+		return (
+			<DsAutocomplete
+				{...args}
+				options={options}
+				loading={loading}
+				onInputValueChange={handleInputValueChange}
+				showTrigger={false}
+				startAdornment={<DsIcon icon="search" size="medium" aria-label="search icon" />}
+				placeholder="Search countries (async)..."
+				noMatchesMessage="No results found"
+				style={{ width: '300px' }}
+			/>
+		);
+	},
 	play: async ({ args, canvasElement }) => {
 		const canvas = within(canvasElement);
 		const input = canvas.getByRole('combobox');
 
-		// Type and verify filtered results appear
 		await userEvent.type(input, 'Uni');
 
 		const usOption = await screen.findByRole('option', { name: /United States/i });
@@ -295,24 +303,20 @@ export const AsyncSearch: Story = {
 		await expect(screen.getByRole('option', { name: /United Kingdom/i })).toBeInTheDocument();
 		await expect(args.onInputValueChange).toHaveBeenLastCalledWith('Uni');
 
-		// Select an option and verify callbacks
 		await userEvent.click(usOption);
 		await expect(args.onValueChange).toHaveBeenCalledWith('us');
 		await expect(args.onInputValueChange).toHaveBeenLastCalledWith('United States');
 		await expect(input).toHaveValue('United States');
 
-		// Clear and verify reset
 		const clearButton = canvas.getByLabelText('Clear');
 		await userEvent.click(clearButton);
 		await expect(args.onInputValueChange).toHaveBeenLastCalledWith('');
 		await expect(input).toHaveValue('');
 
-		// Type a query with no matches
 		await userEvent.type(input, 'zzz');
 		await screen.findByText('No results found');
 		await expect(screen.queryByRole('option')).not.toBeInTheDocument();
 
-		// Clear and refine: broad search then narrow down
 		await userEvent.clear(input);
 		await userEvent.type(input, 'an');
 

@@ -14,12 +14,13 @@ import type {
 	DsTreeItemIndicatorProps,
 	DsTreeItemProps,
 	DsTreeItemTextProps,
+	DsTreeNode,
 	DsTreeNodeCheckboxProps,
 	DsTreeRootProps,
 	DsTreeTreeProps,
 } from './ds-tree.types';
 
-const DsTreeRoot = ({
+const DsTreeRoot = <T extends DsTreeNode = DsTreeNode>({
 	collection,
 	size = 'medium',
 	ref,
@@ -40,7 +41,7 @@ const DsTreeRoot = ({
 	typeahead = true,
 	lazyMount = true,
 	unmountOnExit,
-}: DsTreeRootProps) => (
+}: DsTreeRootProps<T>) => (
 	<TreeView.Root
 		ref={ref}
 		collection={collection}

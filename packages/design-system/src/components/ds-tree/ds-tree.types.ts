@@ -12,8 +12,6 @@ export interface DsTreeNode {
 	children?: DsTreeNode[];
 }
 
-type ArkRootProps = ArkTreeView.RootProps<DsTreeNode>;
-
 export const dsTreeSizes = ['medium', 'small'] as const;
 export type DsTreeSize = (typeof dsTreeSizes)[number];
 
@@ -26,24 +24,24 @@ interface DsTreeBasePropsWithChildren extends DsTreeBaseProps {
 	children?: ReactNode;
 }
 
-export interface DsTreeRootProps extends DsTreeBasePropsWithChildren {
-	collection: ArkRootProps['collection'];
+export interface DsTreeRootProps<T extends DsTreeNode = DsTreeNode> extends DsTreeBasePropsWithChildren {
+	collection: ArkTreeView.RootProps<T>['collection'];
 	size?: DsTreeSize;
 	ref?: Ref<HTMLDivElement>;
 
 	selectedValue?: string[];
 	defaultSelectedValue?: string[];
-	onSelectionChange?: ArkRootProps['onSelectionChange'];
+	onSelectionChange?: ArkTreeView.RootProps<T>['onSelectionChange'];
 	selectionMode?: 'single' | 'multiple';
 
 	expandedValue?: string[];
 	defaultExpandedValue?: string[];
-	onExpandedChange?: ArkRootProps['onExpandedChange'];
+	onExpandedChange?: ArkTreeView.RootProps<T>['onExpandedChange'];
 	expandOnClick?: boolean;
 
 	checkedValue?: string[];
 	defaultCheckedValue?: string[];
-	onCheckedChange?: ArkRootProps['onCheckedChange'];
+	onCheckedChange?: ArkTreeView.RootProps<T>['onCheckedChange'];
 
 	/**
 	 * Whether to enable typeahead navigation — typing characters focuses matching nodes

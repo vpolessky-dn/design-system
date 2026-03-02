@@ -289,20 +289,18 @@ const meta: Meta<typeof DsTree.Root> = {
 				code: `
 import { DsTree, createDsTreeCollection } from '@drivenets/design-system';
 
-const collection = createDsTreeCollection({
-	nodes: [
-		{
-			id: 'network',
-			name: 'Network',
-			children: [
-				{ id: 'routers', name: 'Routers', children: [...] },
-				{ id: 'switches', name: 'Switches', children: [...] },
-				{ id: 'firewall-1', name: 'Firewall Primary' },
-			],
-		},
-		{ id: 'monitoring', name: 'Monitoring', children: [...] },
-	],
-});
+const collection = createDsTreeCollection([
+	{
+		id: 'network',
+		name: 'Network',
+		children: [
+			{ id: 'routers', name: 'Routers', children: [...] },
+			{ id: 'switches', name: 'Switches', children: [...] },
+			{ id: 'firewall-1', name: 'Firewall Primary' },
+		],
+	},
+	{ id: 'monitoring', name: 'Monitoring', children: [...] },
+]);
 
 <DsTree.Root collection={collection} defaultExpandedValue={['network']}>
 	<DsTree.Tree>
@@ -358,7 +356,7 @@ export const Default: Story = {
 		onExpandedChange: fn(),
 	},
 	render: (args) => {
-		const collection = createDsTreeCollection({ nodes: sideNavNodes });
+		const collection = createDsTreeCollection(sideNavNodes);
 
 		return (
 			<DsTree.Root
@@ -394,7 +392,7 @@ export const Controlled: Story = {
 		size: 'medium',
 	},
 	render: function Render(args) {
-		const collection = createDsTreeCollection({ nodes: sideNavNodes });
+		const collection = createDsTreeCollection(sideNavNodes);
 		const [selectedValue, setSelectedValue] = useState<string[]>([]);
 		const [expandedValue, setExpandedValue] = useState<string[]>(['network']);
 
@@ -445,7 +443,7 @@ export const CheckboxWithIcons: Story = {
 		onExpandedChange: fn(),
 	},
 	render: (args) => {
-		const collection = createDsTreeCollection({ nodes: mapLayersNodes });
+		const collection = createDsTreeCollection(mapLayersNodes);
 
 		return (
 			<DsTree.Root
@@ -481,7 +479,7 @@ export const WithStatusIcons: Story = {
 		onExpandedChange: fn(),
 	},
 	render: function Render(args) {
-		const collection = createDsTreeCollection({ nodes: workflowNodes });
+		const collection = createDsTreeCollection(workflowNodes);
 		const onNavigate = fn();
 
 		return (

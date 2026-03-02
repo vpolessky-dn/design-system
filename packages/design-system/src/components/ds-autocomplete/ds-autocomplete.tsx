@@ -39,20 +39,15 @@ export const DsAutocomplete = ({
 	});
 
 	const handleInputValueChange = (details: Combobox.InputValueChangeDetails) => {
-		if (details.reason === 'input-change') {
-			setFilterText(details.inputValue);
-		} else {
-			setFilterText('');
-		}
-
+		setFilterText(details.inputValue);
 		onInputValueChange?.(details.inputValue);
 	};
 
-	const handleValueChange = (details: Combobox.ValueChangeDetails) => {
-		const selectedValue = details.value[0];
+	const handleValueChange = (details: Combobox.ValueChangeDetails<DsAutocompleteOption>) => {
+		const selectedItem = details.items[0];
 
-		if (selectedValue) {
-			onValueChange?.(selectedValue);
+		if (selectedItem) {
+			onValueChange?.(selectedItem.value);
 		}
 	};
 
@@ -109,7 +104,7 @@ export const DsAutocomplete = ({
 			<Portal>
 				<Combobox.Positioner className={styles.positioner}>
 					<Combobox.Content className={styles.content}>
-						{loading && <div className={styles.noMatches}>{loadingMessage}</div>}
+						{loading && <div className={styles.loading}>{loadingMessage}</div>}
 
 						{!loading && collection.items.length === 0 && (
 							<div className={styles.noMatches}>{noMatchesMessage}</div>

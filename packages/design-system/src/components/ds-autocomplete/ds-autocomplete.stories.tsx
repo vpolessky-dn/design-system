@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, screen, userEvent, within } from 'storybook/test';
 import { DsIcon } from '../ds-icon';
@@ -86,7 +86,7 @@ export const Default: Story = {
 	play: async ({ args, canvasElement }) => {
 		const canvas = within(canvasElement);
 		const input = canvas.getByRole('combobox');
-		const trigger = canvas.getByLabelText('Toggle dropdown');
+		const trigger = canvas.getByRole('button', { name: /toggle dropdown/i });
 
 		await expect(trigger).toBeInTheDocument();
 
@@ -259,6 +259,12 @@ const fetchCountries = async (query: string): Promise<DsAutocompleteOption[]> =>
 	return countries.filter((c) => c.label.toLowerCase().includes(query.toLowerCase()));
 };
 
+const fetchAllCountries = async (): Promise<DsAutocompleteOption[]> => {
+	await new Promise((resolve) => setTimeout(resolve, ASYNC_DELAY_MS));
+
+	return countries;
+};
+
 export const AsyncSearch: Story = {
 	render: (args) => {
 		const [options, setOptions] = useState<DsAutocompleteOption[]>([]);
@@ -328,5 +334,48 @@ export const AsyncSearch: Story = {
 		await userEvent.type(input, 'ad');
 		await screen.findByRole('option', { name: /Canada/i });
 		await expect(screen.queryByRole('option', { name: /France/i })).not.toBeInTheDocument();
+	},
+};
+
+export const AsyncOptions: Story = {
+	render: (args) => {
+		const [options, setOptions] = useState<DsAutocompleteOption[]>([]);
+		const [loading, setLoading] = useState(true);
+
+		useEffect(() => {
+			void fetchAllCountries().then((results) => {
+				setOptions(results);
+				setLoading(false);
+			});
+		}, []);
+
+		return (
+			<DsAutocomplete
+				{...args}
+				options={options}
+				loading={loading}
+				placeholder="Select a country..."
+				style={{ width: '300px' }}
+			/>
+		);
+	},
+	play: async ({ args, canvasElement }) => {
+		const canvas = within(canvasElement);
+		const input = canvas.getByRole('combobox');
+		const trigger = canvas.getByRole('button', { name: /toggle dropdown/i });
+
+		await userEvent.click(trigger);
+
+		const usOption = await screen.findByRole('option', { name: /United States/i });
+		await expect(usOption).toBeInTheDocument();
+		await expect(screen.getByRole('option', { name: /Japan/i })).toBeInTheDocument();
+
+		await userEvent.type(input, 'Un');
+		await expect(screen.getByRole('option', { name: /United States/i })).toBeInTheDocument();
+		await expect(screen.getByRole('option', { name: /United Kingdom/i })).toBeInTheDocument();
+		await expect(screen.queryByRole('option', { name: /Japan/i })).not.toBeInTheDocument();
+
+		await userEvent.click(screen.getByRole('option', { name: /United States/i }));
+		await expect(args.onValueChange).toHaveBeenCalledWith('us');
 	},
 };

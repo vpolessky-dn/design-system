@@ -2,4 +2,4 @@
 '@drivenets/design-system': minor
 ---
 
-Update `DsAutocomplete` with async options implementation
+Add loading state for `DsAutocomplete`

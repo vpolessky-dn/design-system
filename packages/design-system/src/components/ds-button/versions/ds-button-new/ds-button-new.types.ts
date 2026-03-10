@@ -9,24 +9,12 @@ export type ButtonVariant = (typeof buttonVariants)[number];
 export const buttonSizes = ['large', 'medium', 'small', 'tiny'] as const;
 export type ButtonSize = (typeof buttonSizes)[number];
 
-export interface DsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-	/**
-	 * Type of the button
-	 * @default 'primary'
-	 */
-	buttonType?: ButtonType;
-
+interface DsButtonBaseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	/**
 	 * Visual variant of the button
 	 * @default 'filled'
 	 */
 	variant?: ButtonVariant;
-
-	/**
-	 * Size of the button
-	 * @default 'medium'
-	 */
-	size?: ButtonSize;
 
 	/**
 	 * Whether the button is disabled
@@ -39,3 +27,32 @@ export interface DsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 	 */
 	contentClassName?: string;
 }
+
+export type DsButtonProps = DsButtonBaseProps &
+	(
+		| {
+				/**
+				 * Type of the button
+				 * @default 'primary'
+				 */
+				buttonType?: ButtonType;
+
+				/**
+				 * Size of the button
+				 * @default 'medium'
+				 */
+				size?: Exclude<ButtonSize, 'tiny'>;
+		  }
+		| {
+				/**
+				 * Type of the button
+				 */
+				buttonType: 'tertiary';
+
+				/**
+				 * Size of the button. Supports 'tiny' for tertiary buttons.
+				 * @default 'medium'
+				 */
+				size?: ButtonSize;
+		  }
+	);

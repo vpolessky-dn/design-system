@@ -132,7 +132,7 @@ export const Showcase: Story = {
 		];
 
 		const variants = ['filled', 'ghost', 'danger', 'dark'];
-		const sizes = ['small', 'medium', 'large'];
+		const sizes = ['tiny', 'small', 'medium', 'large'];
 		const states = [false, true]; // false = default, true = disabled
 
 		return (
@@ -171,7 +171,10 @@ export const Showcase: Story = {
 									.map((variant) =>
 										sizes.map((size) =>
 											states.map((disabled) => {
-												if (!isSupported(row.buttonType, variant)) {
+												const isTiny = size === 'tiny';
+												const isTertiary = row.buttonType === 'tertiary';
+
+												if (!isSupported(row.buttonType, variant) || (isTiny && !isTertiary)) {
 													return (
 														<td
 															key={`${row.label}-${variant}-${size}-${disabled ? 'disabled' : 'default'}`}
@@ -179,6 +182,7 @@ export const Showcase: Story = {
 														></td>
 													);
 												}
+
 												return (
 													<td
 														key={`${row.label}-${variant}-${size}-${disabled ? 'disabled' : 'default'}`}
@@ -187,14 +191,25 @@ export const Showcase: Story = {
 														})}
 													>
 														<div className={styles.showcaseCellInline}>
-															<DsButtonNew
-																buttonType={row.buttonType as (typeof buttonTypes)[number]}
-																variant={variant as (typeof buttonVariants)[number]}
-																size={size as (typeof buttonSizes)[number]}
-																disabled={disabled}
-															>
-																{row.icon ? iconButtonChildren : defaultButtonChildren}
-															</DsButtonNew>
+															{isTertiary ? (
+																<DsButtonNew
+																	buttonType="tertiary"
+																	variant={variant as (typeof buttonVariants)[number]}
+																	size={size as (typeof buttonSizes)[number]}
+																	disabled={disabled}
+																>
+																	{row.icon ? iconButtonChildren : defaultButtonChildren}
+																</DsButtonNew>
+															) : (
+																<DsButtonNew
+																	buttonType={row.buttonType as (typeof buttonTypes)[number]}
+																	variant={variant as (typeof buttonVariants)[number]}
+																	size={size as Exclude<(typeof buttonSizes)[number], 'tiny'>}
+																	disabled={disabled}
+																>
+																	{row.icon ? iconButtonChildren : defaultButtonChildren}
+																</DsButtonNew>
+															)}
 														</div>
 													</td>
 												);

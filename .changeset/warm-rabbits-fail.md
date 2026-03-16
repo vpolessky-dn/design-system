@@ -2,4 +2,4 @@
 '@drivenets/design-system': patch
 ---
 
-Update empty state html in `DsTableBody`
+Use semantic HTML structure in `DsTable` empty view

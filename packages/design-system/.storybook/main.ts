@@ -1,3 +1,5 @@
+import babel from '@rolldown/plugin-babel';
+import { reactCompilerPreset } from '@vitejs/plugin-react';
 import type { StorybookConfig } from '@storybook/react-vite';
 import { withoutVitePlugins } from '@storybook/builder-vite';
 import { vitePluginDesignSystem } from '@drivenets/vite-plugin-design-system';
@@ -12,6 +14,7 @@ const config: StorybookConfig = {
 		}
 
 		viteConfig.plugins.push(vitePluginDesignSystem() as never);
+		viteConfig.plugins.push(babel({ presets: [reactCompilerPreset()] }));
 
 		// Storybook build doesn't need to generate d.ts files.
 		viteConfig.plugins = await withoutVitePlugins(viteConfig.plugins, ['vite:dts']);
@@ -21,11 +24,11 @@ const config: StorybookConfig = {
 			viteConfig.build = {};
 		}
 
-		if (!viteConfig.build.rollupOptions) {
-			viteConfig.build.rollupOptions = {};
+		if (!viteConfig.build.rolldownOptions) {
+			viteConfig.build.rolldownOptions = {};
 		}
 
-		viteConfig.build.rollupOptions.onwarn = (warning, defaultHandler) => {
+		viteConfig.build.rolldownOptions.onwarn = (warning, defaultHandler) => {
 			if (warning.code === 'MODULE_LEVEL_DIRECTIVE' && warning.message.includes('"use client"')) {
 				return;
 			}

@@ -4,8 +4,8 @@ import sass from 'rollup-plugin-sass';
 import * as sassEmbedded from 'sass-embedded';
 import postcss from 'postcss';
 import postcssModules from 'postcss-modules';
-import babel from '@rollup/plugin-babel';
-import babelPluginReactCompiler from 'babel-plugin-react-compiler';
+import babel from '@rolldown/plugin-babel';
+import { reactCompilerPreset } from '@vitejs/plugin-react';
 
 export default defineConfig({
 	entry: ['./src/index.ts'],
@@ -19,13 +19,7 @@ export default defineConfig({
 	outExtensions: ({ format }) => (format === 'cjs' ? { js: '.cjs' } : { js: '.js' }),
 	plugins: [
 		babel({
-			babelHelpers: 'bundled',
-			parserOpts: {
-				sourceType: 'module',
-				plugins: ['jsx', 'typescript'],
-			},
-			plugins: [babelPluginReactCompiler],
-			extensions: ['.js', '.jsx', '.ts', '.tsx'],
+			presets: [reactCompilerPreset()],
 		}),
 
 		sass({

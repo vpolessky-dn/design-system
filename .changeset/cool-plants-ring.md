@@ -2,4 +2,4 @@
 '@drivenets/design-system': patch
 ---
 
-Update `DsStatusBadge` to capitalize only first word
+Capitalize only the first word in `DsStatusBadge`

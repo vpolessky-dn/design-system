@@ -107,6 +107,7 @@ export const Default: Story = {
 
 		const clearButton = canvas.getByLabelText('Clear');
 		await userEvent.click(clearButton);
+		await expect(args.onValueChange).toHaveBeenCalledWith(null);
 		await expect(args.onInputValueChange).toHaveBeenCalledWith('');
 	},
 };
@@ -142,6 +143,7 @@ export const SearchMode: Story = {
 
 		const clearButton = canvas.getByLabelText('Clear');
 		await userEvent.click(clearButton);
+		await expect(args.onValueChange).toHaveBeenCalledWith(null);
 		await expect(args.onInputValueChange).toHaveBeenCalledWith('');
 	},
 };
@@ -315,6 +317,7 @@ export const AsyncSearch: Story = {
 
 		const clearButton = canvas.getByLabelText('Clear');
 		await userEvent.click(clearButton);
+		await expect(args.onValueChange).toHaveBeenCalledWith(null);
 		await expect(args.onInputValueChange).toHaveBeenLastCalledWith('');
 		await expect(input).toHaveValue('');
 

@@ -20,8 +20,6 @@ describe('DsTable - Columns', () => {
 
 	it('should toggle column visibility', async () => {
 		function ColumnHidingWrapper() {
-			'use no memo';
-
 			const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
 				age: true,
 				visits: true,

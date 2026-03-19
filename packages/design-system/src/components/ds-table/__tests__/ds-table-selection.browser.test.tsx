@@ -46,8 +46,6 @@ describe('DsTable Selection', () => {
 
 	it('should support programmatic row selection via ref API', async () => {
 		function ProgrammaticSelectionWrapper() {
-			'use no memo';
-
 			const tableRef = useRef<DsTableApi<Person>>(null);
 			const [selectedRows, setSelectedRows] = useState<string[]>([]);
 

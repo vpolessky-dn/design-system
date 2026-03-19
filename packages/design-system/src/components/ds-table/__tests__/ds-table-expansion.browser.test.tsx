@@ -35,8 +35,6 @@ describe('DsTable Expansion', () => {
 
 	it('should support programmatic expansion via ref API', async () => {
 		function ProgrammaticExpansionWrapper() {
-			'use no memo';
-
 			const tableRef = useRef<DsTableApi<Person>>(null);
 			const [expandedRows, setExpandedRows] = useState<string[]>([]);
 			const data = defaultData.slice(0, 5);

@@ -11,6 +11,8 @@ export const DsTableRowSelectableCell = <TData,>({
 	isSelected,
 	className,
 }: DsTableRowSelectableCellProps<TData>) => {
+	'use no memo';
+
 	return (
 		<TableCell className={classnames(styles.cell, className)}>
 			<DsCheckbox

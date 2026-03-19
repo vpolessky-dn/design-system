@@ -39,6 +39,8 @@ const DsRowDragHandle = ({ isDragging, attributes, listeners }: DsRowDragHandleP
 };
 
 const DsTableRow = <TData,>({ ref, row, isSelected }: DsTableRowProps<TData>) => {
+	'use no memo';
+
 	const {
 		expandable,
 		selectable,

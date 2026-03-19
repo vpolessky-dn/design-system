@@ -17,6 +17,8 @@ export const DsTableRowVirtualized = <TData,>({
 	virtualRow,
 	isExpandedRowContent,
 }: DsTableRowVirtualizedProps<TData>) => {
+	'use no memo';
+
 	const {
 		selectable,
 		expandable,

@@ -6,6 +6,8 @@ import styles from './ds-table-cell.module.scss';
 import type { DsTableCellProps } from './ds-table-cell.types';
 
 const DsDefaultTableCell = <TData, TValue>({ cell }: { cell: Cell<TData, TValue> }) => {
+	'use no memo';
+
 	return (
 		<div className={styles.tableCellEllipsis}>
 			{flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -19,6 +21,8 @@ export const DsTableCell = <TData, TValue>({
 	primaryRowActions = [],
 	secondaryRowActions = [],
 }: DsTableCellProps<TData, TValue>) => {
+	'use no memo';
+
 	if (primaryRowActions.length || secondaryRowActions.length) {
 		const hasSecondaryRowActions = secondaryRowActions.some((action) => !action.disabled?.(row.original));
 		return (

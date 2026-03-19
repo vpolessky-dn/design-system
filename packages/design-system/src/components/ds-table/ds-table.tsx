@@ -64,6 +64,8 @@ const DsTable = <TData extends { id: string }, TValue>({
 	onColumnVisibilityChange,
 	activeRowId,
 }: DsDataTableProps<TData, TValue>) => {
+	'use no memo';
+
 	const [data, setData] = React.useState(tableData);
 	const [sorting, setSorting] = React.useState<SortingState>([]);
 	const [internalColumnFilters, setInternalColumnFilters] = React.useState<ColumnFiltersState>([]);

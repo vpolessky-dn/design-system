@@ -10,6 +10,8 @@ import { useDsTableContext } from '../../context/ds-table-context';
 import { getColumnSizeStyle } from '../../utils/column-size';
 
 const DsTableHeader = <TData,>({ table }: DsTableHeaderProps<TData>) => {
+	'use no memo';
+
 	const { stickyHeader, bordered, expandable, selectable, reorderable, showSelectAllCheckbox, virtualized } =
 		useDsTableContext<TData, unknown>();
 

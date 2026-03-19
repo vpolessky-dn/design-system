@@ -16,6 +16,8 @@ export const DsTableBodyVirtualized = <TData,>({
 	onScroll,
 	rowSelection,
 }: DsTableBodyVirtualizedProps<TData>) => {
+	'use no memo';
+
 	const rowsMapRef = useRef<Map<string, HTMLTableRowElement>>(new Map());
 	const rowHeightsMapRef = useRef<Map<string, number>>(new Map());
 
@@ -108,6 +110,8 @@ function DsTableBody<TData>({
 	emptyState,
 	rowSelection,
 }: DsTableBodyProps<TData>) {
+	'use no memo';
+
 	const virtualRows = rowVirtualizer.getVirtualItems();
 
 	return (

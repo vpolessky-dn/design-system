@@ -13,6 +13,8 @@ export const DsTableRowExpandableCell = <TData,>({
 	className,
 	buttonClassName,
 }: DsTableRowExpandableCellProps<TData>) => {
+	'use no memo';
+
 	const { expandable } = useDsTableContext<TData, unknown>();
 	const isExpanded = row.getIsExpanded();
 	const isExpandable = typeof expandable === 'function' ? expandable(row.original) : expandable;

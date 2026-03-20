@@ -225,6 +225,10 @@ $transition-duration: 0.2s;
 	align-items: center;
 	justify-content: space-between;
 	padding: var(--spacing-xs) 0;
+
+	> :last-child {
+		margin-left: auto;
+	}
 }
 
 .sendButton {

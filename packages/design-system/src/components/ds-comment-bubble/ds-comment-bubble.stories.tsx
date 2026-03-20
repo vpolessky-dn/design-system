@@ -93,6 +93,10 @@ Floating bubble component for creating new comments and viewing/replying to exis
 		},
 	},
 	argTypes: {
+		enableActionRequired: {
+			control: 'boolean',
+			description: 'Whether to show action required controls',
+		},
 		actionRequired: {
 			control: 'boolean',
 			description: 'Whether action required is checked',
@@ -170,6 +174,21 @@ export const TypingWithActionRequired: Story = {
 	},
 };
 
+export const TypingWithoutActionRequired: Story = {
+	args: {
+		value: 'This is a new comment...',
+		enableActionRequired: false,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const checkbox = canvas.queryByRole('checkbox', { name: /action required/i });
+		const sendButton = canvas.getByRole('button', { name: /send/i });
+
+		await expect(checkbox).not.toBeInTheDocument();
+		await expect(sendButton).toBeEnabled();
+	},
+};
+
 export const Thread: Story = {
 	args: {
 		comment: createMockComment(),
@@ -194,6 +213,23 @@ export const ThreadWithActionRequired: Story = {
 		const dialog = canvas.getByRole('dialog', { name: /comment thread #63/i });
 
 		await expect(dialog).toBeInTheDocument();
+	},
+};
+
+export const ThreadWithoutActionRequired: Story = {
+	args: {
+		comment: createMockComment(),
+		currentUser,
+		enableActionRequired: false,
+		actionRequired: true,
+	},
+	play: async ({ canvasElement }) => {
+		const canvas = within(canvasElement);
+		const dialog = canvas.getByRole('dialog', { name: /comment thread #63/i });
+		const badge = canvas.queryByText('Action required');
+
+		await expect(dialog).toBeInTheDocument();
+		await expect(badge).not.toBeInTheDocument();
 	},
 };
 

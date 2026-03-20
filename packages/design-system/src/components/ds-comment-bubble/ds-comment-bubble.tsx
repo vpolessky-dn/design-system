@@ -15,6 +15,7 @@ export const DsCommentBubble = ({
 	ref,
 	comment,
 	currentUser,
+	enableActionRequired = true,
 	actionRequired = false,
 	onActionRequiredChange,
 	value = '',
@@ -96,7 +97,7 @@ export const DsCommentBubble = ({
 			className={classNames(
 				styles.bubble,
 				{
-					[styles.actionRequired]: actionRequired,
+					[styles.actionRequired]: enableActionRequired && actionRequired,
 					[styles.initial]: isInitialMode,
 					[styles.typing]: isTypingMode,
 					[styles.thread]: hasThread,
@@ -117,7 +118,9 @@ export const DsCommentBubble = ({
 						<div className={styles.headerInfo}>
 							<span className={styles.commentId}>#{comment.numericId}</span>
 							{renderReferenceTag()}
-							{actionRequired && <span className={styles.actionRequiredBadge}>Action required</span>}
+							{enableActionRequired && actionRequired && (
+								<span className={styles.actionRequiredBadge}>Action required</span>
+							)}
 						</div>
 					</div>
 
@@ -130,9 +133,11 @@ export const DsCommentBubble = ({
 									</DsButton>
 								</DsDropdownMenu.Trigger>
 								<DsDropdownMenu.Content className={styles.dropdownContent}>
-									<DsDropdownMenu.Item value="toggle-action" onClick={onToggleActionRequired}>
-										{actionRequired ? 'Remove action requirement' : 'Require action'}
-									</DsDropdownMenu.Item>
+									{enableActionRequired && (
+										<DsDropdownMenu.Item value="toggle-action" onClick={onToggleActionRequired}>
+											{actionRequired ? 'Remove action requirement' : 'Require action'}
+										</DsDropdownMenu.Item>
+									)}
 									<DsDropdownMenu.Item value="forward" onClick={onForward}>
 										Forward
 									</DsDropdownMenu.Item>
@@ -205,8 +210,8 @@ export const DsCommentBubble = ({
 				{(isInitialMode || hasThread) && (
 					<DsButton
 						design="v1.2"
-						buttonType="tertiary"
-						size="tiny"
+						buttonType="primary"
+						size="small"
 						disabled={!hasContent}
 						onClick={handleSend}
 						aria-label="Send"
@@ -218,17 +223,19 @@ export const DsCommentBubble = ({
 
 			{showFooter && (
 				<div className={styles.footer}>
-					<DsCheckbox
-						variant="warning"
-						label="Action required"
-						checked={actionRequired}
-						onCheckedChange={(checked) => onActionRequiredChange?.(checked === true)}
-					/>
+					{enableActionRequired && (
+						<DsCheckbox
+							variant="warning"
+							label="Action required"
+							checked={actionRequired}
+							onCheckedChange={(checked) => onActionRequiredChange?.(checked === true)}
+						/>
+					)}
 
 					<DsButton
 						design="v1.2"
-						buttonType="tertiary"
-						size="tiny"
+						buttonType="primary"
+						size="small"
 						disabled={!hasContent}
 						onClick={handleSend}
 						aria-label="Send"

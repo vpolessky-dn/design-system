@@ -45,7 +45,7 @@ export const DsAutocomplete = ({
 
 	const handleValueChange = (details: Combobox.ValueChangeDetails<DsAutocompleteOption>) => {
 		const selectedItem = details.items[0];
-		onValueChange?.(selectedItem?.value ?? null);
+		onValueChange?.(selectedItem?.value ?? '');
 	};
 
 	const handleOpenChange = (details: Combobox.OpenChangeDetails) => {

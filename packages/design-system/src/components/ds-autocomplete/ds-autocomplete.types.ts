@@ -86,9 +86,9 @@ export interface DsAutocompleteProps {
 
 	/**
 	 * Event handler called when the value changes.
-	 * Fires with the selected option's value, or `null` when cleared.
+	 * Fires with the selected option's value, or an empty string when cleared.
 	 */
-	onValueChange?: (value: string | null) => void;
+	onValueChange?: (value: string) => void;
 	/**
 	 * Event handler called when the input value changes (on every keystroke)
 	 */

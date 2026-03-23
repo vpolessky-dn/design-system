@@ -29,8 +29,6 @@ type Story = StoryObj<typeof DsTable<Person, unknown>>;
 
 export const Default: Story = {};
 
-export const Sortable: Story = {};
-
 export const EmptyState: Story = {
 	args: {
 		data: [],

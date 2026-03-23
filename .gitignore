@@ -11,5 +11,3 @@ dist
 actionlint
 
 coverage/
-.vitest-attachments/
-__screenshots__/

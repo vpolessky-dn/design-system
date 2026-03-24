@@ -4,8 +4,13 @@ export type FileError = FileUploadFileError;
 export type UploadFileStatus = 'pending' | 'uploading' | 'interrupted' | 'completed' | 'error' | 'cancelled';
 export type FileMetadata = Record<string, unknown>;
 
-export interface UploadedFile extends File {
+export type FileIdentity = Pick<UploadedFile, 'name' | 'size' | 'type'>;
+
+export interface UploadedFile {
 	id: string;
+	name: string;
+	size: number;
+	type: string;
 	progress: number;
 	status: UploadFileStatus;
 	errors?: FileError[];

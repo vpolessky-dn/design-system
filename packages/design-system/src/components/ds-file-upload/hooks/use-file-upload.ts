@@ -29,7 +29,7 @@ export interface UseFileUploadConfig {
 }
 
 export interface UseFileUploadUserCallbacks {
-	onFilesAdded?: (files: File[]) => void;
+	onFilesAdded?: (files: UploadedFile[]) => void;
 	onFileRemoved?: (fileId: string) => void;
 	onFileDeleted?: (fileId: string) => void;
 	onFileUploadCanceled?: (fileId: string) => void;
@@ -94,8 +94,7 @@ export function useFileUpload({
 
 	const getDuplicatedFiles = (newFiles: File[]) =>
 		newFiles.filter((file) => {
-			const uploadedFile = file as UploadedFile;
-			if (uploadedFile.id) {
+			if ('id' in file) {
 				return false;
 			}
 			const found = files.filter((existing) => isFileEqual(existing, file));

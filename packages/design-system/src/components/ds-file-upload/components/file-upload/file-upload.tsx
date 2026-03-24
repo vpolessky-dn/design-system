@@ -9,6 +9,7 @@ import type { FileUploadProps } from './file-upload.types';
 import { DEFAULT_ALLOWED_FILE_TYPES, DEFAULT_MAX_FILE_SIZE, DEFAULT_MAX_FILES } from '../../utils/constants';
 import { generateHelperText } from '../../utils/generate-helper-text';
 import { getMimeTypes } from '../../utils/accept-utils';
+import { toArkAcceptedFiles } from '../../utils/ark-compat';
 import styles from './file-upload.module.scss';
 
 /**
@@ -49,7 +50,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
 			accept={getMimeTypes(accept)}
 			disabled={disabled}
 			allowDrop={!disableDrop}
-			acceptedFiles={acceptedFiles}
+			acceptedFiles={toArkAcceptedFiles(acceptedFiles)}
 			onFileAccept={onFileAccept}
 			onFileReject={onFileReject}
 		>

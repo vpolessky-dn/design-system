@@ -13,5 +13,5 @@ export function createUploadedFile(file: File, status: UploadFileStatus, errors?
 		status,
 		errors,
 		originalFile: file,
-	} as UploadedFile;
+	};
 }

@@ -66,17 +66,6 @@ export default defineConfig({
 						enabled: true,
 						provider: playwright(),
 						instances: [{ browser: 'chromium' }],
-						commands: {
-							async uploadFile(context, selector: string, files: { name: string; mimeType: string }[]) {
-								await context.iframe.locator(selector).setInputFiles(
-									files.map((f) => ({
-										name: f.name,
-										mimeType: f.mimeType,
-										buffer: Buffer.from('test content'),
-									})),
-								);
-							},
-						},
 					},
 					deps: {
 						web: {

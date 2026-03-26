@@ -1,16 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
-import { commands, page } from 'vitest/browser';
+import { page, userEvent } from 'vitest/browser';
 import { DsFileUpload } from '..';
 import { MockFileUploadAdapter } from '../stories/adapters/mock-file-upload-adapter';
 
-declare module 'vitest/internal/browser' {
-	interface BrowserCommands {
-		uploadFile: (selector: string, files: { name: string; mimeType: string }[]) => Promise<void>;
-	}
-}
+const uploadTestFile = (name = 'test-document') => {
+	const input = document.querySelector('input[type="file"]') as HTMLInputElement;
+	const inputLocator = page.elementLocator(input);
 
-const uploadTestFile = (name = 'test-document.pdf') =>
-	commands.uploadFile('input[type="file"]', [{ name, mimeType: 'application/pdf' }]);
+	const file = new File([name], `${name}.pdf`, { type: 'application/pdf' });
+
+	return userEvent.upload(inputLocator, file);
+};
 
 const fastAdapter = () => new MockFileUploadAdapter({ scenario: 'success', duration: 50, steps: 2 });
 
@@ -140,11 +140,11 @@ describe('DsFileUpload', () => {
 		it('should reject files exceeding maxFiles with TOO_MANY_FILES error', async () => {
 			await page.render(<DsFileUpload adapter={fastAdapter()} maxFiles={1} />);
 
-			await uploadTestFile('first.pdf');
+			await uploadTestFile('first');
 
 			await expect.element(page.getByText('Upload complete')).toBeInTheDocument();
 
-			await uploadTestFile('second.pdf');
+			await uploadTestFile('second');
 
 			await expect.element(page.getByText('Too many files selected')).toBeInTheDocument();
 		});

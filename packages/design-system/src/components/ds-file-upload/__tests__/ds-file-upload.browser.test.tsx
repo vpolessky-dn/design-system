@@ -1,115 +1,164 @@
 import { describe, expect, it, vi } from 'vitest';
-import { page } from 'vitest/browser';
-import { FileUpload } from '../components/file-upload';
-import type { UploadedFile } from '../ds-file-upload-api.types';
+import { commands, page } from 'vitest/browser';
+import { DsFileUpload } from '..';
+import { MockFileUploadAdapter } from '../stories/adapters/mock-file-upload-adapter';
 
-const createMockUploadedFile = (overrides: Partial<UploadedFile> = {}): UploadedFile => {
-	const file = new File(['test'], 'test-document.pdf', { type: 'application/pdf' });
+declare module 'vitest/internal/browser' {
+	interface BrowserCommands {
+		uploadFile: (selector: string, files: { name: string; mimeType: string }[]) => Promise<void>;
+	}
+}
 
-	return {
-		// eslint-disable-next-line @typescript-eslint/no-misused-spread -- We're fine with losing the prototype here
-		...file,
-		id: 'test-file-1',
-		name: 'test-document.pdf',
-		size: 1024,
-		type: 'application/pdf',
-		progress: 0,
-		status: 'pending',
-		originalFile: file,
-		...overrides,
-	} satisfies UploadedFile;
-};
+const uploadTestFile = (name = 'test-document.pdf') =>
+	commands.uploadFile('input[type="file"]', [{ name, mimeType: 'application/pdf' }]);
 
-describe('FileUpload', () => {
-	it('should render the select file trigger button', async () => {
-		await page.render(<FileUpload />);
+const fastAdapter = () => new MockFileUploadAdapter({ scenario: 'success', duration: 50, steps: 2 });
 
-		await expect.element(page.getByRole('button', { name: /select file/i })).toBeInTheDocument();
+const slowAdapter = () => new MockFileUploadAdapter({ scenario: 'success', duration: 5000, steps: 10 });
+
+describe('DsFileUpload', () => {
+	describe('rendering', () => {
+		it('should render the select file trigger button', async () => {
+			await page.render(<DsFileUpload adapter={fastAdapter()} />);
+
+			await expect.element(page.getByRole('button', { name: /select file/i })).toBeInTheDocument();
+		});
+
+		it('should hide info text when hideInfoText is true', async () => {
+			await page.render(<DsFileUpload adapter={fastAdapter()} hideInfoText />);
+
+			await expect.element(page.getByRole('button', { name: /select file/i })).toBeInTheDocument();
+			await expect.element(page.getByText(/Only/)).not.toBeInTheDocument();
+		});
 	});
 
-	it('should hide info text when hideInfoText is true', async () => {
-		await page.render(<FileUpload hideInfoText />);
+	describe('upload lifecycle', () => {
+		it('should auto-upload file and show completion', async () => {
+			const onFileUploadComplete = vi.fn();
 
-		await expect.element(page.getByRole('button', { name: /select file/i })).toBeInTheDocument();
-		await expect.element(page.getByText(/Only/)).not.toBeInTheDocument();
+			await page.render(<DsFileUpload adapter={fastAdapter()} onFileUploadComplete={onFileUploadComplete} />);
+
+			await uploadTestFile();
+
+			await expect.element(page.getByText('test-document.pdf')).toBeInTheDocument();
+			await expect.element(page.getByText('Upload complete')).toBeInTheDocument();
+			expect(onFileUploadComplete).toHaveBeenCalled();
+		});
+
+		it('should delete a completed file', async () => {
+			const onFileDeleted = vi.fn();
+
+			await page.render(<DsFileUpload adapter={fastAdapter()} onFileDeleted={onFileDeleted} />);
+
+			await uploadTestFile();
+
+			await expect.element(page.getByText('Upload complete')).toBeInTheDocument();
+
+			await page.getByRole('button', { name: /delete/i }).click();
+
+			expect(onFileDeleted).toHaveBeenCalled();
+			await expect.element(page.getByText('test-document.pdf')).not.toBeInTheDocument();
+		});
+
+		it('should show uploading progress with cancel button', async () => {
+			await page.render(<DsFileUpload adapter={slowAdapter()} />);
+
+			await uploadTestFile();
+
+			await expect.element(page.getByText('test-document.pdf')).toBeInTheDocument();
+			await expect.element(page.getByText(/Uploading/)).toBeInTheDocument();
+			await expect.element(page.getByRole('button', { name: /cancel/i })).toBeInTheDocument();
+		});
+
+		it('should cancel an active upload', async () => {
+			const onFileUploadCanceled = vi.fn();
+
+			await page.render(<DsFileUpload adapter={slowAdapter()} onFileUploadCanceled={onFileUploadCanceled} />);
+
+			await uploadTestFile();
+
+			await expect.element(page.getByText(/Uploading/)).toBeInTheDocument();
+
+			await page.getByRole('button', { name: /cancel/i }).click();
+
+			await expect.element(page.getByText('Upload cancelled')).toBeInTheDocument();
+			expect(onFileUploadCanceled).toHaveBeenCalled();
+		});
+
+		it('should show interrupted upload with retry option', async () => {
+			const adapter = new MockFileUploadAdapter({
+				scenario: 'interrupted',
+				duration: 100,
+				steps: 5,
+				interruptAt: 30,
+			});
+
+			await page.render(<DsFileUpload adapter={adapter} />);
+
+			await uploadTestFile();
+
+			await expect.element(page.getByText('Upload interrupted')).toBeInTheDocument();
+			await expect.element(page.getByRole('button', { name: /retry/i })).toBeInTheDocument();
+		});
+
+		it('should retry interrupted upload and complete', async () => {
+			const onFileUploadComplete = vi.fn();
+			const adapter = new MockFileUploadAdapter({
+				scenario: 'interrupted',
+				duration: 100,
+				steps: 5,
+				interruptAt: 30,
+			});
+
+			await page.render(<DsFileUpload adapter={adapter} onFileUploadComplete={onFileUploadComplete} />);
+
+			await uploadTestFile();
+
+			await expect.element(page.getByText('Upload interrupted')).toBeInTheDocument();
+
+			await page.getByRole('button', { name: /retry/i }).click();
+
+			await expect.element(page.getByText('Upload complete')).toBeInTheDocument();
+			expect(onFileUploadComplete).toHaveBeenCalled();
+		});
+
+		it('should show error on fatal upload failure', async () => {
+			const adapter = new MockFileUploadAdapter({ scenario: 'error', errorMessage: 'Server error' });
+			const onFileUploadError = vi.fn();
+
+			await page.render(<DsFileUpload adapter={adapter} onFileUploadError={onFileUploadError} />);
+
+			await uploadTestFile();
+
+			await expect.element(page.getByText('test-document.pdf')).toBeInTheDocument();
+			await expect.element(page.getByText('Server error')).toBeInTheDocument();
+			expect(onFileUploadError).toHaveBeenCalled();
+		});
 	});
 
-	it('should render completed file with delete button', async () => {
-		const onFileDelete = vi.fn();
-		const file = createMockUploadedFile({ status: 'completed', progress: 100 });
+	describe('validation', () => {
+		it('should reject files exceeding maxFiles with TOO_MANY_FILES error', async () => {
+			await page.render(<DsFileUpload adapter={fastAdapter()} maxFiles={1} />);
 
-		await page.render(<FileUpload files={[file]} onFileDelete={onFileDelete} />);
+			await uploadTestFile('first.pdf');
 
-		await expect.element(page.getByText('test-document.pdf')).toBeInTheDocument();
-		await expect.element(page.getByText('Upload complete')).toBeInTheDocument();
+			await expect.element(page.getByText('Upload complete')).toBeInTheDocument();
 
-		await page.getByRole('button', { name: /delete/i }).click();
+			await uploadTestFile('second.pdf');
 
-		expect(onFileDelete).toHaveBeenCalledWith('test-file-1');
-	});
+			await expect.element(page.getByText('Too many files selected')).toBeInTheDocument();
+		});
 
-	it('should render uploading file with cancel button and progress', async () => {
-		const onFileCancel = vi.fn();
-		const file = createMockUploadedFile({ status: 'uploading', progress: 45 });
+		it('should reject duplicate files with FILE_EXISTS error', async () => {
+			await page.render(<DsFileUpload adapter={fastAdapter()} />);
 
-		await page.render(<FileUpload files={[file]} onFileCancel={onFileCancel} />);
+			await uploadTestFile();
 
-		await expect.element(page.getByText('test-document.pdf')).toBeInTheDocument();
-		await expect.element(page.getByText(/Uploading.*45%/)).toBeInTheDocument();
+			await expect.element(page.getByText('Upload complete')).toBeInTheDocument();
 
-		await page.getByRole('button', { name: /cancel/i }).click();
+			await uploadTestFile();
 
-		expect(onFileCancel).toHaveBeenCalledWith('test-file-1');
-	});
-
-	it('should render interrupted file with retry and remove buttons', async () => {
-		const onFileRetry = vi.fn();
-		const onFileRemove = vi.fn();
-		const file = createMockUploadedFile({ status: 'interrupted' });
-
-		await page.render(<FileUpload files={[file]} onFileRetry={onFileRetry} onFileRemove={onFileRemove} />);
-
-		await expect.element(page.getByText('Upload interrupted')).toBeInTheDocument();
-
-		await page.getByRole('button', { name: /retry/i }).click();
-
-		expect(onFileRetry).toHaveBeenCalledWith('test-file-1');
-	});
-
-	it('should render cancelled file', async () => {
-		const file = createMockUploadedFile({ status: 'cancelled' });
-
-		await page.render(<FileUpload files={[file]} />);
-
-		await expect.element(page.getByText('Upload cancelled')).toBeInTheDocument();
-	});
-
-	it('should render error file with error message and remove button', async () => {
-		const onFileRemove = vi.fn();
-		const file = createMockUploadedFile({ status: 'error', errors: ['FILE_TOO_LARGE'] });
-
-		await page.render(<FileUpload files={[file]} onFileRemove={onFileRemove} />);
-
-		await expect.element(page.getByText('File size exceeds the maximum limit')).toBeInTheDocument();
-
-		await page.getByRole('button', { name: /remove/i }).click();
-
-		expect(onFileRemove).toHaveBeenCalledWith('test-file-1');
-	});
-
-	it('should render TOO_MANY_FILES error message', async () => {
-		const file = createMockUploadedFile({ status: 'error', errors: ['TOO_MANY_FILES'] });
-
-		await page.render(<FileUpload files={[file]} />);
-
-		await expect.element(page.getByText('Too many files selected')).toBeInTheDocument();
-	});
-
-	it('should render FILE_EXISTS error message', async () => {
-		const file = createMockUploadedFile({ status: 'error', errors: ['FILE_EXISTS'] });
-
-		await page.render(<FileUpload files={[file]} />);
-
-		await expect.element(page.getByText('File already exists')).toBeInTheDocument();
+			await expect.element(page.getByText('File already exists')).toBeInTheDocument();
+		});
 	});
 });

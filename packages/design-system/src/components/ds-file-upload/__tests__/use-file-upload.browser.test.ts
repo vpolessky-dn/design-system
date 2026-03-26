@@ -1,8 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { renderHook } from 'vitest-browser-react';
-import { useFileUpload } from '../hooks';
+import { useFileUpload, type FileUploadAdapter } from '..';
 import { MockFileUploadAdapter } from '../stories/adapters/mock-file-upload-adapter';
-import type { FileUploadAdapter } from '../ds-file-upload-api.types';
 
 const createMockFile = (name = 'test.pdf', size = 1024) => {
 	const file = new File(['test'], name, { type: 'application/pdf' });

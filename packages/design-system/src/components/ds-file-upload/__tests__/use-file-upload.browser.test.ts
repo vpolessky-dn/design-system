@@ -3,10 +3,8 @@ import { renderHook } from 'vitest-browser-react';
 import { useFileUpload, type FileUploadAdapter } from '..';
 import { MockFileUploadAdapter } from '../stories/adapters/mock-file-upload-adapter';
 
-const createMockFile = (name = 'test.pdf', size = 1024) => {
-	const file = new File(['test'], name, { type: 'application/pdf' });
-	Object.defineProperty(file, 'size', { value: size, writable: false });
-	return file;
+const createMockFile = (name = 'test') => {
+	return new File(['test'], `${name}.pdf`, { type: 'application/pdf' });
 };
 
 const fastAdapter = (): FileUploadAdapter =>

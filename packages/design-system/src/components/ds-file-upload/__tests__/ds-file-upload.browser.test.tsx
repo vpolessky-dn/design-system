@@ -3,16 +3,22 @@ import { page } from 'vitest/browser';
 import { FileUpload } from '../components/file-upload';
 import type { UploadedFile } from '../ds-file-upload-api.types';
 
-const createMockUploadedFile = (overrides: Partial<UploadedFile> = {}): UploadedFile => ({
-	id: 'test-file-1',
-	name: 'test-document.pdf',
-	size: 1024,
-	type: 'application/pdf',
-	progress: 0,
-	status: 'pending',
-	originalFile: new File(['test'], 'test-document.pdf', { type: 'application/pdf' }),
-	...overrides,
-});
+const createMockUploadedFile = (overrides: Partial<UploadedFile> = {}): UploadedFile => {
+	const file = new File(['test'], 'test-document.pdf', { type: 'application/pdf' });
+
+	return {
+		// eslint-disable-next-line @typescript-eslint/no-misused-spread -- We're fine with losing the prototype here
+		...file,
+		id: 'test-file-1',
+		name: 'test-document.pdf',
+		size: 1024,
+		type: 'application/pdf',
+		progress: 0,
+		status: 'pending',
+		originalFile: file,
+		...overrides,
+	} satisfies UploadedFile;
+};
 
 describe('FileUpload', () => {
 	it('should render the select file trigger button', async () => {

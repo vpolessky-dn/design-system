@@ -85,12 +85,9 @@ export interface FileUploadProps {
 	 */
 	onFileRetry?: (fileId: string) => void;
 	/**
-	 * Controlled accepted files.
-	 * Passed to Ark UI to keep its internal state in sync.
-	 * Must be plain objects (not File instances) — Ark UI's syncInputElement
-	 * re-triggers file processing when DataTransfer.items.add() succeeds on real Files.
+	 * Controlled accepted files
 	 */
-	acceptedFiles?: UploadedFile[];
+	acceptedFiles?: File[];
 	/**
 	 * Whether the file upload is disabled
 	 */

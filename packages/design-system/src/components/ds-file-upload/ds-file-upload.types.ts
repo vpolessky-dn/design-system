@@ -1,10 +1,5 @@
 import type { FileUploadProps } from './components/file-upload';
-import type {
-	FileMetadata,
-	FileUploadAdapter,
-	FileUploadResult,
-	UploadedFile,
-} from './ds-file-upload-api.types';
+import type { FileMetadata, FileUploadAdapter, FileUploadResult } from './ds-file-upload-api.types';
 
 export interface DsFileUploadProps extends Omit<
 	FileUploadProps,
@@ -40,7 +35,7 @@ export interface DsFileUploadProps extends Omit<
 	onFileUploadError?: (fileId: string, error: string) => void;
 
 	/** Called when files are added (before upload) */
-	onFilesAdded?: (files: UploadedFile[]) => void;
+	onFilesAdded?: (files: File[]) => void;
 
 	/** Called when a file is removed */
 	onFileRemoved?: (fileId: string) => void;

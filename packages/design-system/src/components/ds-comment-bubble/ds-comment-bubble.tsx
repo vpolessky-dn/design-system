@@ -205,8 +205,8 @@ export const DsCommentBubble = ({
 				{(isInitialMode || hasThread) && (
 					<DsButton
 						design="v1.2"
-						buttonType="tertiary"
-						size="tiny"
+						buttonType="primary"
+						size="small"
 						disabled={!hasContent}
 						onClick={handleSend}
 						aria-label="Send"
@@ -227,8 +227,8 @@ export const DsCommentBubble = ({
 
 					<DsButton
 						design="v1.2"
-						buttonType="tertiary"
-						size="tiny"
+						buttonType="primary"
+						size="small"
 						disabled={!hasContent}
 						onClick={handleSend}
 						aria-label="Send"

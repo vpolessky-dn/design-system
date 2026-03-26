@@ -86,7 +86,7 @@ describe('useFileUpload', () => {
 			);
 
 			await act(() => {
-				result.current.addFiles([createMockFile('doc-1.pdf'), createMockFile('doc-2.pdf')]);
+				result.current.addFiles([createMockFile('doc-1'), createMockFile('doc-2')]);
 			});
 
 			expect(result.current.files).toHaveLength(2);
@@ -109,14 +109,12 @@ describe('useFileUpload', () => {
 
 			const { result, act } = await renderHook(() => useFileUpload({ adapter, onFileUploadError }));
 
-			await act(() => {
+			await act(async () => {
 				result.current.addFiles([createMockFile()]);
+				await Promise.resolve();
 			});
 
-			await vi.waitFor(() => {
-				expect(firstFile(result).status).toBe('error');
-			});
-
+			expect(firstFile(result).status).toBe('error');
 			expect(onFileUploadError).toHaveBeenCalledWith(expect.any(String), 'Unsupported file type');
 		});
 	});
@@ -204,7 +202,7 @@ describe('useFileUpload', () => {
 			const { result, act } = await renderHook(() => useFileUpload({ adapter, maxFiles: 1 }));
 
 			await act(() => {
-				result.current.addFiles([createMockFile('first.pdf')]);
+				result.current.addFiles([createMockFile('first')]);
 			});
 
 			await vi.waitFor(() => {
@@ -212,7 +210,7 @@ describe('useFileUpload', () => {
 			});
 
 			await act(() => {
-				result.current.addFiles([createMockFile('second.pdf')]);
+				result.current.addFiles([createMockFile('second')]);
 			});
 
 			const rejectedFile = findFile(result, 'second.pdf');
@@ -227,7 +225,7 @@ describe('useFileUpload', () => {
 
 			const { result, act } = await renderHook(() => useFileUpload({ adapter }));
 
-			const mockFile = createMockFile('duplicate.pdf');
+			const mockFile = createMockFile('duplicate');
 
 			await act(() => {
 				result.current.addFiles([mockFile]);
@@ -301,7 +299,7 @@ describe('useFileUpload', () => {
 			const { result, act } = await renderHook(() => useFileUpload({ adapter, autoUpload: false }));
 
 			await act(() => {
-				result.current.addFiles([createMockFile('a.pdf'), createMockFile('b.pdf')]);
+				result.current.addFiles([createMockFile('a'), createMockFile('b')]);
 			});
 
 			expect(result.current.files).toHaveLength(2);

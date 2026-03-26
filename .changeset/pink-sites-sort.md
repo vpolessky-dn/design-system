@@ -2,4 +2,4 @@
 '@drivenets/design-system': patch
 ---
 
-Add `enableActionRequired` prop to `DsCommentBubble`
+Add `hideActionRequired` prop to `DsCommentBubble`

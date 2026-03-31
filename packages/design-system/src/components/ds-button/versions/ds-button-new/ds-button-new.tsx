@@ -1,6 +1,7 @@
 import classNames from 'classnames';
 import type React from 'react';
 import { Children, isValidElement } from 'react';
+import { useResponsiveValue } from '../../../../utils/responsive';
 import styles from './ds-button-new.module.scss';
 import type { DsButtonProps } from './ds-button-new.types';
 import { DsIcon } from '../../../ds-icon';
@@ -22,13 +23,14 @@ const isIconOnly = (children: React.ReactNode) => {
 const DsButton: React.FC<DsButtonProps> = ({
 	buttonType,
 	variant = 'filled',
-	size = 'medium',
+	size: sizeProp = 'medium',
 	disabled = false,
 	className,
 	contentClassName,
 	children,
 	...props
 }) => {
+	const size = useResponsiveValue(sizeProp);
 	const type = buttonType ?? (variant === 'ghost' ? 'secondary' : 'primary');
 	const buttonClass = classNames(
 		styles.button,
@@ -37,7 +39,7 @@ const DsButton: React.FC<DsButtonProps> = ({
 		className,
 
 		// @ts-expect-error: we don't have all variations of classnames defined
-		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+		 
 		styles[`${type}-${variant}`],
 	);
 

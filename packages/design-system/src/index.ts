@@ -1,3 +1,4 @@
+export * from './utils/responsive';
 export * from './components/ds-alert-banner';
 export * from './components/ds-autocomplete';
 export * from './components/ds-avatar';

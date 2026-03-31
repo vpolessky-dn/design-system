@@ -1,5 +1,7 @@
 import type React from 'react';
 
+import type { ResponsiveValue } from '../../../../utils/responsive';
+
 export const buttonTypes = ['primary', 'secondary', 'secondary-light', 'tertiary'] as const;
 export type ButtonType = (typeof buttonTypes)[number];
 
@@ -26,7 +28,7 @@ export interface DsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 	 * Size of the button
 	 * @default 'medium'
 	 */
-	size?: ButtonSize;
+	size?: ResponsiveValue<ButtonSize>;
 
 	/**
 	 * Whether the button is disabled

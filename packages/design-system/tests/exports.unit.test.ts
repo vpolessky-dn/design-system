@@ -9,19 +9,21 @@ describe('Design System exports', () => {
 			return `export * from './components/${component}';`;
 		});
 
+	const utilityExports = ["export * from './utils/responsive';"];
+
+	const allExpectedLines = [...expectedLines, ...utilityExports];
+
 	const actualContent = fs.readFileSync('./src/index.ts', 'utf-8');
 	const actualLines = actualContent.split('\n').filter((line) => line.trim().length > 0);
-	const componentLines = actualLines.filter((line) => line.includes('./components/'));
 
-	const tests = expectedLines.map((expectedLine, index) => {
-		return [componentLines[index], expectedLine];
+	const tests = allExpectedLines.map((expectedLine, index) => {
+		return [actualLines[index], expectedLine];
 	});
 
-	it('should export all components', () => {
-		expect(componentLines.length).toBe(expectedLines.length);
+	it('should export all components and utilities', () => {
+		expect(actualLines.length).toBe(allExpectedLines.length);
 	});
 
-	// split expected by line and assert that each line is exported
 	it.each(tests)('"%s" is exported from the package', (actual, expected) => {
 		expect(actual).toBe(expected);
 	});

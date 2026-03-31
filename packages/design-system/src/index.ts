@@ -1,4 +1,3 @@
-export * from './utils/responsive';
 export * from './components/ds-alert-banner';
 export * from './components/ds-autocomplete';
 export * from './components/ds-avatar';
@@ -59,3 +58,4 @@ export * from './components/ds-tooltip';
 export * from './components/ds-tree';
 export * from './components/ds-typography';
 export * from './components/ds-vertical-tabs';
+export * from './utils/responsive';

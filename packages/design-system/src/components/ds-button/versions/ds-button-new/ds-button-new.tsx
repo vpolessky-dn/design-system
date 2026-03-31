@@ -39,7 +39,7 @@ const DsButton: React.FC<DsButtonProps> = ({
 		className,
 
 		// @ts-expect-error: we don't have all variations of classnames defined
-		 
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 		styles[`${type}-${variant}`],
 	);
 

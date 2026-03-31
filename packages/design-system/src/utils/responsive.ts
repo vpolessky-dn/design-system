@@ -7,9 +7,7 @@ export type Breakpoint = (typeof breakpoints)[number];
 
 export type ResponsiveValue<T> = T | { lg: T; md: T };
 
-export const isResponsiveValue = <T>(
-	value: ResponsiveValue<T>,
-): value is { lg: T; md: T } =>
+export const isResponsiveValue = <T>(value: ResponsiveValue<T>): value is { lg: T; md: T } =>
 	value !== null && typeof value === 'object' && 'lg' in value && 'md' in value;
 
 const MEDIA_QUERY = `(min-width: ${String(BREAKPOINT_LG)}px)`;
@@ -20,8 +18,7 @@ const subscribe = (callback: () => void) => {
 	return () => mql.removeEventListener('change', callback);
 };
 
-const getSnapshot = (): Breakpoint =>
-	window.matchMedia(MEDIA_QUERY).matches ? 'lg' : 'md';
+const getSnapshot = (): Breakpoint => (window.matchMedia(MEDIA_QUERY).matches ? 'lg' : 'md');
 
 const getServerSnapshot = (): Breakpoint => 'lg';
 

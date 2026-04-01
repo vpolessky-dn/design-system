@@ -11,7 +11,7 @@ export type ButtonVariant = (typeof buttonVariants)[number];
 export const buttonSizes = ['large', 'medium', 'small', 'tiny'] as const;
 export type ButtonSize = (typeof buttonSizes)[number];
 
-export interface DsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface DsButtonBaseProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 	/**
 	 * Type of the button
 	 * @default 'primary'
@@ -28,7 +28,7 @@ export interface DsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 	 * Size of the button
 	 * @default 'medium'
 	 */
-	size?: ResponsiveValue<ButtonSize>;
+	size?: ButtonSize;
 
 	/**
 	 * Whether the button is disabled
@@ -40,4 +40,12 @@ export interface DsButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElem
 	 * Class name for the button content
 	 */
 	contentClassName?: string;
+}
+
+export interface DsButtonProps extends Omit<DsButtonBaseProps, 'size'> {
+	/**
+	 * Size of the button. Accepts a static value or a responsive object.
+	 * @default 'medium'
+	 */
+	size?: ResponsiveValue<ButtonSize>;
 }

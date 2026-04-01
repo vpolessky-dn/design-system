@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { createElement, useSyncExternalStore, type FunctionComponent } from 'react';
 
 export const BREAKPOINT_LG = 1440;
 
@@ -9,6 +9,9 @@ export type ResponsiveValue<T> = T | { lg: T; md: T };
 
 export const isResponsiveValue = <T>(value: ResponsiveValue<T>): value is { lg: T; md: T } =>
 	value !== null && typeof value === 'object' && 'lg' in value && 'md' in value;
+
+export const resolveResponsiveValue = <T>(value: ResponsiveValue<T>, breakpoint: Breakpoint): T =>
+	isResponsiveValue(value) ? value[breakpoint] : value;
 
 const MEDIA_QUERY = `(min-width: ${String(BREAKPOINT_LG)}px)`;
 
@@ -25,8 +28,42 @@ const getServerSnapshot = (): Breakpoint => 'lg';
 export const useBreakpoint = (): Breakpoint =>
 	useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
-const resolveResponsive = <T>(value: ResponsiveValue<T>, breakpoint: Breakpoint): T =>
-	isResponsiveValue(value) ? value[breakpoint] : value;
-
+/**
+ * Resolves a `ResponsiveValue<T>` to `T` using the current breakpoint.
+ * Use for conditional rendering or JS logic that depends on the breakpoint.
+ */
 export const useResponsiveValue = <T>(value: ResponsiveValue<T>): T =>
-	resolveResponsive(value, useBreakpoint());
+	resolveResponsiveValue(value, useBreakpoint());
+
+/**
+ * Wraps a component so that the specified props accept `ResponsiveValue<T>`.
+ * The wrapper resolves each responsive prop to a plain value before rendering,
+ * so the wrapped component stays completely unaware of breakpoints.
+ */
+export function withResponsiveProps<Props, const Keys extends readonly (keyof Props)[]>(
+	Component: FunctionComponent<Props>,
+	responsiveKeys: Keys,
+) {
+	type EnhancedProps = {
+		[P in keyof Props]: P extends Keys[number] ? ResponsiveValue<NonNullable<Props[P]>> : Props[P];
+	};
+
+	const Wrapper = (props: EnhancedProps) => {
+		const breakpoint = useBreakpoint();
+		const resolved = { ...props } as Record<string, unknown>;
+
+		for (const key of responsiveKeys) {
+			const value = resolved[key as string];
+
+			if (value !== undefined) {
+				resolved[key as string] = resolveResponsiveValue(value as ResponsiveValue<unknown>, breakpoint);
+			}
+		}
+
+		return createElement(Component as FunctionComponent<Record<string, unknown>>, resolved);
+	};
+
+	Wrapper.displayName = `withResponsiveProps(${Component.displayName ?? Component.name})`;
+
+	return Wrapper;
+}

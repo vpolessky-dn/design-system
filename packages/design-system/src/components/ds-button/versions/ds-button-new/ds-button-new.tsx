@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import type React from 'react';
 import { Children, isValidElement } from 'react';
-import { useResponsiveValue } from '../../../../utils/responsive';
+
 import styles from './ds-button-new.module.scss';
-import type { DsButtonProps } from './ds-button-new.types';
+import type { DsButtonBaseProps } from './ds-button-new.types';
 import { DsIcon } from '../../../ds-icon';
 
 const isIconOnly = (children: React.ReactNode) => {
@@ -20,17 +20,16 @@ const isIconOnly = (children: React.ReactNode) => {
 /**
  * Design system Button component
  */
-const DsButton: React.FC<DsButtonProps> = ({
+const DsButton: React.FC<DsButtonBaseProps> = ({
 	buttonType,
 	variant = 'filled',
-	size: sizeProp = 'medium',
+	size = 'medium',
 	disabled = false,
 	className,
 	contentClassName,
 	children,
 	...props
 }) => {
-	const size = useResponsiveValue(sizeProp);
 	const type = buttonType ?? (variant === 'ghost' ? 'secondary' : 'primary');
 	const buttonClass = classNames(
 		styles.button,

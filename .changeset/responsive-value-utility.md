@@ -2,4 +2,4 @@
 '@drivenets/design-system': minor
 ---
 
-Add `useResponsiveValue` hook and `ResponsiveValue<T>` type for responsive props at 1440px breakpoint
+Add responsive prop support at 1440px breakpoint with CSS-first styling and `useResponsiveValue` hook for JS conditional rendering

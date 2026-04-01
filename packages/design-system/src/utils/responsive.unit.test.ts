@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { isResponsiveValue } from './responsive';
+import { isResponsiveValue, resolveResponsiveValue } from './responsive';
 
 describe('isResponsiveValue', () => {
 	it('should return true for a responsive object', () => {
@@ -17,5 +17,20 @@ describe('isResponsiveValue', () => {
 
 	it('should return false for an object missing md', () => {
 		expect(isResponsiveValue({ lg: 'large' } as { lg: string; md: string })).toBe(false);
+	});
+});
+
+describe('resolveResponsiveValue', () => {
+	it('should return static value unchanged for both breakpoints', () => {
+		expect(resolveResponsiveValue('large', 'lg')).toBe('large');
+		expect(resolveResponsiveValue('large', 'md')).toBe('large');
+	});
+
+	it('should resolve lg value from responsive object', () => {
+		expect(resolveResponsiveValue({ lg: 'large', md: 'small' }, 'lg')).toBe('large');
+	});
+
+	it('should resolve md value from responsive object', () => {
+		expect(resolveResponsiveValue({ lg: 'large', md: 'small' }, 'md')).toBe('small');
 	});
 });

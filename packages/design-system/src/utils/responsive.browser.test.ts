@@ -1,7 +1,9 @@
+import { createElement } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import { page } from 'vitest/browser';
 import { renderHook } from 'vitest-browser-react';
 
-import { useBreakpoint, useResponsiveValue } from './responsive';
+import { useBreakpoint, useResponsiveValue, withResponsiveProps } from './responsive';
 
 const mockMatchMedia = (matches: boolean) => {
 	const listeners: Array<() => void> = [];
@@ -62,5 +64,31 @@ describe('useResponsiveValue', () => {
 		const { result } = await renderHook(() => useResponsiveValue({ lg: 'large', md: 'small' }));
 
 		expect(result.current).toBe('small');
+	});
+});
+
+describe('withResponsiveProps', () => {
+	const Base = ({ value }: { value?: string }) => createElement('span', null, value);
+	const Enhanced = withResponsiveProps(Base, ['value']);
+
+	it('should resolve responsive prop to lg value on large screens', async () => {
+		mockMatchMedia(true);
+		await page.render(createElement(Enhanced, { value: { lg: 'desktop', md: 'mobile' } }));
+
+		await expect.element(page.getByText('desktop')).toBeInTheDocument();
+	});
+
+	it('should resolve responsive prop to md value on small screens', async () => {
+		mockMatchMedia(false);
+		await page.render(createElement(Enhanced, { value: { lg: 'desktop', md: 'mobile' } }));
+
+		await expect.element(page.getByText('mobile')).toBeInTheDocument();
+	});
+
+	it('should pass through static values unchanged', async () => {
+		mockMatchMedia(true);
+		await page.render(createElement(Enhanced, { value: 'static' }));
+
+		await expect.element(page.getByText('static')).toBeInTheDocument();
 	});
 });

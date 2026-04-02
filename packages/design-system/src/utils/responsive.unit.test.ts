@@ -21,8 +21,12 @@ describe('isResponsiveValue', () => {
 		expect(isResponsiveValue(null as unknown as string)).toBe(false);
 	});
 
-	it('should return false for an object missing md', () => {
-		expect(isResponsiveValue({ lg: 'large' } as { lg: string; md: string })).toBe(false);
+	it('should return true for an object with only lg', () => {
+		expect(isResponsiveValue({ lg: 'large' })).toBe(true);
+	});
+
+	it('should return true for an object with only md', () => {
+		expect(isResponsiveValue({ md: 'small' })).toBe(true);
 	});
 });
 
@@ -38,5 +42,13 @@ describe('resolveResponsiveValue', () => {
 
 	it('should resolve md value from responsive object', () => {
 		expect(resolveResponsiveValue({ lg: 'large', md: 'small' }, 'md')).toBe('small');
+	});
+
+	it('should fall back to lg when md is not specified', () => {
+		expect(resolveResponsiveValue({ lg: 'large' }, 'md')).toBe('large');
+	});
+
+	it('should fall back to md when lg is not specified', () => {
+		expect(resolveResponsiveValue({ md: 'small' }, 'lg')).toBe('small');
 	});
 });

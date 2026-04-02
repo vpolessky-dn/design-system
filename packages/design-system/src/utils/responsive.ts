@@ -7,13 +7,20 @@ export const BREAKPOINT_LG = parseInt(breakpointTokens.breakpointLg, 10);
 export const breakpoints = ['lg', 'md'] as const;
 export type Breakpoint = (typeof breakpoints)[number];
 
-export type ResponsiveValue<T> = T | { lg: T; md: T };
+export type Responsive<T> = Partial<Record<Breakpoint, T>>;
 
-export const isResponsiveValue = <T>(value: ResponsiveValue<T>): value is { lg: T; md: T } =>
-	value !== null && typeof value === 'object' && 'lg' in value && 'md' in value;
+export type ResponsiveValue<T> = T | Responsive<T>;
 
-export const resolveResponsiveValue = <T>(value: ResponsiveValue<T>, breakpoint: Breakpoint): T =>
-	isResponsiveValue(value) ? value[breakpoint] : value;
+export const isResponsiveValue = <T>(value: ResponsiveValue<T>): value is Responsive<T> =>
+	value !== null && typeof value === 'object' && breakpoints.some((bp) => bp in value);
+
+export const resolveResponsiveValue = <T>(value: ResponsiveValue<T>, breakpoint: Breakpoint): T => {
+	if (!isResponsiveValue(value)) {
+		return value;
+	}
+
+	return (value[breakpoint] ?? value.lg ?? value.md) as T;
+};
 
 const MEDIA_QUERY = `(min-width: ${String(BREAKPOINT_LG)}px)`;
 

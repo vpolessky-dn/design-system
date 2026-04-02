@@ -1,6 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { isResponsiveValue, resolveResponsiveValue } from './responsive';
+import { BREAKPOINT_LG, isResponsiveValue, resolveResponsiveValue } from './responsive';
+
+describe('BREAKPOINT_LG', () => {
+	it('should be sourced from the SCSS variable and equal 1440', () => {
+		expect(BREAKPOINT_LG).toBe(1440);
+	});
+});
 
 describe('isResponsiveValue', () => {
 	it('should return true for a responsive object', () => {

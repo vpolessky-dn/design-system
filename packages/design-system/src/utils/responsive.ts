@@ -1,6 +1,8 @@
 import { createElement, useSyncExternalStore, type FunctionComponent } from 'react';
 
-export const BREAKPOINT_LG = 1440;
+import breakpointTokens from '../styles/_breakpoints.module.scss';
+
+export const BREAKPOINT_LG = parseInt(breakpointTokens.breakpointLg, 10);
 
 export const breakpoints = ['lg', 'md'] as const;
 export type Breakpoint = (typeof breakpoints)[number];

@@ -62,10 +62,11 @@ export function withResponsiveProps<Props, const Keys extends readonly (keyof Pr
 		const resolved = { ...props } as Record<string, unknown>;
 
 		for (const key of responsiveKeys) {
-			const value = resolved[key as string];
+			const k = String(key);
+			const value = resolved[k];
 
 			if (value !== undefined) {
-				resolved[key as string] = resolveResponsiveValue(value as ResponsiveValue<unknown>, breakpoint);
+				resolved[k] = resolveResponsiveValue(value, breakpoint);
 			}
 		}
 

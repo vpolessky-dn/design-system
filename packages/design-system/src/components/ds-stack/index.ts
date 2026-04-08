@@ -14,4 +14,6 @@ export const DsStack: FC<DsStackProps> = withResponsiveProps(DsStackBase, [
 	'width',
 ]);
 
+DsStack.displayName = 'DsStack';
+
 export * from './ds-stack.types';

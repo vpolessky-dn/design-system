@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DsStack } from './index';
-import { stackDirections } from './ds-stack.types';
 import styles from './ds-stack.stories.module.scss';
 
 const Box = ({ children }: { children: React.ReactNode }) => <div className={styles.box}>{children}</div>;
@@ -12,7 +11,7 @@ const meta: Meta<typeof DsStack> = {
 		layout: 'centered',
 	},
 	argTypes: {
-		direction: { control: 'select', options: stackDirections },
+		direction: { control: 'select', options: ['row', 'column', 'row-reverse', 'column-reverse'] },
 		gap: { control: 'text' },
 		alignItems: { control: 'select', options: ['flex-start', 'center', 'flex-end', 'stretch', 'baseline'] },
 		justifyContent: {

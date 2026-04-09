@@ -1,7 +1,7 @@
 import classNames from 'classnames';
 
 import styles from './ds-stack.module.scss';
-import type { DsStackBaseProps } from './ds-stack.types';
+import type { DsStackProps } from './ds-stack.types';
 
 export const DsStack = ({
 	direction,
@@ -15,7 +15,7 @@ export const DsStack = ({
 	className,
 	style,
 	ref,
-}: DsStackBaseProps) => {
+}: DsStackProps) => {
 	const layoutStyle: React.CSSProperties = {
 		flexDirection: direction,
 		gap,

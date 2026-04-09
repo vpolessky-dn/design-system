@@ -1,10 +1,9 @@
-import type { FC } from 'react';
+import type { ComponentProps } from 'react';
 
 import { withResponsiveProps } from '../../utils/responsive';
 import { DsStack as DsStackBase } from './ds-stack';
-import type { DsStackProps } from './ds-stack.types';
 
-export const DsStack: FC<DsStackProps> = withResponsiveProps(DsStackBase, [
+export const DsStack = withResponsiveProps(DsStackBase, [
 	'direction',
 	'gap',
 	'alignItems',
@@ -16,4 +15,4 @@ export const DsStack: FC<DsStackProps> = withResponsiveProps(DsStackBase, [
 
 DsStack.displayName = 'DsStack';
 
-export * from './ds-stack.types';
+export type DsStackProps = ComponentProps<typeof DsStack>;

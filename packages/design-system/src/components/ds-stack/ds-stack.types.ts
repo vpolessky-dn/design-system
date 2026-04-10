@@ -1,13 +1,16 @@
+import type { Properties } from 'csstype';
+
+type CSSProps = Properties<string | number>;
 import type { CSSProperties, ReactNode, Ref } from 'react';
 
 export interface DsStackProps {
-	direction?: CSSProperties['flexDirection'];
-	gap?: CSSProperties['gap'];
-	alignItems?: CSSProperties['alignItems'];
-	justifyContent?: CSSProperties['justifyContent'];
-	flex?: CSSProperties['flex'];
-	flexWrap?: CSSProperties['flexWrap'];
-	width?: CSSProperties['width'];
+	direction?: CSSProps['flexDirection'];
+	gap?: CSSProps['gap'];
+	alignItems?: CSSProps['alignItems'];
+	justifyContent?: CSSProps['justifyContent'];
+	flex?: CSSProps['flex'];
+	flexWrap?: CSSProps['flexWrap'];
+	width?: CSSProps['width'];
 
 	children?: ReactNode;
 	className?: string;

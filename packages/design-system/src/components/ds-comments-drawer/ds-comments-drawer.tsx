@@ -108,14 +108,7 @@ export const DsCommentsDrawer = ({
 
 	return (
 		<>
-			<DsDrawer
-				open={open}
-				onOpenChange={onOpenChange}
-				position="start"
-				columns={4}
-				className={className}
-				style={style}
-			>
+			<DsDrawer open={open} onOpenChange={onOpenChange} position="start" className={className} style={style}>
 				<DsDrawer.Header>
 					<DsDrawer.Title>{commentCount} Comments</DsDrawer.Title>
 

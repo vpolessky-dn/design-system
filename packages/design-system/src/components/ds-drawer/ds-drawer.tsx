@@ -2,20 +2,15 @@ import { type CSSProperties, type ReactNode, Fragment } from 'react';
 import { Dialog } from '@ark-ui/react/dialog';
 import { Portal } from '@ark-ui/react/portal';
 import classNames from 'classnames';
-import type { DsDrawerProps } from './ds-drawer.types';
+import type { DsDrawerBaseProps } from './ds-drawer.types';
 import styles from './ds-drawer.module.scss';
 import { DsIcon } from '../ds-icon';
 import { DsTypography } from '../ds-typography';
 
-/**
- * Composable drawer component.
- * Supports grid-based sizing, flexible positioning, and compound components.
- * Use columns prop to control drawer width (1-12 grid columns).
- */
 const DsDrawer = ({
 	open,
 	onOpenChange,
-	columns = 4,
+	width,
 	position = 'end',
 	backdrop = false,
 	closeOnEscape = true,
@@ -24,10 +19,11 @@ const DsDrawer = ({
 	style,
 	className,
 	children,
-}: DsDrawerProps) => {
+}: DsDrawerBaseProps) => {
 	const handleOpenChange = (details: { open: boolean }) => {
 		onOpenChange(details.open);
 	};
+
 	const Wrapper = portal ? Portal : Fragment;
 
 	return (
@@ -43,16 +39,8 @@ const DsDrawer = ({
 				{backdrop && <Dialog.Backdrop className={styles.backdrop} />}
 				<Dialog.Positioner className={styles.positioner}>
 					<Dialog.Content
-						style={style}
-						className={classNames(
-							styles.drawer,
-							styles[`position-${position}`],
-							className,
-
-							// @ts-expect-error: these classnames are generated dynamically in scss
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-							styles[`cols-${String(columns)}`],
-						)}
+						style={width ? { ...style, width } : style}
+						className={classNames(styles.drawer, styles[`position-${position}`], className)}
 					>
 						<div className={styles.content}>{children}</div>
 					</Dialog.Content>

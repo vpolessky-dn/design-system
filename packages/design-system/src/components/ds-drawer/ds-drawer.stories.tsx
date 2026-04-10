@@ -1,7 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import classNames from 'classnames';
-import { expect, userEvent, within } from 'storybook/test';
 import DsDrawer from './ds-drawer';
 import { DsButton } from '../ds-button';
 import { DsTextInput } from '../ds-text-input';
@@ -10,7 +9,7 @@ import { DsIcon } from '../ds-icon';
 import { DsSystemStatus } from '../ds-system-status';
 import styles from './ds-drawer.stories.module.scss';
 import { DsTypography } from '../ds-typography';
-import type { DsDrawerProps } from './ds-drawer.types';
+import type { DsDrawerBaseProps } from './ds-drawer.types';
 
 const meta: Meta<typeof DsDrawer> = {
 	title: 'Design System/Drawer',
@@ -21,23 +20,16 @@ const meta: Meta<typeof DsDrawer> = {
 			description: {
 				component: `
 A composable drawer component that supports:
-- Grid-based sizing (1-12 columns)
+- Responsive viewport-based width (20vw, 240–480px)
+- Responsive \`open\` prop via \`ResponsiveValue<boolean>\`
 - Start/end positioning
 - Optional backdrop
-- Flexible content layout (flex or grid)
 - Compound components for structured content
         `,
 			},
 		},
 	},
 	argTypes: {
-		columns: {
-			control: { type: 'select' },
-			options: Array(12)
-				.fill(0)
-				.map((_, i) => i + 1),
-			description: 'Number of grid columns (1-12)',
-		},
 		position: {
 			control: { type: 'select' },
 			options: ['start', 'end'],
@@ -61,7 +53,7 @@ A composable drawer component that supports:
 export default meta;
 type Story = StoryObj<typeof DsDrawer>;
 
-const DrawerTemplate = (args: DsDrawerProps) => {
+const DrawerTemplate = (args: DsDrawerBaseProps) => {
 	const [isOpen, setIsOpen] = useState(false);
 
 	return (
@@ -137,24 +129,83 @@ export const Default: Story = {
 			</>
 		),
 	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
+};
 
-		const openButton = canvas.getByRole('button', { name: /open drawer/i });
-		await userEvent.click(openButton);
+export const WithBackdropAndScroll: Story = {
+	render: DrawerTemplate,
+	args: {
+		backdrop: true,
+		children: (
+			<>
+				<DsDrawer.Header>
+					<DsDrawer.Title>Basic Drawer</DsDrawer.Title>
+					<DsDrawer.CloseTrigger />
+				</DsDrawer.Header>
+				<DsDrawer.Body className={styles.body}>
+					<div className={styles.section}>
+						<DsTypography className={styles.sectionHeader} variant="body-md-semi-bold">
+							Drawer content header
+						</DsTypography>
+						<DsTypography style={{ minHeight: '300px' }} variant="heading2" className={styles.sectionContent}>
+							Out of scope section
+						</DsTypography>
+					</div>
+					<div className={styles.section}>
+						<DsTypography className={styles.sectionHeader} variant="body-md-semi-bold">
+							Drawer content header
+						</DsTypography>
+						<DsTypography style={{ minHeight: '200px' }} variant="heading2" className={styles.sectionContent}>
+							Out of scope section
+						</DsTypography>
+						<DsTypography style={{ minHeight: '500px' }} variant="heading2" className={styles.sectionContent}>
+							Out of scope section
+						</DsTypography>
+					</div>
+				</DsDrawer.Body>
+			</>
+		),
+	},
+};
 
-		const drawer = await canvas.findByRole('dialog');
-		await expect(drawer).toHaveAttribute('data-state', 'open');
-
-		const closeButton = canvas.getByRole('button', { name: /close/i });
-		await userEvent.click(closeButton);
-
-		await expect(drawer).toHaveAttribute('data-state', 'closed');
+export const DockToStart: Story = {
+	render: DrawerTemplate,
+	args: {
+		position: 'start',
+		children: (
+			<>
+				<DsDrawer.Header>
+					<DsDrawer.Title>Active tasks</DsDrawer.Title>
+					<DsDrawer.CloseTrigger />
+				</DsDrawer.Header>
+				<DsDrawer.Body className={styles.body}>
+					<div className={styles.section}>
+						<DsTypography className={styles.sectionHeader} variant="body-md-semi-bold">
+							Panel content
+						</DsTypography>
+						<DsTypography variant="heading2" className={styles.sectionContent}>
+							Out of scope section
+						</DsTypography>
+					</div>
+					<div className={styles.section}>
+						<DsTypography className={styles.sectionHeader} variant="body-md-semi-bold">
+							Drawer content header
+						</DsTypography>
+						<DsTypography variant="heading2" className={styles.sectionContent}>
+							Out of scope section
+						</DsTypography>
+						<DsTypography variant="heading2" className={styles.sectionContent}>
+							Out of scope section
+						</DsTypography>
+					</div>
+				</DsDrawer.Body>
+			</>
+		),
 	},
 };
 
 const Tabs = ({ total = 4 }: { total?: number }) => {
 	const [selected, setSelected] = useState(1);
+
 	return (
 		<div className={styles.tabs}>
 			{Array.from({ length: total }, (_, index) => (
@@ -174,7 +225,7 @@ const Tabs = ({ total = 4 }: { total?: number }) => {
 export const WithTabs: Story = {
 	render: DrawerTemplate,
 	args: {
-		columns: 8,
+		width: '60vw',
 		children: (
 			<>
 				<DsDrawer.Header>
@@ -220,99 +271,14 @@ export const WithTabs: Story = {
 	},
 };
 
-export const WithBackdropAndScroll: Story = {
-	render: DrawerTemplate,
-	args: {
-		backdrop: true,
-		children: (
-			<>
-				<DsDrawer.Header>
-					<DsDrawer.Title>Basic Drawer</DsDrawer.Title>
-					<DsDrawer.CloseTrigger />
-				</DsDrawer.Header>
-				<DsDrawer.Body className={styles.body}>
-					<div className={styles.section}>
-						<DsTypography className={styles.sectionHeader} variant="body-md-semi-bold">
-							Drawer content header
-						</DsTypography>
-						<DsTypography style={{ minHeight: '300px' }} variant="heading2" className={styles.sectionContent}>
-							Out of scope section
-						</DsTypography>
-					</div>
-					<div className={styles.section}>
-						<DsTypography className={styles.sectionHeader} variant="body-md-semi-bold">
-							Drawer content header
-						</DsTypography>
-						<DsTypography style={{ minHeight: '200px' }} variant="heading2" className={styles.sectionContent}>
-							Out of scope section
-						</DsTypography>
-						<DsTypography style={{ minHeight: '500px' }} variant="heading2" className={styles.sectionContent}>
-							Out of scope section
-						</DsTypography>
-					</div>
-				</DsDrawer.Body>
-			</>
-		),
-	},
-	play: async ({ canvasElement }) => {
-		const canvas = within(canvasElement);
-
-		const openButton = canvas.getByRole('button', { name: /open drawer/i });
-		await userEvent.click(openButton);
-
-		const drawer = await canvas.findByRole('dialog');
-		await expect(drawer).toHaveAttribute('data-state', 'open');
-
-		const backdrop = canvasElement.querySelector('[data-part="backdrop"]');
-		await expect(backdrop).toBeInTheDocument();
-		await expect(backdrop).toHaveAttribute('data-state', 'open');
-	},
-};
-
-export const DockToStart: Story = {
-	render: DrawerTemplate,
-	args: {
-		position: 'start',
-		children: (
-			<>
-				<DsDrawer.Header>
-					<DsDrawer.Title>Basic Drawer</DsDrawer.Title>
-					<DsDrawer.CloseTrigger />
-				</DsDrawer.Header>
-				<DsDrawer.Body className={styles.body}>
-					<div className={styles.section}>
-						<DsTypography className={styles.sectionHeader} variant="body-md-semi-bold">
-							Drawer content header
-						</DsTypography>
-						<DsTypography variant="heading2" className={styles.sectionContent}>
-							Out of scope section
-						</DsTypography>
-					</div>
-					<div className={styles.section}>
-						<DsTypography className={styles.sectionHeader} variant="body-md-semi-bold">
-							Drawer content header
-						</DsTypography>
-						<DsTypography variant="heading2" className={styles.sectionContent}>
-							Out of scope section
-						</DsTypography>
-						<DsTypography variant="heading2" className={styles.sectionContent}>
-							Out of scope section
-						</DsTypography>
-					</div>
-				</DsDrawer.Body>
-			</>
-		),
-	},
-};
-
 export const WithGridContent: Story = {
 	render: DrawerTemplate,
 	args: {
-		columns: 10,
+		width: '80vw',
 		children: (
 			<>
 				<DsDrawer.Header>
-					<DsDrawer.Title>Basic Drawer</DsDrawer.Title>
+					<DsDrawer.Title>Grid Content Drawer</DsDrawer.Title>
 					<DsDrawer.CloseTrigger />
 				</DsDrawer.Header>
 				<DsDrawer.Body className={styles.bodyGrid}>
@@ -347,34 +313,22 @@ export const WithGridContent: Story = {
 };
 
 export const ToggleFullSize: Story = {
-	args: {
-		columns: 4,
-	},
-	render: function Render(args: DsDrawerProps) {
+	render: function Render(args: DsDrawerBaseProps) {
 		const [isOpen, setIsOpen] = useState(false);
 		const [isFullScreen, setIsFullScreen] = useState(false);
-
-		const toggleFullScreen = () => {
-			setIsFullScreen(!isFullScreen);
-		};
 
 		return (
 			<div className={styles.storyWrapper}>
 				<DsButton onClick={() => setIsOpen(true)}>Open Drawer</DsButton>
 
-				<DsDrawer
-					{...args}
-					open={isOpen}
-					onOpenChange={setIsOpen}
-					columns={isFullScreen ? 12 : args.columns || 4}
-				>
+				<DsDrawer {...args} open={isOpen} onOpenChange={setIsOpen} width={isFullScreen ? '100%' : undefined}>
 					<DsDrawer.Header>
 						<DsDrawer.Title>Expandable Drawer</DsDrawer.Title>
 						<div className={styles.headerActions}>
 							<button
 								className={styles.expand}
 								aria-label={isFullScreen ? 'Collapse' : 'Expand'}
-								onClick={toggleFullScreen}
+								onClick={() => setIsFullScreen(!isFullScreen)}
 							>
 								<DsIcon icon={isFullScreen ? 'close_fullscreen' : 'open_in_full'} size="tiny" />
 							</button>

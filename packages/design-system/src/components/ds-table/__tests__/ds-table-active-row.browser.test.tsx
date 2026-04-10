@@ -31,7 +31,6 @@ describe('DsTable Active Row with Drawer', () => {
 								setSelectedPerson(null);
 							}
 						}}
-						columns={4}
 						position="end"
 					>
 						{selectedPerson && (

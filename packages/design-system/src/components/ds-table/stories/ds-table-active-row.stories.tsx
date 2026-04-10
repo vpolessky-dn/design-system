@@ -67,7 +67,6 @@ export const WithDrawerAndActiveRow: Story = {
 							setSelectedPerson(null);
 						}
 					}}
-					columns={4}
 					position="end"
 				>
 					{selectedPerson && (

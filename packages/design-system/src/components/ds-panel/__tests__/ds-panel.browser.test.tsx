@@ -3,14 +3,14 @@ import { describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 
 import { DsPanel } from '../';
-import { DsButton } from '../../ds-button';
+import { DsButtonV3 } from '../../ds-button-v3';
 
 function CollapsiblePanel({ variant }: { variant?: 'docked' | 'floating' }) {
 	const [open, setOpen] = useState(true);
 
 	return (
 		<>
-			{!open && <DsButton onClick={() => setOpen(true)}>Open Panel</DsButton>}
+			{!open && <DsButtonV3 onClick={() => setOpen(true)}>Open Panel</DsButtonV3>}
 
 			<DsPanel open={open} onOpenChange={setOpen} variant={variant}>
 				<p>This is a panel</p>

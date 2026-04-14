@@ -22,7 +22,6 @@ const DsDrawer = ({
 	children,
 }: DsDrawerProps) => {
 	const resolvedColumns = useResponsiveValue(columns);
-	const colsClass = `cols-${String(resolvedColumns)}` as keyof typeof styles;
 
 	const handleOpenChange = (details: { open: boolean }) => {
 		onOpenChange(details.open);
@@ -48,7 +47,8 @@ const DsDrawer = ({
 							styles.drawer,
 							styles[`position-${position}`],
 							className,
-							styles[colsClass],
+							// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+							styles[`cols-${resolvedColumns}`],
 						)}
 					>
 						<div className={styles.content}>{children}</div>

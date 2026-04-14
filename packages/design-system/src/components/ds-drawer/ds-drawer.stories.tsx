@@ -9,7 +9,8 @@ import { DsIcon } from '../ds-icon';
 import { DsSystemStatus } from '../ds-system-status';
 import styles from './ds-drawer.stories.module.scss';
 import { DsTypography } from '../ds-typography';
-import type { DsDrawerProps } from './ds-drawer.types';
+import type { DsDrawerColumns, DsDrawerProps } from './ds-drawer.types';
+import type { ResponsiveValue } from '../../utils/responsive';
 
 const meta: Meta<typeof DsDrawer> = {
 	title: 'Design System/Drawer',
@@ -334,12 +335,12 @@ export const Responsive: Story = {
 		const close = () => setOpenDrawer(null);
 
 		const variants = [
-			{ label: '3 cols → 4 on md', columns: { lg: 3, md: 4 } as const },
-			{ label: '4 cols → 6 on md', columns: { lg: 4, md: 6 } as const },
-			{ label: '5 cols → 6 on md', columns: { lg: 5, md: 6 } as const },
-			{ label: '6 cols → 10 on md', columns: { lg: 6, md: 10 } as const },
-			{ label: '8 cols → 10 on md', columns: { lg: 8, md: 10 } as const },
-		];
+			{ label: '3 cols → 4 on md', columns: { lg: 3, md: 4 } },
+			{ label: '4 cols → 6 on md', columns: { lg: 4, md: 6 } },
+			{ label: '5 cols → 6 on md', columns: { lg: 5, md: 6 } },
+			{ label: '6 cols → 10 on md', columns: { lg: 6, md: 10 } },
+			{ label: '8 cols → 10 on md', columns: { lg: 8, md: 10 } },
+		] satisfies Array<{ label: string; columns: ResponsiveValue<DsDrawerColumns> }>;
 
 		return (
 			<div className={styles.storyWrapper}>

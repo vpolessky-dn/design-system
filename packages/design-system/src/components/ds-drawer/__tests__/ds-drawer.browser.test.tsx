@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
 import { page } from 'vitest/browser';
 import DsDrawer from '../ds-drawer';
+import type { DsDrawerProps } from '../ds-drawer.types';
 
-const DrawerHarness = (props: Partial<Parameters<typeof DsDrawer>[0]>) => {
+const ControlledDrawer = (props: Partial<DsDrawerProps>) => {
 	const [open, setOpen] = useState(false);
 
 	return (
@@ -24,7 +25,7 @@ const DrawerHarness = (props: Partial<Parameters<typeof DsDrawer>[0]>) => {
 
 describe('DsDrawer', () => {
 	it('should open and close', async () => {
-		await page.render(<DrawerHarness />);
+		await page.render(<ControlledDrawer />);
 
 		await page.getByRole('button', { name: /open drawer/i }).click();
 
@@ -36,20 +37,14 @@ describe('DsDrawer', () => {
 	});
 
 	it('should render backdrop when enabled', async () => {
-		await page.render(<DrawerHarness backdrop />);
+		await page.render(<ControlledDrawer backdrop />);
 
 		await page.getByRole('button', { name: /open drawer/i }).click();
 
 		const drawer = page.getByRole('dialog');
 		await expect.element(drawer).toHaveAttribute('data-state', 'open');
 
-		const backdropEl = document.querySelector('[data-part="backdrop"]');
-
-		if (!backdropEl) {
-			throw new Error('Backdrop element not found');
-		}
-
-		const backdrop = page.elementLocator(backdropEl);
+		const backdrop = document.querySelector<HTMLElement>('[data-part="backdrop"]');
 		await expect.element(backdrop).toBeInTheDocument();
 		await expect.element(backdrop).toHaveAttribute('data-state', 'open');
 	});

@@ -1,9 +1,8 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
-export interface DsGridProps {
-	/**
-	 * The content to be rendered inside the grid
-	 */
+import type { ResponsiveValue } from '../../utils/responsive';
+
+export interface DsGridBaseProps {
 	children: ReactNode;
 
 	/**
@@ -17,15 +16,35 @@ export interface DsGridProps {
 	columns?: 2 | 4 | 6 | 8 | 10 | 12;
 
 	/**
-	 * Custom class names to apply to the grid
+	 * Gap between grid cells in px.
+	 * Defaults to 16.
 	 */
+	gutter?: number;
+
+	/**
+	 * Padding around the grid container.
+	 * A number is treated as px (uniform). A string is used as-is (e.g. "16px 20px").
+	 */
+	margin?: number | string;
+
 	className?: string;
+	style?: CSSProperties;
 }
 
-export interface DsGridItemProps {
+export type DsGridProps = Omit<DsGridBaseProps, 'gutter' | 'margin'> & {
 	/**
-	 * The content to be rendered inside the grid item
+	 * Gap between grid cells in px.
 	 */
+	gutter?: ResponsiveValue<number>;
+
+	/**
+	 * Padding around the grid container.
+	 * A number is treated as px (uniform). A string is used as-is (e.g. "16px 20px").
+	 */
+	margin?: ResponsiveValue<number | string>;
+};
+
+export interface DsGridItemBaseProps {
 	children: ReactNode;
 
 	/**
@@ -48,8 +67,10 @@ export interface DsGridItemProps {
 	 */
 	rowStart?: number;
 
-	/**
-	 * Custom class names to apply to the grid item
-	 */
 	className?: string;
 }
+
+export type DsGridItemProps = Omit<DsGridItemBaseProps, 'colSpan' | 'rowSpan'> & {
+	colSpan?: ResponsiveValue<number | 'full'>;
+	rowSpan?: ResponsiveValue<number | 'full'>;
+};

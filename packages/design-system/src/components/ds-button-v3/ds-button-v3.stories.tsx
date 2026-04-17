@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import classNames from 'classnames';
 import { fn } from 'storybook/test';
 import DsButtonV3 from './ds-button-v3';
-import { DsButtonV3 as DsButtonV3Wrapped } from './index.ts';
+import { DsButtonV3 as DsButtonV3Wrapped } from './index';
 import {
 	type ButtonV3Color,
 	buttonV3Colors,

@@ -21,18 +21,18 @@ export const DsGridBase = ({
 		className,
 	);
 
-	const gridStyle = {
-		...style,
-		...(gutter !== undefined && {
-			'--ds-grid-gutter': typeof gutter === 'number' ? `${String(gutter)}px` : gutter,
-		}),
-		...(margin !== undefined && {
-			'--ds-grid-margin': typeof margin === 'number' ? `${String(margin)}px` : margin,
-		}),
-	} as CSSProperties;
+	const cssVars: Record<string, string> = {};
+
+	if (gutter !== undefined) {
+		cssVars['--ds-grid-gutter'] = typeof gutter === 'number' ? `${String(gutter)}px` : gutter;
+	}
+
+	if (margin !== undefined) {
+		cssVars['--ds-grid-margin'] = typeof margin === 'number' ? `${String(margin)}px` : margin;
+	}
 
 	return (
-		<div className={gridClass} style={gridStyle}>
+		<div className={gridClass} style={{ ...style, ...cssVars } as CSSProperties}>
 			{children}
 		</div>
 	);

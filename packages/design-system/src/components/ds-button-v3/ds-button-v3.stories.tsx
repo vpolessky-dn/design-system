@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import classNames from 'classnames';
 import { fn } from 'storybook/test';
 import DsButtonV3 from './ds-button-v3';
+import { DsButtonV3 as DsButtonV3Wrapped } from './index';
 import {
 	type ButtonV3Color,
 	buttonV3Colors,
@@ -51,7 +52,7 @@ const matrixRows = [
 const defaultIconMatrixRows = [
 	{ label: 'check circle', icon: 'check_circle', variant: 'primary', color: 'default', loading: false },
 	{ label: 'info', icon: 'info', variant: 'secondary', color: 'default', loading: false },
-	{ label: 'delete', icon: 'delete', variant: 'tertiary', color: 'negative', loading: false },
+	{ label: 'delete', icon: 'delete', variant: 'tertiary', color: 'error', loading: false },
 	{ label: 'loading', icon: 'check_circle', variant: 'primary', color: 'default', loading: true },
 ] as const;
 
@@ -185,12 +186,12 @@ export const MatrixDefault: Story = {
 	),
 };
 
-export const MatrixNegative: Story = {
+export const MatrixError: Story = {
 	parameters: { layout: 'fullscreen' },
 	render: () => (
 		<div className={storyStyles.matrix}>
-			<p className={storyStyles.sectionTitle}>Negative</p>
-			<MatrixGrid color="negative" />
+			<p className={storyStyles.sectionTitle}>Error</p>
+			<MatrixGrid color="error" />
 		</div>
 	),
 };
@@ -228,6 +229,25 @@ export const MatrixIcons: Story = {
 				</p>
 				<IconMatrixGrid rows={onDarkIconMatrixRows} isOnDark />
 			</div>
+		</div>
+	),
+};
+
+export const ResponsiveSize: Story = {
+	parameters: { layout: 'centered' },
+	render: () => (
+		<div className={storyStyles.responsiveRow}>
+			<DsButtonV3Wrapped size={{ lg: 'large', md: 'small' }} icon="check_circle" onClick={fn()}>
+				lg: large / md: small
+			</DsButtonV3Wrapped>
+
+			<DsButtonV3Wrapped size={{ lg: 'medium', md: 'tiny' }} icon="check_circle" onClick={fn()}>
+				lg: medium / md: tiny
+			</DsButtonV3Wrapped>
+
+			<DsButtonV3Wrapped size="medium" icon="check_circle" onClick={fn()}>
+				static: medium
+			</DsButtonV3Wrapped>
 		</div>
 	),
 };

@@ -23,7 +23,9 @@ export const DsGridBase = ({
 
 	const gridStyle = {
 		...style,
-		...(gutter !== undefined && { '--ds-grid-gutter': `${String(gutter)}px` }),
+		...(gutter !== undefined && {
+			'--ds-grid-gutter': typeof gutter === 'number' ? `${String(gutter)}px` : gutter,
+		}),
 		...(margin !== undefined && {
 			'--ds-grid-margin': typeof margin === 'number' ? `${String(margin)}px` : margin,
 		}),

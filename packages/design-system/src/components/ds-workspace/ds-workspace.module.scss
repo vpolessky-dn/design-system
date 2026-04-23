@@ -1,0 +1,48 @@
+.root {
+	--ds-workspace-header-height: 54px;
+
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	overflow: hidden;
+	background: var(--color-background);
+}
+
+.fillParent {
+	height: 100%;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	height: var(--ds-workspace-header-height);
+	padding: 0 var(--spacing-sm) 0 var(--spacing-lg);
+	background: var(--gradient-radial-1);
+	color: var(--color-font-on-action);
+	overflow: clip;
+}
+
+.subHeader {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	padding: var(--spacing-xs) var(--spacing-standard);
+	border-bottom: 1px solid var(--color-border);
+	background: var(--color-background);
+}
+
+.content {
+	position: relative;
+	flex: 1;
+	overflow: auto;
+}
+
+.footer {
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+	padding: var(--spacing-xs) var(--spacing-standard);
+	border-top: 1px solid var(--color-border);
+	background: var(--color-background);
+}

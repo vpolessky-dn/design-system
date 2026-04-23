@@ -61,4 +61,5 @@ export * from './components/ds-tooltip';
 export * from './components/ds-tree';
 export * from './components/ds-typography';
 export * from './components/ds-vertical-tabs';
+export * from './components/ds-workspace';
 export * from './utils/responsive';

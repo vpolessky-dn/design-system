@@ -8,10 +8,25 @@ updates:
     commit-message:
       prefix: 'chore'
     groups:
+      # Matching the pnpm catalog entries manually since Dependabot matches them under the production group.
+      # See: https://github.com/dependabot/dependabot-core/issues/14824
+      pnpm-catalog:
+        patterns:
+          - '@arethetypeswrong/cli'
+          - '@eslint/core'
+          - '@typescript/native-preview'
+          - '@vitest/coverage-v8'
+          - 'eslint'
+          - 'publint'
+          - 'tsdown'
+          - 'typescript'
+          - 'vitest'
+
       npm-development:
         dependency-type: 'development'
         patterns:
           - '**'
+
       npm-production:
         dependency-type: 'production'
         patterns:

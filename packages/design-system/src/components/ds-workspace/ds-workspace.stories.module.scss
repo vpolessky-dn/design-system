@@ -1,7 +1,7 @@
 .headerLayout {
 	display: flex;
 	align-items: center;
-	gap: var(--spacing-3xs);
+	gap: var(--3xs);
 	width: 100%;
 }
 
@@ -16,7 +16,7 @@
 	flex: 1;
 	align-items: center;
 	justify-content: center;
-	gap: var(--spacing-xs);
+	gap: var(--xs);
 	white-space: nowrap;
 	overflow: hidden;
 }
@@ -25,40 +25,40 @@
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
-	gap: var(--spacing-xs);
+	gap: var(--xs);
 	flex-shrink: 0;
 	white-space: nowrap;
 }
 
 .projectName {
-	color: var(--color-font-on-action);
+	color: var(--font-on-action);
 }
 
 .lastUpdate {
 	display: flex;
 	align-items: center;
-	gap: var(--spacing-xs);
-	color: var(--color-font-on-action);
+	gap: var(--xs);
+	color: var(--font-on-action);
 	white-space: nowrap;
 }
 
 .subHeaderContent {
 	display: flex;
 	align-items: center;
-	gap: var(--spacing-sm);
+	gap: var(--sm);
 	width: 100%;
 }
 
 .mainContent {
-	padding: var(--spacing-standard);
+	padding: var(--standard);
 }
 
 .card {
-	padding: var(--spacing-lg);
-	border-radius: var(--spacing-xs);
-	border: 1px solid var(--color-border);
-	background: var(--color-background);
-	margin-bottom: var(--spacing-standard);
+	padding: var(--lg);
+	border-radius: var(--xs);
+	border: 1px solid var(--border);
+	background: var(--background);
+	margin-bottom: var(--standard);
 }
 
 .footerContent {
@@ -66,12 +66,12 @@
 	align-items: center;
 	justify-content: space-between;
 	width: 100%;
-	color: var(--color-font-secondary);
-	font-size: var(--font-size-xs);
+	color: var(--font-secondary);
+	font-size: var(--body-font-size-xs);
 }
 
 .footerActions {
 	display: flex;
 	align-items: center;
-	gap: var(--spacing-xs);
+	gap: var(--xs);
 }

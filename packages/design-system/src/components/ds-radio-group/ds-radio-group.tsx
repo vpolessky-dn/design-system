@@ -1,5 +1,4 @@
 import type React from 'react';
-import * as RadioGroupPrimitive from '@radix-ui/react-radio-group';
 import { RadioGroup } from '@ark-ui/react/radio-group';
 import classNames from 'classnames';
 import styles from './ds-radio-group.module.scss';
@@ -47,14 +46,8 @@ const Item: React.FC<DsRadioGroupItemProps> = ({
 				</div>
 			</RadioGroup.ItemControl>
 			<RadioGroup.ItemHiddenInput />
-			{label ? (
-				<RadioGroup.ItemText className={styles.radioLabel}>
-					{label}
-					{labelInfo && <div className={styles.labelInfo}>{labelInfo}</div>}
-				</RadioGroup.ItemText>
-			) : (
-				children
-			)}
+			{label ? <RadioGroup.ItemText className={styles.radioLabel}>{label}</RadioGroup.ItemText> : children}
+			{labelInfo && <div className={styles.labelInfo}>{labelInfo}</div>}
 		</RadioGroup.Item>
 	);
 };
@@ -70,35 +63,40 @@ export const DsRadioGroupLegacy: React.FC<DsRadioGroupLegacyProps> = ({
 	value,
 	defaultValue,
 	onValueChange,
+	disabled,
 	className,
-	...props
+	style,
 }) => (
-	<RadioGroupPrimitive.Root
+	<RadioGroup.Root
 		className={classNames(styles.radioGroupRoot, className)}
-		value={value}
+		style={style}
+		value={value ?? undefined}
 		defaultValue={defaultValue}
-		onValueChange={onValueChange}
-		{...props}
+		disabled={disabled}
+		onValueChange={(details) => {
+			if (details.value !== null) {
+				onValueChange?.(details.value);
+			}
+		}}
 	>
 		{options.map((option) => (
-			<div key={option.value} className={styles.radioItemContainer}>
-				<RadioGroupPrimitive.Item
-					className={styles.radioItem}
-					value={option.value}
-					disabled={option.disabled}
-					id={option.value}
-				>
+			<RadioGroup.Item
+				key={option.value}
+				value={option.value}
+				disabled={option.disabled}
+				className={styles.radioItemContainer}
+			>
+				<RadioGroup.ItemControl className={styles.radioItem}>
 					<div className={styles.radioItemWrapper}>
-						<RadioGroupPrimitive.Indicator className={styles.radioIndicator} />
+						<div className={styles.radioIndicator} data-part="indicator" />
 					</div>
-				</RadioGroupPrimitive.Item>
-				<label className={styles.radioLabel} htmlFor={option.value}>
-					{option.label}
-					{option.labelInfo && <div className={styles.labelInfo}>{option.labelInfo}</div>}
-				</label>
-			</div>
+				</RadioGroup.ItemControl>
+				<RadioGroup.ItemHiddenInput />
+				<RadioGroup.ItemText className={styles.radioLabel}>{option.label}</RadioGroup.ItemText>
+				{option.labelInfo && <div className={styles.labelInfo}>{option.labelInfo}</div>}
+			</RadioGroup.Item>
 		))}
-	</RadioGroupPrimitive.Root>
+	</RadioGroup.Root>
 );
 /* c8 ignore stop */
 

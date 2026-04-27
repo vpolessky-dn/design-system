@@ -9,7 +9,7 @@ import { DsDrawer } from '../ds-drawer';
 import styles from './ds-workspace.stories.module.scss';
 
 const meta: Meta<typeof DsWorkspace> = {
-	title: 'Design System/Workspace',
+	title: 'Components/Workspace',
 	component: DsWorkspace,
 	parameters: {
 		layout: 'fullscreen',

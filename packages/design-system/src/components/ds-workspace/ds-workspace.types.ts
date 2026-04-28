@@ -1,10 +1,6 @@
-import type { CSSProperties, ReactNode, Ref } from 'react';
+import type { ComponentPropsWithRef } from 'react';
 
-export interface DsWorkspaceProps {
-	ref?: Ref<HTMLDivElement>;
-	className?: string;
-	style?: CSSProperties;
-	children?: ReactNode;
+export interface DsWorkspaceProps extends ComponentPropsWithRef<'div'> {
 	/**
 	 * Whether the workspace should fill its parent height (`100%`) instead of the viewport (`100vh`).
 	 * @default false
@@ -12,30 +8,10 @@ export interface DsWorkspaceProps {
 	fillParent?: boolean;
 }
 
-export interface DsWorkspaceHeaderProps {
-	ref?: Ref<HTMLElement>;
-	className?: string;
-	style?: CSSProperties;
-	children?: ReactNode;
-}
+export type DsWorkspaceHeaderProps = ComponentPropsWithRef<'header'>;
 
-export interface DsWorkspaceSubHeaderProps {
-	ref?: Ref<HTMLDivElement>;
-	className?: string;
-	style?: CSSProperties;
-	children?: ReactNode;
-}
+export type DsWorkspaceSubHeaderProps = ComponentPropsWithRef<'div'>;
 
-export interface DsWorkspaceContentProps {
-	ref?: Ref<HTMLDivElement>;
-	className?: string;
-	style?: CSSProperties;
-	children?: ReactNode;
-}
+export type DsWorkspaceContentProps = ComponentPropsWithRef<'div'>;
 
-export interface DsWorkspaceFooterProps {
-	ref?: Ref<HTMLElement>;
-	className?: string;
-	style?: CSSProperties;
-	children?: ReactNode;
-}
+export type DsWorkspaceFooterProps = ComponentPropsWithRef<'footer'>;

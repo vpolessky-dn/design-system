@@ -8,39 +8,25 @@ import type {
 	DsWorkspaceFooterProps,
 } from './ds-workspace.types';
 
-const DsWorkspace = ({ ref, className, style, fillParent = false, children }: DsWorkspaceProps) => (
-	<div
-		ref={ref}
-		className={classNames(styles.root, { [styles.fillParent]: fillParent }, className)}
-		style={style}
-	>
-		{children}
-	</div>
+const DsWorkspace = ({ className, fillParent = false, ...rest }: DsWorkspaceProps) => (
+	<div {...rest} className={classNames(styles.root, { [styles.fillParent]: fillParent }, className)} />
 );
 
-const Header = ({ ref, className, style, children }: DsWorkspaceHeaderProps) => (
-	<header ref={ref} className={classNames(styles.header, className)} style={style}>
-		{children}
-	</header>
+const Header = ({ className, ...rest }: DsWorkspaceHeaderProps) => (
+	<header {...rest} className={classNames(styles.header, className)} />
 );
 
-const SubHeader = ({ ref, className, style, children }: DsWorkspaceSubHeaderProps) => (
-	<div ref={ref} className={classNames(styles.subHeader, className)} style={style}>
-		{children}
-	</div>
+const SubHeader = ({ className, ...rest }: DsWorkspaceSubHeaderProps) => (
+	<div {...rest} className={classNames(styles.subHeader, className)} />
 );
 
 /** Stacking context for non-portal drawer containment. */
-const Content = ({ ref, className, style, children }: DsWorkspaceContentProps) => (
-	<div ref={ref} className={classNames(styles.content, className)} style={style}>
-		{children}
-	</div>
+const Content = ({ className, ...rest }: DsWorkspaceContentProps) => (
+	<div {...rest} className={classNames(styles.content, className)} />
 );
 
-const Footer = ({ ref, className, style, children }: DsWorkspaceFooterProps) => (
-	<footer ref={ref} className={classNames(styles.footer, className)} style={style}>
-		{children}
-	</footer>
+const Footer = ({ className, ...rest }: DsWorkspaceFooterProps) => (
+	<footer {...rest} className={classNames(styles.footer, className)} />
 );
 
 DsWorkspace.Header = Header;

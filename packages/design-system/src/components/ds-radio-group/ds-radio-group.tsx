@@ -1,6 +1,7 @@
 import type React from 'react';
 import { RadioGroup } from '@ark-ui/react/radio-group';
 import classNames from 'classnames';
+import { DsTypography } from '../ds-typography';
 import styles from './ds-radio-group.module.scss';
 import type {
 	DsRadioGroupItemProps,
@@ -47,7 +48,11 @@ const Item: React.FC<DsRadioGroupItemProps> = ({
 			</RadioGroup.ItemControl>
 			<RadioGroup.ItemHiddenInput />
 			{label ? <RadioGroup.ItemText className={styles.radioLabel}>{label}</RadioGroup.ItemText> : children}
-			{labelInfo && <div className={styles.labelInfo}>{labelInfo}</div>}
+			{!!labelInfo && (
+				<DsTypography variant="body-xs-reg" className={styles.labelInfo}>
+					{labelInfo}
+				</DsTypography>
+			)}
 		</RadioGroup.Item>
 	);
 };
@@ -93,7 +98,11 @@ export const DsRadioGroupLegacy: React.FC<DsRadioGroupLegacyProps> = ({
 				</RadioGroup.ItemControl>
 				<RadioGroup.ItemHiddenInput />
 				<RadioGroup.ItemText className={styles.radioLabel}>{option.label}</RadioGroup.ItemText>
-				{option.labelInfo && <div className={styles.labelInfo}>{option.labelInfo}</div>}
+				{!!option.labelInfo && (
+					<DsTypography variant="body-xs-reg" className={styles.labelInfo}>
+						{option.labelInfo}
+					</DsTypography>
+				)}
 			</RadioGroup.Item>
 		))}
 	</RadioGroup.Root>

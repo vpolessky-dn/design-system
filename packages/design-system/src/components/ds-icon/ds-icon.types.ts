@@ -40,6 +40,12 @@ export interface DsIconProps {
 	filled?: boolean;
 
 	/**
+	 * CSS color applied to the icon. Works with Material Icons (font color),
+	 * custom SVG icons (`currentColor`), and inline SVG components.
+	 */
+	color?: string;
+
+	/**
 	 * Additional CSS class names
 	 */
 	className?: string;

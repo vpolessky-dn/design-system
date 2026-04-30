@@ -31,6 +31,9 @@ const meta: Meta<typeof DsIcon> = {
 			control: 'boolean',
 			description: 'Whether the icon should be filled',
 		},
+		color: {
+			control: 'color',
+		},
 		onClick: { action: 'clicked' },
 	},
 };
@@ -49,7 +52,7 @@ export const Colored: Story = {
 	args: {
 		size: 'medium',
 		filled: true,
-		style: { color: '#4CAF50' },
+		color: '#4CAF50',
 	},
 	render: function Render(args) {
 		return (

@@ -11,29 +11,31 @@ const DsIcon = ({
 	size = 'medium',
 	variant = 'outlined',
 	filled,
+	color,
 	className = '',
 	style = {},
 	...rest
 }: DsIconProps) => {
 	const iconClass = classNames(styles.icon, styles[size], { [styles.filled]: filled }, className);
+	const mergedStyle = color ? { color, ...style } : style;
 
 	// 1. SVG component passed directly
 	if (typeof icon === 'function') {
 		const SvgComponent = icon;
-		return <SvgComponent className={iconClass} style={style} {...rest} />;
+		return <SvgComponent className={iconClass} style={mergedStyle} {...rest} />;
 	}
 
 	// 2. Custom registered icon from custom-icons registry
 	if (isCustomIcon(icon)) {
 		const SvgComponent = customIcons[icon];
-		return <SvgComponent className={iconClass} style={style} {...rest} />;
+		return <SvgComponent className={iconClass} style={mergedStyle} {...rest} />;
 	}
 
 	// 3. Material Icon (font-based)
 	const variantClass = `material-symbols-${variant}`;
 
 	return (
-		<span className={classNames(iconClass, variantClass)} style={style} {...rest}>
+		<span className={classNames(iconClass, variantClass)} style={mergedStyle} {...rest}>
 			{icon}
 		</span>
 	);

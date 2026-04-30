@@ -1,8 +1,11 @@
 import classNames from 'classnames';
 import styles from './ds-icon.module.scss';
-import type { DsIconProps } from './ds-icon.types';
+import { iconColors, type DsIconProps } from './ds-icon.types';
 import { customIcons, isCustomIcon } from './custom-icons';
-import { resolveColor } from '../../utils/semantic-color';
+
+const iconColorSet = new Set<string>(iconColors);
+
+const resolveColor = (color: string): string => (iconColorSet.has(color) ? `var(--icon-${color})` : color);
 
 /**
  * Design system Icon component that renders Google Material Icons, custom SVG icons, or inline SVGs

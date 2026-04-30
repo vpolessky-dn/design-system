@@ -1,6 +1,7 @@
 import type { MouseEvent, CSSProperties, FunctionComponent, SVGProps } from 'react';
 import type { IconPrefix, materialIcons } from './material-icons';
 import type { CustomIconName } from './custom-icons';
+import type { SemanticColor } from '../../utils/semantic-color';
 
 export const iconSizes = ['tiny', 'small', 'medium', 'large', 'extra-large'] as const;
 export type IconSize = (typeof iconSizes)[number];
@@ -40,10 +41,11 @@ export interface DsIconProps {
 	filled?: boolean;
 
 	/**
-	 * CSS color applied to the icon. Works with Material Icons (font color),
-	 * custom SVG icons (`currentColor`), and inline SVG components.
+	 * Icon color. Semantic names map to `--font-*` tokens (e.g. `'error'` →
+	 * `var(--font-error)`); raw CSS values (hex, rgb, hsl, CSS variables)
+	 * pass through unchanged. Omit to inherit from parent.
 	 */
-	color?: string;
+	color?: SemanticColor | (string & {});
 
 	/**
 	 * Additional CSS class names

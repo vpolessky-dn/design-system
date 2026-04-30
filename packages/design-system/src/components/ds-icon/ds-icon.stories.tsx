@@ -52,13 +52,15 @@ export const Colored: Story = {
 	args: {
 		size: 'medium',
 		filled: true,
-		color: '#4CAF50',
 	},
 	render: function Render(args) {
 		return (
-			<div>
-				<DsIcon {...args} icon="check_circle" />
-				<DsIcon {...args} icon="special-market" />
+			<div style={{ display: 'flex', gap: 16 }}>
+				<DsIcon {...args} icon="check_circle" color="success" />
+				<DsIcon {...args} icon="error" color="error" />
+				<DsIcon {...args} icon="warning" color="warning" />
+				<DsIcon {...args} icon="info" color="#2196F3" />
+				<DsIcon {...args} icon="special-market" color="action" />
 			</div>
 		);
 	},

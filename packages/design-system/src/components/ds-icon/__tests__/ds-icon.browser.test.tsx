@@ -30,11 +30,18 @@ describe('DsIcon', () => {
 		await expect.element(page.getByTestId('test-svg')).toBeInTheDocument();
 	});
 
-	it('should apply the color prop to a material icon', async () => {
+	it('should resolve semantic color to a CSS variable', async () => {
+		await page.render(<DsIcon icon="home" color="error" />);
+
+		const icon = page.getByText('home');
+		await expect.element(icon).toHaveAttribute('style', expect.stringContaining('var(--font-error)'));
+	});
+
+	it('should pass raw CSS color values through unchanged', async () => {
 		await page.render(<DsIcon icon="home" color="#ff0000" />);
 
 		const icon = page.getByText('home');
-		await expect.element(icon).toHaveAttribute('style', expect.stringContaining('color: rgb(255, 0, 0)'));
+		await expect.element(icon).toHaveAttribute('style', expect.stringContaining('rgb(255, 0, 0)'));
 	});
 
 	it('should apply the color prop to a custom SVG icon', async () => {

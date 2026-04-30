@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import styles from './ds-icon.module.scss';
 import type { DsIconProps } from './ds-icon.types';
 import { customIcons, isCustomIcon } from './custom-icons';
+import { resolveColor } from '../../utils/semantic-color';
 
 /**
  * Design system Icon component that renders Google Material Icons, custom SVG icons, or inline SVGs
@@ -17,7 +18,7 @@ const DsIcon = ({
 	...rest
 }: DsIconProps) => {
 	const iconClass = classNames(styles.icon, styles[size], { [styles.filled]: filled }, className);
-	const mergedStyle = color ? { color, ...style } : style;
+	const mergedStyle = color ? { color: resolveColor(color), ...style } : style;
 
 	// 1. SVG component passed directly
 	if (typeof icon === 'function') {

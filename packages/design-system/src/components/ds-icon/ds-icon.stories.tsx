@@ -289,6 +289,7 @@ const customIconCategories: Record<string, CustomIconName[]> = {
 	],
 	Misc: [
 		'special-home',
+		'special-leading-icon',
 		'special-lego',
 		'special-scheme',
 		'special-book',

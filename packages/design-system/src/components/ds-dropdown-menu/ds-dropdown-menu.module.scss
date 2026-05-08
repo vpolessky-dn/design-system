@@ -48,6 +48,14 @@
 			}
 		}
 	}
+
+	&.variant-error {
+		color: var(--color-font-danger);
+
+		&[data-highlighted] {
+			background: var(--background-background-error-secondary-hover);
+		}
+	}
 }
 
 .itemIcon {

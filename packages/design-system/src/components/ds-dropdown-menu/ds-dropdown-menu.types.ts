@@ -1,6 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react';
 import type { Menu } from '@ark-ui/react/menu';
 
+export const dropdownMenuItemVariants = ['default', 'error'] as const;
+export type DropdownMenuItemVariant = (typeof dropdownMenuItemVariants)[number];
+
 /**
  * Base positioning type
  */
@@ -79,6 +82,11 @@ export interface DsDropdownMenuItemProps extends Pick<
 	 * Whether the item is selected (applies selected styling)
 	 */
 	selected?: boolean;
+	/**
+	 * Status variant that applies a colored text to convey item state.
+	 * `error` renders text in danger color.
+	 */
+	variant?: DropdownMenuItemVariant;
 }
 
 /**

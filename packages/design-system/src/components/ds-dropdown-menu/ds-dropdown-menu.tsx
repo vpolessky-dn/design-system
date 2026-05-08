@@ -101,6 +101,7 @@ const Content: React.FC<DsDropdownMenuContentProps> = ({
 const Item: React.FC<DsDropdownMenuItemProps> = ({
 	disabled,
 	selected,
+	variant = 'default',
 	value,
 	asChild,
 	onClick,
@@ -117,6 +118,7 @@ const Item: React.FC<DsDropdownMenuItemProps> = ({
 				{
 					[styles.selected]: selected,
 				},
+				variant === 'error' && styles['variant-error'],
 				className,
 			)}
 			style={style}

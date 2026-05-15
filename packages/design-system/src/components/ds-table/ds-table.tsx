@@ -281,18 +281,11 @@ const DsTable = <TData extends { id: string }, TValue>({
 				)}
 			>
 				<DragWrapper>
-					<Table
-						className={classnames(
-							fullWidth && styles.fullWidth,
-							!bordered && styles.tableNoBorder,
-							virtualized && styles.virtualized,
-						)}
-					>
+					<Table className={classnames(fullWidth && styles.fullWidth, !bordered && styles.tableNoBorder)}>
 						<DsTableHeader table={table} />
 						{virtualized ? (
 							<DsTableBodyVirtualized
 								table={table}
-								tableContainerRef={tableContainerRef}
 								emptyState={emptyState}
 								estimateSize={virtualizedOptions?.estimateSize || ROW_SIZE_HEIGHT_MAP[rowSize]}
 								overscan={virtualizedOptions?.overscan}

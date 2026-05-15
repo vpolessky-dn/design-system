@@ -30,7 +30,7 @@ const DsTableHeader = <TData,>({ table }: DsTableHeaderProps<TData>) => {
 						<TableHead className={classnames(styles.headerCell, styles.reorderColumn)}>Order</TableHead>
 					)}
 					{headerGroup.headers.map((header) => {
-						const headerStyle = getColumnSizeStyle(header.column.getSize(), virtualized);
+						const headerStyle = getColumnSizeStyle(header.column.getSize());
 						const canSort = header.column.getCanSort();
 						const isSelectColumn = header.column.id === SELECT_COLUMN_ID;
 
